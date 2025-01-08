@@ -1,15 +1,12 @@
 package dtu.group17;
 
-import org.jboss.logging.Logger;
-
 import java.util.*;
 
 public class DTUPayService {
-    private static final Logger LOG = Logger.getLogger(DTUPayService.class);
 
-    Map<String, Customer> customers = new HashMap<>();
-    Map<String, Merchant> merchants = new HashMap<>();
-    List<Payment> payments = new ArrayList<>();
+    private static Map<String, Customer> customers = new HashMap<>();
+    private static Map<String, Merchant> merchants = new HashMap<>();
+    private static List<Payment> payments = new ArrayList<>();
 
     public String register(Customer customer) {
         String id = UUID.randomUUID().toString();
@@ -42,8 +39,6 @@ public class DTUPayService {
     }
 
     public boolean createPayment(Payment payment) {
-        LOG.info("Customer id: " + payment.customerId());
-        LOG.info("Customers: " + String.join(", ", customers.keySet()));
         if (!customers.containsKey(payment.customerId())) {
             throw new CustomerNotFound("customer with id \"" + payment.customerId() + "\" is unknown");
         }

@@ -3,13 +3,11 @@ package dtu.group17;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import org.jboss.logging.Logger;
 
 import java.util.List;
 
 @Path("/payments")
 public class PaymentsResource {
-    private static final Logger LOG = Logger.getLogger(DTUPayService.class);
 
     @Singleton
     private DTUPayService service = new DTUPayService();

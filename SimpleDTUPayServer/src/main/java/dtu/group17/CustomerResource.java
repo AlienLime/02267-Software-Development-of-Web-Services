@@ -2,7 +2,6 @@ package dtu.group17;
 
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.MediaType;
 
 @Path("/customer")
 public class CustomerResource {
