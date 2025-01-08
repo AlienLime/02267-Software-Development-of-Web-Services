@@ -6,3 +6,11 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+modules.xml
+jarRepositories.xml
+compiler.xml
+libraries/
+*.iws
+*.iml
+*.ipr
