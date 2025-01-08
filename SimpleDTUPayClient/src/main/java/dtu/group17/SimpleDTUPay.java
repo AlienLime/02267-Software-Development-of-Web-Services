@@ -34,7 +34,7 @@ public class SimpleDTUPay {
 
     public boolean deregisterCustomer(String id) {
         try {
-            Response response = target.path("customer").path(id).request().delete();
+            Response response = target.path("customers").path(id).request().delete();
             return response.getStatus() == Response.Status.OK.getStatusCode();
         } catch (Exception exception) {
             return false;
@@ -43,7 +43,7 @@ public class SimpleDTUPay {
 
     public boolean deregisterMerchant(String id) {
         try {
-            Response response = target.path("merchant").path(id).request().delete();
+            Response response = target.path("merchants").path(id).request().delete();
             return response.getStatus() == Response.Status.OK.getStatusCode();
         } catch (Exception exception) {
             return false;
