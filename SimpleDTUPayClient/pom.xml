@@ -4,7 +4,7 @@
     <groupId>dtu.group17</groupId>
     <artifactId>SimpleDTUPayClient</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Archetype - SimpleDTUPayClient</name>
+    <name>SimpleDTUPayClient</name>
     <url>https://maven.apache.org</url>
 
     <properties>
@@ -44,14 +44,14 @@
             <artifactId>cucumber-picocontainer</artifactId>
             <version>7.13.0</version>
         </dependency>
-        <!-- This is JUnit 5 aka Jupiter -->
+        <!-- JUnit 5 aka Jupiter -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
-        <!--  Run Cucumber tests. -->
+        <!--  Run Cucumber tests -->
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>

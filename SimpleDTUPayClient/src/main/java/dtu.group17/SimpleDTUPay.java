@@ -1,6 +1,5 @@
 package dtu.group17;
 
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -8,7 +7,6 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleDTUPay {
@@ -34,13 +32,33 @@ public class SimpleDTUPay {
         }
     }
 
-    public boolean pay(Integer amount, String customerId, String merchantId) {
+    public boolean deregisterCustomer(String id) {
         try {
-            Response response = target.path("payments").request().post(Entity.json(new Payment(customerId, amount, merchantId)));
+            Response response = target.path("customer").path(id).request().delete();
             return response.getStatus() == Response.Status.OK.getStatusCode();
         } catch (Exception exception) {
             return false;
         }
+    }
+
+    public boolean deregisterMerchant(String id) {
+        try {
+            Response response = target.path("merchant").path(id).request().delete();
+            return response.getStatus() == Response.Status.OK.getStatusCode();
+        } catch (Exception exception) {
+            return false;
+        }
+    }
+
+    public boolean pay(Integer amount, String customerId, String merchantId) throws Exception {
+        Payment payment = new Payment(customerId, amount, merchantId);
+        Response response = target.path("payments").request().post(Entity.json(payment));
+
+        if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+            throw new Exception(response.readEntity(String.class));
+        }
+
+        return response.getStatus() == Response.Status.OK.getStatusCode();
     }
 
     public List<Payment> getPayments() {
@@ -52,4 +70,12 @@ public class SimpleDTUPay {
         }
     }
 
+    public boolean clearPayments() {
+        try {
+            Response response = target.path("payments").request().delete();
+            return response.getStatus() == Response.Status.OK.getStatusCode();
+        } catch (Exception exception) {
+            return false;
+        }
+    }
 }
