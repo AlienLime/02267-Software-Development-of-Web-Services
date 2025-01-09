@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-pushd ../SimpleDTUPayServer
+pushd SimpleDTUPayServer
 mvn package
 docker compose build
 docker compose up -docker
