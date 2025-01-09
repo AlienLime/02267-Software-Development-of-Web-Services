@@ -15,134 +15,134 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 
 public class PaymentSteps {
-    private Customer customer;
-    private Merchant merchant;
-    private String customerId, merchantId;
-    private SimpleDTUPay dtupay = new SimpleDTUPay();
-    private boolean successful = false;
-    private List<Payment> payments;
-    Map<String, String> customers = new HashMap<>(); // name -> id
-    Map<String, String> merchants = new HashMap<>(); // name -> id
-    private String errorMessage;
+    private SimpleDTUPay dtupay;
+    private Holder holder;
+    private ErrorMessageHolder errorMessageHolder;
+
+    public PaymentSteps(SimpleDTUPay dtupay, Holder holder, ErrorMessageHolder errorMessageHolder) {
+        this.dtupay = dtupay;
+        this.holder = holder;
+        this.errorMessageHolder = errorMessageHolder;
+    }
 
     @Before
     public void before() {
-        customer = null;
-        merchant = null;
-        customerId = null;
-        merchantId = null;
-        successful = false;
-        payments = null;
-        customers = new HashMap<>();
-        merchants = new HashMap<>();
-        errorMessage = null;
+        holder.setCustomer(null);
+        holder.setMerchant(null);
+        holder.setCustomerId(null);
+        holder.setMerchantId(null);
+        holder.setSuccessful(false);
+        holder.setPayments(null);
+        holder.setCustomers(new HashMap<>());
+        holder.setMerchants(new HashMap<>());
+        errorMessageHolder.setErrorMessage(null);
     }
 
     @After
     public void after() {
-        customers.values().forEach(dtupay::deregisterCustomer);
-        merchants.values().forEach(dtupay::deregisterMerchant);
+        holder.getCustomers().values().forEach(dtupay::deregisterCustomer);
+        holder.getMerchants().values().forEach(dtupay::deregisterMerchant);
         dtupay.clearPayments();
     }
 
     @Given("a customer with name {string}")
     public void aCustomerWithName(String name) {
-        customer = new Customer(name);
+        holder.setCustomer(new Customer(name,null,null));
     }
 
     @Given("the customer is registered with Simple DTU Pay")
     public void theCustomerIsRegisteredWithSimpleDTUPay() {
-        customerId = dtupay.register(customer);
+        holder.setCustomerId(dtupay.register(holder.getCustomer()));
     }
 
     @Given("a merchant with name {string}")
     public void aMerchantWithName(String name) {
-        merchant = new Merchant(name);
+        holder.setMerchant(new Merchant(name,null,null));
     }
 
     @Given("the merchant is registered with Simple DTU Pay")
     public void theMerchantIsRegisteredWithSimpleDTUPay() {
-        merchantId = dtupay.register(merchant);
+        holder.setMerchantId(dtupay.register(holder.getMerchant()));
     }
 
     @When("the merchant initiates a payment for {int} kr by the customer")
     public void theMerchantInitiatesAPaymentForKrByTheCustomer(Integer amount) {
         try {
-            successful = dtupay.pay(amount, customerId, merchantId);
+            holder.setSuccessful(dtupay.pay(amount, holder.getCustomerId(), holder.getMerchantId()));
         } catch (Exception e) {
-            successful = false;
-            errorMessage = e.getMessage();
+            holder.setSuccessful(false);
+            errorMessageHolder.setErrorMessage(e.getMessage());
         }
     }
 
     @Then("the payment is successful")
     public void thePaymentIsSuccessful() {
-        assertTrue(successful);
+        assertTrue(holder.isSuccessful());
     }
 
     @Given("a customer with name {string}, who is registered with Simple DTU Pay")
     public void aCustomerWithNameWhoIsRegisteredWithSimpleDTUPay(String name) {
-        customer = new Customer(name);
-        customerId = dtupay.register(customer);
-        customers.put(customer.name(), customerId);
+        holder.setCustomer(new Customer(name,null,null));
+        holder.setCustomerId(dtupay.register(holder.getCustomer()));
+        holder.getCustomers().put(holder.getCustomer().firstName(), holder.getCustomerId());
     }
 
     @Given("a merchant with name {string}, who is registered with Simple DTU Pay")
     public void aMerchantWithNameWhoIsRegisteredWithSimpleDTUPay(String name) {
-        merchant = new Merchant(name);
-        merchantId = dtupay.register(merchant);
-        merchants.put(merchant.name(), merchantId);
+        holder.setMerchant(new Merchant(name, null, null));
+        holder.setMerchantId(dtupay.register(holder.getMerchant()));
+        holder.getMerchants().put(holder.getMerchant().firstName(), holder.getMerchantId());
     }
 
     @Given("a successful payment of {int} kr from the customer to the merchant")
     public void aSuccessfulPaymentOfKrFromTheCustomerToTheMerchant(Integer amount) {
         try {
-            successful = dtupay.pay(amount, customerId, merchantId);
+            holder.setSuccessful(dtupay.pay(amount, holder.getCustomerId(), holder.getMerchantId()));
         } catch (Exception e) {
-            successful = false;
-            errorMessage = e.getMessage();
+            holder.setSuccessful(false);
+            errorMessageHolder.setErrorMessage(e.getMessage());
         }
     }
 
     @When("the manager asks for a list of payments")
     public void theManagerAsksForAListOfPayments() {
-        payments = dtupay.getPayments();
+        holder.setPayments(dtupay.getPayments());
     }
 
     @Then("the list contains a payments where customer {string} paid {int} kr to merchant {string}")
     public void theListContainsAPaymentsWhereCustomerPaidKrToMerchant(String customerName, Integer amount, String merchantName) {
-        Payment payment = new Payment(customers.get(customerName), amount, merchants.get(merchantName));
-        assertTrue(payments.stream().anyMatch(p -> p.equals(payment)));
+        Payment payment = new Payment(holder.getCustomers().get(customerName), amount, holder.getMerchants().get(merchantName));
+        assertTrue(holder.getPayments().stream().anyMatch(p -> p.equals(payment)));
     }
 
     @When("the merchant initiates a payment for {int} kr using customer id {string}")
     public void theMerchantInitiatesAPaymentForKrUsingCustomerId(Integer amount, String customerId) {
         try {
-            successful = dtupay.pay(amount, customerId, merchantId);
+            holder.setSuccessful(dtupay.pay(amount, customerId, holder.getMerchantId()));
         } catch (Exception e) {
-            successful = false;
-            errorMessage = e.getMessage();
+            holder.setSuccessful(false);
+            errorMessageHolder.setErrorMessage(e.getMessage());
         }
     }
 
     @When("the merchant with id {string} initiates a payment for {int} kr using the customer")
     public void theMerchantWithIdInitiatesAPaymentForKrUsingTheCustomer(String merchantId, Integer amount) {
         try {
-            successful = dtupay.pay(amount, customerId, merchantId);
+            holder.setSuccessful(dtupay.pay(amount, holder.getCustomerId(), merchantId));
         } catch (Exception e) {
-            successful = false;
-            errorMessage = e.getMessage();
+            holder.setSuccessful(false);
+            errorMessageHolder.setErrorMessage(e.getMessage());
         }
     }
 
     @Then("the payment is not successful")
     public void thePaymentIsNotSuccessful() {
-        assertFalse(successful);
+        assertFalse(holder.isSuccessful());
     }
 
     @Then("an error message is returned saying {string}")
     public void anErrorMessageIsReturnedSaying(String errorMessage) {
-        assertEquals(errorMessage, this.errorMessage);
+        assertEquals(errorMessage, errorMessageHolder.getErrorMessage());
     }
 
 }

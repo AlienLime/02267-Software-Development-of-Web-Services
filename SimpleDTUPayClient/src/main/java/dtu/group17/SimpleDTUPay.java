@@ -1,5 +1,7 @@
 package dtu.group17;
 
+import dtu.ws.fastmoney.BankService;
+import dtu.ws.fastmoney.BankServiceService;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -7,6 +9,7 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 
+import javax.xml.namespace.QName;
 import java.util.List;
 
 public class SimpleDTUPay {
@@ -23,7 +26,25 @@ public class SimpleDTUPay {
         }
     }
 
+    public String register(Customer customer, String accountId) {
+        try {
+            Response response = target.path("customers").request().post(Entity.json(customer));
+            return response.readEntity(String.class);
+        } catch (Exception exception) {
+            return null;
+        }
+    }
+
     public String register(Merchant merchant) {
+        try {
+            Response response = target.path("merchants").request().post(Entity.json(merchant));
+            return response.readEntity(String.class);
+        } catch (Exception exception) {
+            return null;
+        }
+    }
+
+    public String register(Merchant merchant, String accountId) {
         try {
             Response response = target.path("merchants").request().post(Entity.json(merchant));
             return response.readEntity(String.class);
