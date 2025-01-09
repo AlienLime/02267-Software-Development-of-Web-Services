@@ -4,7 +4,7 @@ set -e
 pushd SimpleDTUPayServer
 mvn package
 docker compose build
-docker compose up -docker
+docker compose up -d
 docker image prune -f
 popd
 
