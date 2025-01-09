@@ -1,50 +1,43 @@
 package dtu.group17;
 
 import dtu.ws.fastmoney.Account;
+import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
+import dtu.ws.fastmoney.BankServiceService;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 
 public class BankPaymentSteps {
     private SimpleDTUPay dtupay;
-    private BankService bankService;
     private Holder holder;
     private ErrorMessageHolder errorMessageHolder;
 
-    public BankPaymentSteps(SimpleDTUPay dtupay, BankService bankService, Holder holder, ErrorMessageHolder errorMessageHolder) {
+    BankServiceService bankServiceService = new BankServiceService();
+    BankService bankService = bankServiceService.getBankServicePort();
+
+    public BankPaymentSteps(SimpleDTUPay dtupay, Holder holder, ErrorMessageHolder errorMessageHolder) {
         this.dtupay = dtupay;
-        this.bankService = bankService;
         this.holder = holder;
         this.errorMessageHolder = errorMessageHolder;
     }
 
-  /*  @Before
+    @Before
     public void before() {
-        holder.setCustomer(null);
-        holder.setMerchant(null);
-        holder.setCustomerId(null);
-        holder.setMerchantId(null);
-        holder.setSuccessful(false);
-        holder.setPayments(null);
-        holder.setCustomers(new HashMap<>());
-        holder.setMerchants(new HashMap<>());
-        errorMessageHolder.setErrorMessage(null);
+        holder.getAccounts().clear();
     }
 
     @After
-    public void after() {
-        holder.getCustomers().values().forEach(dtupay::deregisterCustomer);
-        holder.getMerchants().values().forEach(dtupay::deregisterMerchant);
-        dtupay.clearPayments();
-        holder.getAccounts().values().forEach(bankService::retireAccount);
-    }*/
+    public void after() throws BankServiceException_Exception {
+        for (String accountId : holder.getAccounts().values()) {
+            bankService.retireAccount(accountId);
+        }
+    }
 
     @Given("a customer with name {string}, last name {string}, and CPR {string}")
     public void aCustomerWithNameLastNameAndCPR(String firstName, String lastName, String cpr) {

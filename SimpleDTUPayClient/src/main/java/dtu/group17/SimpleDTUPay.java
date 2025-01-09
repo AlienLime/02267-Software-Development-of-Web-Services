@@ -1,15 +1,15 @@
 package dtu.group17;
 
-import dtu.ws.fastmoney.BankService;
-import dtu.ws.fastmoney.BankServiceService;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 
-import javax.xml.namespace.QName;
+
 import java.util.List;
 
 public class SimpleDTUPay {
@@ -28,7 +28,10 @@ public class SimpleDTUPay {
 
     public String register(Customer customer, String accountId) {
         try {
-            Response response = target.path("customers").request().post(Entity.json(customer));
+            MultipartFormDataOutput formData = new MultipartFormDataOutput();
+            formData.addFormData("customer", customer, MediaType.APPLICATION_JSON_TYPE);
+            formData.addFormData("account-id", accountId, MediaType.TEXT_PLAIN_TYPE);
+            Response response = target.path("customers").request().post(Entity.entity(formData, MediaType.MULTIPART_FORM_DATA));
             return response.readEntity(String.class);
         } catch (Exception exception) {
             return null;
@@ -46,7 +49,10 @@ public class SimpleDTUPay {
 
     public String register(Merchant merchant, String accountId) {
         try {
-            Response response = target.path("merchants").request().post(Entity.json(merchant));
+            MultipartFormDataOutput formData = new MultipartFormDataOutput();
+            formData.addFormData("merchant", merchant, MediaType.APPLICATION_JSON_TYPE);
+            formData.addFormData("account-id", accountId, MediaType.TEXT_PLAIN_TYPE);
+            Response response = target.path("merchants").request().post(Entity.entity(formData, MediaType.MULTIPART_FORM_DATA));
             return response.readEntity(String.class);
         } catch (Exception exception) {
             return null;
@@ -75,7 +81,8 @@ public class SimpleDTUPay {
         Payment payment = new Payment(customerId, amount, merchantId);
         Response response = target.path("payments").request().post(Entity.json(payment));
 
-        if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+        if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()
+                || response.getStatus() == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()) {
             throw new Exception(response.readEntity(String.class));
         }
 

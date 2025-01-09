@@ -33,8 +33,8 @@ public class PaymentSteps {
         holder.setMerchantId(null);
         holder.setSuccessful(false);
         holder.setPayments(null);
-        holder.setCustomers(new HashMap<>());
-        holder.setMerchants(new HashMap<>());
+        holder.getCustomers().clear();
+        holder.getMerchants().clear();
         errorMessageHolder.setErrorMessage(null);
     }
 
@@ -77,6 +77,7 @@ public class PaymentSteps {
 
     @Then("the payment is successful")
     public void thePaymentIsSuccessful() {
+        System.out.println(errorMessageHolder.getErrorMessage());
         assertTrue(holder.isSuccessful());
     }
 

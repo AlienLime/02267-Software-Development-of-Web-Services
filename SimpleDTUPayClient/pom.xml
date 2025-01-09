@@ -75,6 +75,12 @@
             <artifactId>quarkus-resteasy-jaxb</artifactId>
             <version>3.17.1</version>
         </dependency>
+        <!-- Multipart -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-multipart</artifactId>
+            <version>3.17.6</version>
+        </dependency>
         <!-- SOAP & Bank -->
         <dependency>
             <groupId>com.sun.xml.ws</groupId>

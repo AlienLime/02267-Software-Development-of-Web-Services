@@ -1,12 +1,20 @@
 package dtu.group17;
 
+import dtu.ws.fastmoney.BankService;
+import dtu.ws.fastmoney.BankServiceException_Exception;
+import dtu.ws.fastmoney.BankServiceService;
+
+import java.math.BigDecimal;
 import java.util.*;
 
 public class DTUPayService {
-
-    private static Map<String, Customer> customers = new HashMap<>();
-    private static Map<String, Merchant> merchants = new HashMap<>();
+    private static Map<String, Customer> customers = new HashMap<>(); // customer id -> customer
+    private static Map<String, Merchant> merchants = new HashMap<>(); // merchant id -> merchant
+    private static Map<String, String> accounts = new HashMap<>(); // customer/merchant id -> bank account id
     private static List<Payment> payments = new ArrayList<>();
+
+    BankServiceService bankServiceService = new BankServiceService();
+    BankService bankService = bankServiceService.getBankServicePort();
 
     public String register(Customer customer) {
         String id = UUID.randomUUID().toString();
@@ -14,9 +22,21 @@ public class DTUPayService {
         return id;
     }
 
+    public String register(Customer customer, String accountId) {
+        String id = register(customer);
+        accounts.put(id, accountId);
+        return id;
+    }
+
     public String register(Merchant merchant) {
         String id = UUID.randomUUID().toString();
         merchants.put(id, merchant);
+        return id;
+    }
+
+    public String register(Merchant merchant, String accountId) {
+        String id = register(merchant);
+        accounts.put(id, accountId);
         return id;
     }
 
@@ -38,13 +58,17 @@ public class DTUPayService {
         }
     }
 
-    public boolean createPayment(Payment payment) {
+    public boolean createPayment(Payment payment) throws BankServiceException_Exception {
         if (!customers.containsKey(payment.customerId())) {
             throw new CustomerNotFound("customer with id \"" + payment.customerId() + "\" is unknown");
         }
         if (!merchants.containsKey(payment.merchantId())) {
             throw new MerchantNotFound("merchant with id \"" + payment.merchantId() + "\" is unknown");
         }
+        String customerName = customers.get(payment.customerId()).firstName();
+        String merchantName = merchants.get(payment.merchantId()).firstName();
+        String description = "Group 17 - transfer of " + payment.amount() + " kr. from " + customerName + " to " + merchantName;
+        bankService.transferMoneyFromTo(accounts.get(payment.customerId()), accounts.get(payment.merchantId()), BigDecimal.valueOf(payment.amount()), description);
         return payments.add(payment);
     }
 

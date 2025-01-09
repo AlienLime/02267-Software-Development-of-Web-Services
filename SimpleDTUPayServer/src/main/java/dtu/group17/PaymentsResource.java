@@ -1,5 +1,6 @@
 package dtu.group17;
 
+import dtu.ws.fastmoney.BankServiceException_Exception;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -14,7 +15,7 @@ public class PaymentsResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean createPayment(Payment payment) throws CustomerNotFound, MerchantNotFound {
+    public boolean createPayment(Payment payment) throws CustomerNotFound, MerchantNotFound, BankServiceException_Exception {
         return service.createPayment(payment);
     }
 
