@@ -22,7 +22,6 @@ public class CustomersResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public String register(RegisterCustomerBody body)  {
-        LOG.info("BENT: " + body.accountId());
         return service.register(body.customer(), body.accountId());
     }
 
