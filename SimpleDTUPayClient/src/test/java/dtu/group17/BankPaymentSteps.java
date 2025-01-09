@@ -53,7 +53,9 @@ public class BankPaymentSteps {
     @Given("the customer is registered with Simple DTU Pay using their bank account")
     public void theCustomerIsRegisteredWithSimpleDTUPayUsingTheirBankAccount() {
         String accountId = holder.getAccounts().get(holder.getCustomer().cpr());
-        holder.setCustomerId(dtupay.register(holder.getCustomer(), accountId));
+        String customerId = dtupay.register(holder.getCustomer(), accountId);
+        holder.setCustomerId(customerId);
+        holder.getCustomers().put(holder.getCustomer().firstName(), customerId);
     }
 
     @Given("a merchant with name {string}, last name {string}, and CPR {string}")
@@ -71,6 +73,7 @@ public class BankPaymentSteps {
     public void theMerchantIsRegisteredWithSimpleDTUPayUsingTheirBankAccount() {
         String accountId = holder.getAccounts().get(holder.getMerchant().cpr());
         holder.setMerchantId(dtupay.register(holder.getMerchant(), accountId));
+        holder.getMerchants().put(holder.getMerchant().firstName(), holder.getMerchantId());
     }
 
     @Then("the balance of the customer at the bank is {int} kr")

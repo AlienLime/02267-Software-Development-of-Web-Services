@@ -17,30 +17,12 @@ public class SimpleDTUPay {
     private Client client = ClientBuilder.newClient();
     private WebTarget target = client.target(BASE_URL);
 
-    public String register(Customer customer) {
-        try {
-            Response response = target.path("customers").request().post(Entity.json(customer));
-            return response.readEntity(String.class);
-        } catch (Exception exception) {
-            return null;
-        }
-    }
-
     public String register(Customer customer, String accountId) {
         try {
             MultipartFormDataOutput formData = new MultipartFormDataOutput();
             formData.addFormData("customer", customer, MediaType.APPLICATION_JSON_TYPE);
             formData.addFormData("account-id", accountId, MediaType.TEXT_PLAIN_TYPE);
             Response response = target.path("customers").request().post(Entity.entity(formData, MediaType.MULTIPART_FORM_DATA));
-            return response.readEntity(String.class);
-        } catch (Exception exception) {
-            return null;
-        }
-    }
-
-    public String register(Merchant merchant) {
-        try {
-            Response response = target.path("merchants").request().post(Entity.json(merchant));
             return response.readEntity(String.class);
         } catch (Exception exception) {
             return null;

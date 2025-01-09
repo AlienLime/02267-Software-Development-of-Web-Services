@@ -45,26 +45,6 @@ public class PaymentSteps {
         dtupay.clearPayments();
     }
 
-    @Given("a customer with name {string}")
-    public void aCustomerWithName(String name) {
-        holder.setCustomer(new Customer(name,null,null));
-    }
-
-    @Given("the customer is registered with Simple DTU Pay")
-    public void theCustomerIsRegisteredWithSimpleDTUPay() {
-        holder.setCustomerId(dtupay.register(holder.getCustomer()));
-    }
-
-    @Given("a merchant with name {string}")
-    public void aMerchantWithName(String name) {
-        holder.setMerchant(new Merchant(name,null,null));
-    }
-
-    @Given("the merchant is registered with Simple DTU Pay")
-    public void theMerchantIsRegisteredWithSimpleDTUPay() {
-        holder.setMerchantId(dtupay.register(holder.getMerchant()));
-    }
-
     @When("the merchant initiates a payment for {int} kr by the customer")
     public void theMerchantInitiatesAPaymentForKrByTheCustomer(Integer amount) {
         try {
@@ -77,22 +57,7 @@ public class PaymentSteps {
 
     @Then("the payment is successful")
     public void thePaymentIsSuccessful() {
-        System.out.println(errorMessageHolder.getErrorMessage());
         assertTrue(holder.isSuccessful());
-    }
-
-    @Given("a customer with name {string}, who is registered with Simple DTU Pay")
-    public void aCustomerWithNameWhoIsRegisteredWithSimpleDTUPay(String name) {
-        holder.setCustomer(new Customer(name,null,null));
-        holder.setCustomerId(dtupay.register(holder.getCustomer()));
-        holder.getCustomers().put(holder.getCustomer().firstName(), holder.getCustomerId());
-    }
-
-    @Given("a merchant with name {string}, who is registered with Simple DTU Pay")
-    public void aMerchantWithNameWhoIsRegisteredWithSimpleDTUPay(String name) {
-        holder.setMerchant(new Merchant(name, null, null));
-        holder.setMerchantId(dtupay.register(holder.getMerchant()));
-        holder.getMerchants().put(holder.getMerchant().firstName(), holder.getMerchantId());
     }
 
     @Given("a successful payment of {int} kr from the customer to the merchant")

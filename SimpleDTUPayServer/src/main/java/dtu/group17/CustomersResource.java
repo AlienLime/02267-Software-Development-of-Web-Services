@@ -18,12 +18,6 @@ public class CustomersResource {
     @Singleton
     private DTUPayService service = new DTUPayService();
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public String register(Customer customer) {
-        return service.register(customer);
-    }
-
     public static class CustomerRegisterForm {
         @FormParam("customer")
         @PartType(MediaType.APPLICATION_JSON)

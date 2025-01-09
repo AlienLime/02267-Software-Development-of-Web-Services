@@ -16,26 +16,16 @@ public class DTUPayService {
     BankServiceService bankServiceService = new BankServiceService();
     BankService bankService = bankServiceService.getBankServicePort();
 
-    public String register(Customer customer) {
+    public String register(Customer customer, String accountId) {
         String id = UUID.randomUUID().toString();
         customers.put(id, customer);
-        return id;
-    }
-
-    public String register(Customer customer, String accountId) {
-        String id = register(customer);
         accounts.put(id, accountId);
         return id;
     }
 
-    public String register(Merchant merchant) {
+    public String register(Merchant merchant, String accountId) {
         String id = UUID.randomUUID().toString();
         merchants.put(id, merchant);
-        return id;
-    }
-
-    public String register(Merchant merchant, String accountId) {
-        String id = register(merchant);
         accounts.put(id, accountId);
         return id;
     }

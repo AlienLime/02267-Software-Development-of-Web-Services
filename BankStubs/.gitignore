@@ -36,6 +36,3 @@ build/
 
 ### Mac OS ###
 .DS_Store
-
-### Ignore Generated files ###
-src/main/java/dtu/ws/fastmoney

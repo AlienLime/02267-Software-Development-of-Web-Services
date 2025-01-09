@@ -17,12 +17,6 @@ public class MerchantsResource {
     @Singleton
     private DTUPayService service = new DTUPayService();
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public String register(Merchant merchant) {
-        return service.register(merchant);
-    }
-
     public static class MerchantRegisterForm {
         public MerchantRegisterForm() {}
 
