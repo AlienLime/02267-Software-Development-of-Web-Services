@@ -1,0 +1,8 @@
+version: '3'
+services:
+  simple-dtu-pay:
+    build: .
+    image: simple-dtu-pay
+    container_name: simple-dtu-pay
+    ports:
+      - "8080:8080"
