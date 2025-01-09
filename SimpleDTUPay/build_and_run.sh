@@ -2,7 +2,7 @@
 set -e
 
 pushd SimpleDTUPayServer
-mvn package
+mvn package 
 docker compose build
 docker compose up -d
 docker image prune -f
