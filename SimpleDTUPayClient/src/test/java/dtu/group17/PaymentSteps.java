@@ -5,6 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.java.After;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.List;
@@ -110,5 +111,4 @@ public class PaymentSteps {
     public void anErrorMessageIsReturnedSaying(String errorMessage) {
         assertEquals(errorMessage, errorMessageHolder.getErrorMessage());
     }
-
 }

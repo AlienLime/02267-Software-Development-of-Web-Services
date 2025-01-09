@@ -8,6 +8,7 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import org.junit.Test;
 
 import java.math.BigDecimal;
 

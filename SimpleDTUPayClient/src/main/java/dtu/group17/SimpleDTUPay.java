@@ -17,24 +17,22 @@ public class SimpleDTUPay {
     private Client client = ClientBuilder.newClient();
     private WebTarget target = client.target(BASE_URL);
 
+    public record RegisterCustomerBody(Customer customer, String accountId) {}
     public String register(Customer customer, String accountId) {
         try {
-            MultipartFormDataOutput formData = new MultipartFormDataOutput();
-            formData.addFormData("customer", customer, MediaType.APPLICATION_JSON_TYPE);
-            formData.addFormData("account-id", accountId, MediaType.TEXT_PLAIN_TYPE);
-            Response response = target.path("customers").request().post(Entity.entity(formData, MediaType.MULTIPART_FORM_DATA));
+            RegisterCustomerBody body = new RegisterCustomerBody(customer, accountId);
+            Response response = target.path("customers").request().post(Entity.json(body));
             return response.readEntity(String.class);
         } catch (Exception exception) {
             return null;
         }
     }
 
+    public record RegisterMerchantBody(Merchant merchant, String accountId) {}
     public String register(Merchant merchant, String accountId) {
         try {
-            MultipartFormDataOutput formData = new MultipartFormDataOutput();
-            formData.addFormData("merchant", merchant, MediaType.APPLICATION_JSON_TYPE);
-            formData.addFormData("account-id", accountId, MediaType.TEXT_PLAIN_TYPE);
-            Response response = target.path("merchants").request().post(Entity.entity(formData, MediaType.MULTIPART_FORM_DATA));
+            RegisterMerchantBody body = new RegisterMerchantBody(merchant, accountId);
+            Response response = target.path("merchants").request().post(Entity.json(body));
             return response.readEntity(String.class);
         } catch (Exception exception) {
             return null;

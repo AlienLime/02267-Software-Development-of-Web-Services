@@ -18,36 +18,12 @@ public class CustomersResource {
     @Singleton
     private DTUPayService service = new DTUPayService();
 
-    public static class CustomerRegisterForm {
-        @FormParam("customer")
-        @PartType(MediaType.APPLICATION_JSON)
-        private Customer customer;
-
-        @FormParam("account-id")
-        @PartType(MediaType.TEXT_PLAIN)
-        private String accountId;
-
-        public Customer getCustomer() {
-            return customer;
-        }
-
-        public void setCustomer(Customer customer) {
-            this.customer = customer;
-        }
-
-        public String getAccountId() {
-            return accountId;
-        }
-
-        public void setAccountId(String accountId) {
-            this.accountId = accountId;
-        }
-    }
-
+    public record RegisterCustomerBody(Customer customer, String accountId) {}
     @POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public String register(@MultipartForm CustomerRegisterForm form)  {
-        return service.register(form.getCustomer(), form.getAccountId());
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String register(RegisterCustomerBody body)  {
+        LOG.info("BENT: " + body.accountId());
+        return service.register(body.customer(), body.accountId());
     }
 
 }

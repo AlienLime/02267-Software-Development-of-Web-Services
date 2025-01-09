@@ -17,37 +17,10 @@ public class MerchantsResource {
     @Singleton
     private DTUPayService service = new DTUPayService();
 
-    public static class MerchantRegisterForm {
-        public MerchantRegisterForm() {}
-
-        @FormParam("merchant")
-        @PartType(MediaType.APPLICATION_JSON)
-        private Merchant merchant;
-
-        @FormParam("account-id")
-        @PartType(MediaType.TEXT_PLAIN)
-        private String accountId;
-
-        public Merchant getMerchant() {
-            return merchant;
-        }
-
-        public void setMerchant(Merchant merchant) {
-            this.merchant = merchant;
-        }
-
-        public String getAccountId() {
-            return accountId;
-        }
-
-        public void setAccountId(String accountId) {
-            this.accountId = accountId;
-        }
-    }
-
+    public record RegisterMerchantBody(Merchant merchant, String accountId) {}
     @POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public String register(@MultipartForm MerchantsResource.MerchantRegisterForm form)  {
-        return service.register(form.getMerchant(), form.getAccountId());
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String register(RegisterMerchantBody body)  {
+        return service.register(body.merchant(), body.accountId());
     }
 }
