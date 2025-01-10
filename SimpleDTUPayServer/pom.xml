@@ -46,13 +46,14 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-arc</artifactId>
         </dependency>
-        <!-- SOAP & Bank -->
+        <!-- SOAP -->
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-ri</artifactId>
             <version>4.0.3</version>
             <type>pom</type>
         </dependency>
+        <!-- Bank -->
         <dependency>
             <groupId>dtu.group17</groupId>
             <artifactId>BankStubs</artifactId>
