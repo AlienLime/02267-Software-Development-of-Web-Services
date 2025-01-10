@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+pushd BankStub
+mvn jaxws:wsimport
+mvn install
+popd
+
 pushd SimpleDTUPayServer
 mvn package 
 docker compose build
