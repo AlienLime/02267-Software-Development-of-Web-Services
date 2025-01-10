@@ -19,8 +19,7 @@ public class BankPaymentSteps {
     private Holder holder;
     private ErrorMessageHolder errorMessageHolder;
 
-    BankServiceService bankServiceService = new BankServiceService();
-    BankService bankService = bankServiceService.getBankServicePort();
+    BankService bankService = new BankServiceService().getBankServicePort();
 
     public BankPaymentSteps(SimpleDTUPay dtupay, Holder holder, ErrorMessageHolder errorMessageHolder) {
         this.dtupay = dtupay;
