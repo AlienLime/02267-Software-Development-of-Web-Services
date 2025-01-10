@@ -1,4 +1,4 @@
-# simple-dtu-pay-server
+# Simple DTU Pay Server
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 

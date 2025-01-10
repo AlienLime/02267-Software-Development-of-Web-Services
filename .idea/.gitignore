@@ -1,6 +1,11 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+/workspace.iml
+/vcs.xml
+/modules.xml
+/jb-workspace.xml
+/jarRepositories.xml
 # Editor-based HTTP Client requests
 /httpRequests/
 # Datasource local storage ignored files

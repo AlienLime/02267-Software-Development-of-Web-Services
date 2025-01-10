@@ -22,7 +22,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
-                    <argLine>-ea -Djava.util.logging.manager=org.jboss.logmanager.LogManager</argLine>
+                    <systemPropertyVariables>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>
@@ -42,7 +44,10 @@
             <version>7.15.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- Cucumber JUnit 5 integration -->
+        <!--
+            Cucumber JUnit 5 integration
+            https://github.com/cucumber/cucumber-jvm/tree/main/cucumber-junit-platform-engine
+        -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit-platform-engine</artifactId>
@@ -56,6 +61,7 @@
             <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
+        <!-- Test Suite Configuration -->
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
@@ -90,10 +96,8 @@
         <!-- Bank -->
         <dependency>
             <groupId>dtu.group17</groupId>
-            <artifactId>BankStubs</artifactId>
+            <artifactId>BankStub</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/BankStubs-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
     </dependencies>
 
