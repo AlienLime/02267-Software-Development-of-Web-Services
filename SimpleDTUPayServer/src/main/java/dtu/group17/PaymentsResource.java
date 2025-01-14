@@ -1,7 +1,7 @@
 package dtu.group17;
 
 import dtu.ws.fastmoney.BankServiceException_Exception;
-import jakarta.inject.Singleton;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
@@ -10,8 +10,8 @@ import java.util.List;
 @Path("/payments")
 public class PaymentsResource {
 
-    @Singleton
-    private DTUPayService service = new DTUPayService();
+    @Inject
+    DTUPayService service;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

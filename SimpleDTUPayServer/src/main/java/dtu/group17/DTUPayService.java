@@ -3,15 +3,17 @@ package dtu.group17;
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
+import jakarta.inject.Singleton;
 
 import java.math.BigDecimal;
 import java.util.*;
 
+@Singleton
 public class DTUPayService {
-    private static Map<String, Customer> customers = new HashMap<>(); // customer id -> customer
-    private static Map<String, Merchant> merchants = new HashMap<>(); // merchant id -> merchant
-    private static Map<String, String> accounts = new HashMap<>(); // customer/merchant id -> bank account id
-    private static List<Payment> payments = new ArrayList<>();
+    private Map<String, Customer> customers = new HashMap<>(); // customer id -> customer
+    private Map<String, Merchant> merchants = new HashMap<>(); // merchant id -> merchant
+    private Map<String, String> accounts = new HashMap<>(); // customer/merchant id -> bank account id
+    private List<Payment> payments = new ArrayList<>();
 
     BankServiceService bankServiceService = new BankServiceService();
     BankService bankService = bankServiceService.getBankServicePort();

@@ -16,6 +16,7 @@ public class SimpleDTUPay {
     private WebTarget target = client.target(BASE_URL);
 
     public record RegisterCustomerBody(Customer customer, String accountId) {}
+
     public String register(Customer customer, String accountId) {
         try {
             RegisterCustomerBody body = new RegisterCustomerBody(customer, accountId);
