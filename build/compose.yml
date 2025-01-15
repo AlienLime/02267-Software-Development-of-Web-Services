@@ -22,3 +22,5 @@ services:
     build: ../TokenManager
     image: token-manager
     container_name: token-manager
+  rabbitmq:
+    image: rabbitmq:4.0.5-management

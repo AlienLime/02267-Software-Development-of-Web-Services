@@ -1,5 +1,10 @@
 package dtu.group17;
 
+import dtu.group17.customer.Customer;
+import dtu.group17.merchant.Merchant;
+import dtu.group17.merchant.Payment;
+
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,10 +14,12 @@ public class Holder {
     private Merchant merchant;
     private String customerId, merchantId;
     private boolean successful = false;
-    private List<Payment> payments;
     private Map<String, String> customers = new HashMap<>(); // name -> id
     private Map<String, String> merchants = new HashMap<>(); // name -> id
     private Map<String, String> accounts = new HashMap<>(); // cpr -> account id
+    private Map<String, List<Token>> tokens = new HashMap<>(); // id -> list of tokens
+    private Payment currentPayment;
+    private Token presentedToken;
 
     public Customer getCustomer() {
         return customer;
@@ -54,14 +61,6 @@ public class Holder {
         this.successful = successful;
     }
 
-    public List<Payment> getPayments() {
-        return payments;
-    }
-
-    public void setPayments(List<Payment> payments) {
-        this.payments = payments;
-    }
-
     public Map<String, String> getCustomers() {
         return customers;
     }
@@ -84,5 +83,29 @@ public class Holder {
 
     public void setAccounts(Map<String, String> accounts) {
         this.accounts = accounts;
+    }
+
+    public Map<String, List<Token>> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(Map<String, List<Token>> tokens) {
+        this.tokens = tokens;
+    }
+
+    public Payment getCurrentPayment() {
+        return currentPayment;
+    }
+
+    public void setCurrentPayment(Payment currentPayment) {
+        this.currentPayment = currentPayment;
+    }
+
+    public Token getPresentedToken() {
+        return presentedToken;
+    }
+
+    public void setPresentedToken(Token presentedToken) {
+        this.presentedToken = presentedToken;
     }
 }

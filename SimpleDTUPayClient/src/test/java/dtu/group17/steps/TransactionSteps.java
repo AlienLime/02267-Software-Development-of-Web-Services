@@ -2,34 +2,32 @@ package dtu.group17.steps;
 
 import dtu.group17.ErrorMessageHolder;
 import dtu.group17.Holder;
-import dtu.group17.SimpleDTUPay;
+import dtu.group17.merchant.MerchantAPI;
+import dtu.group17.merchant.Payment;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TransactionSteps {
-
-    private SimpleDTUPay dtupay;
     private Holder holder;
     private ErrorMessageHolder errorMessageHolder;
+    private MerchantAPI merchantAPI;
 
-    public TransactionSteps(SimpleDTUPay dtupay, Holder holder, ErrorMessageHolder errorMessageHolder) {
-        this.dtupay = dtupay;
+    public TransactionSteps(Holder holder, ErrorMessageHolder errorMessageHolder, MerchantAPI merchantAPI) {
         this.holder = holder;
         this.errorMessageHolder = errorMessageHolder;
+        this.merchantAPI = merchantAPI;
     }
 
     @When("the merchant creates a payment for {int} kr")
-    public void theMerchantCreatesAPaymentForKr(Integer int1) {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+    public void theMerchantCreatesAPaymentForKr(Integer amount) {
+        holder.setCurrentPayment(new Payment(null, amount, holder.getMerchantId()));
     }
 
     @When("the merchant submits the transaction to the server")
-    public void theMerchantSubmitsTheTransactionToTheServer() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+    public void theMerchantSubmitsTheTransactionToTheServer() throws Exception {
+        holder.setSuccessful(merchantAPI.submitPayment(holder.getCurrentPayment()));
     }
 
     @Then("the payment is successful")
