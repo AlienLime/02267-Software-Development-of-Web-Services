@@ -1,0 +1,24 @@
+version: '3'
+services:
+  dtu-pay-facade:
+    build: ../DTUPayFacade
+    image: dtu-pay-facade
+    container_name: dtu-pay-facade
+    ports:
+      - "8080:8080"
+  account-manager:
+    build: ../AccountManager
+    image: account-manager
+    container_name: account-manager
+  transaction-manager:
+    build: ../TransactionManager
+    image: transaction-manager
+    container_name: transaction-manager
+  reporting-manager:
+    build: ../ReportingManager
+    image: reporting-manager
+    container_name: reporting-manager
+  token-manager:
+    build: ../TokenManager
+    image: token-manager
+    container_name: token-manager

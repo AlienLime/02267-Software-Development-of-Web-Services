@@ -1,19 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <excludeFromCompile>
+      <directory url="file://$PROJECT_DIR$/AccountManager/src/main/resources/archetype-resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/DTUPayFacade/src/main/resources/archetype-resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/ReportingManager/src/main/resources/archetype-resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/TokenManager/src/main/resources/archetype-resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/TransactionManager/src/main/resources/archetype-resources" includeSubdirectories="true" />
+    </excludeFromCompile>
     <annotationProcessing>
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="SimpleDTUPayClient" />
+        <module name="DTUPayFacade" />
+        <module name="TransactionManager" />
         <module name="SimpleDTUPayServer" />
+        <module name="AccountManager" />
+        <module name="TokenManager" />
+        <module name="ReportingManager" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="AccountManager" options="-parameters" />
+      <module name="DTUPayFacade" options="-parameters" />
+      <module name="ReportingManager" options="-parameters" />
       <module name="SimpleDTUPayServer" options="-parameters" />
+      <module name="TokenManager" options="-parameters" />
+      <module name="TransactionManager" options="-parameters" />
     </option>
   </component>
 </project>
