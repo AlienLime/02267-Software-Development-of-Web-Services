@@ -1,6 +1,6 @@
 Feature: Full Payment
   Scenario: Successful Payment
-    Given a customer with name "Group17-Katja", last name "Group17-Kaj", and CPR "170154-4421"
+    Given a customer with name "Group17-Katja", last name "Group17-Kaj", and CPR "170155-4421"
     And the customer is registered with the bank with an initial balance of 1000 kr
     And the customer is registered with DTU Pay using their bank account
     # have at least one unused token

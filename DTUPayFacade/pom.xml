@@ -58,6 +58,12 @@
       <groupId>dtu.group17</groupId>
       <artifactId>BankStub</artifactId>
       <version>1.0-SNAPSHOT</version>
+     </dependency>
+    <!-- Messaging Utilities -->
+    <dependency>
+      <groupId>dtu.group17</groupId>
+      <artifactId>MessagingUtilities</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

@@ -14,11 +14,11 @@ public class CustomersResource {
     @Inject
     DTUPayService service;
 
-    public record RegisterCustomerBody(Customer customer, String accountId) {}
+    public record RegisterCustomerBody(Customer customer, String bankAccountId) {}
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public String register(RegisterCustomerBody body)  {
-        return service.register(body.customer(), body.accountId());
+        return service.register(body.customer(), body.bankAccountId());
     }
 
 }

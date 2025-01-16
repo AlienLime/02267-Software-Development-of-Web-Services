@@ -43,12 +43,12 @@ public class CucumberSteps {
 
     @After
     public void after() throws BankServiceException_Exception {
-        holder.getCustomers().values().forEach(customerAPI::deregister);
-        holder.getMerchants().values().forEach(merchantAPI::deregister);
-        dtupay.clearPayments();
         for (String accountId : holder.getAccounts().values()) {
             bankService.retireAccount(accountId);
         }
+        holder.getCustomers().values().forEach(customerAPI::deregister);
+        holder.getMerchants().values().forEach(merchantAPI::deregister);
+        dtupay.clearPayments();
     }
 
 }

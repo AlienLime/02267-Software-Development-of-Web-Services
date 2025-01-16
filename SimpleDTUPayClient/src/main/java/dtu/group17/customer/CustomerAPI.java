@@ -19,7 +19,7 @@ public class CustomerAPI {
     private Client client = ClientBuilder.newClient();
     private WebTarget target = client.target(BASE_URL);
 
-    BankService bankService = new BankServiceService().getBankServicePort();
+    BankService bankService = new BankServiceService().getBankServicePort(); //TODO: Use factory pattern
 
     public String createBankAccount(Customer customer, int balance) throws BankServiceException_Exception {
         return bankService.createAccountWithBalance(customer.toUser(), BigDecimal.valueOf(balance));

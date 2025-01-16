@@ -18,10 +18,10 @@ public class DTUPayService {
     BankServiceService bankServiceService = new BankServiceService();
     BankService bankService = bankServiceService.getBankServicePort();
 
-    public String register(Customer customer, String accountId) {
+    public String register(Customer customer, String bankAccountId) {
         String id = UUID.randomUUID().toString();
         customers.put(id, customer);
-        accounts.put(id, accountId);
+        accounts.put(id, bankAccountId);
         return id;
     }
 

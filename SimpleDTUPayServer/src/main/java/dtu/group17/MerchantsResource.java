@@ -12,10 +12,10 @@ public class MerchantsResource {
     @Inject
     DTUPayService service;
 
-    public record RegisterMerchantBody(Merchant merchant, String accountId) {}
+    public record RegisterMerchantBody(Merchant merchant, String bankAccountId) {}
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public String register(RegisterMerchantBody body)  {
-        return service.register(body.merchant(), body.accountId());
+        return service.register(body.merchant(), body.bankAccountId());
     }
 }

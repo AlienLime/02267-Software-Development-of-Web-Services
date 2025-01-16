@@ -16,20 +16,20 @@ public class MerchantAPI {
     private Client client = ClientBuilder.newClient();
     private WebTarget target = client.target(BASE_URL);
 
-    BankService bankService = new BankServiceService().getBankServicePort();
+    BankService bankService = new BankServiceService().getBankServicePort(); //TODO: Use factory pattern
 
     public String createBankAccount(Merchant merchant, int balance) throws BankServiceException_Exception {
         return bankService.createAccountWithBalance(merchant.toUser(), BigDecimal.valueOf(balance));
     }
 
-    public Account getBalance(String accountId) throws BankServiceException_Exception {
-        return bankService.getAccount(accountId);
+    public Account getBalance(String bankAccountId) throws BankServiceException_Exception {
+        return bankService.getAccount(bankAccountId);
     }
 
     public record RegisterMerchantBody(Merchant merchant, String accountId) {}
     public String register(Merchant merchant, String accountId) {
         try {
-            RegisterMerchantBody body = new RegisterMerchantBody(merchant, accountId);
+            RegisterMerchantBody body = new RegisterMerchantBody(merchant, accountId); //TODO: Use factory pattern
             Response response = target.path("merchants").request().post(Entity.json(body));
             return response.readEntity(String.class);
         } catch (Exception exception) {
