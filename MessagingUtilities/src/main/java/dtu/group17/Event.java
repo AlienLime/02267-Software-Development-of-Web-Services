@@ -1,8 +1,11 @@
 package dtu.group17;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,6 +39,12 @@ public class Event implements Serializable {
         return gson.fromJson(jsonString, cls);
     }
 
+    public <T> T getArgument(String key, TypeToken<T> typeToken) { // To keep type after serialization
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(arguments.get(key));
+        return gson.fromJson(jsonString, typeToken);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -55,5 +64,4 @@ public class Event implements Serializable {
                 ", arguments=" + arguments +
                 '}';
     }
-    
 }

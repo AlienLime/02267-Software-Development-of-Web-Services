@@ -49,9 +49,11 @@ public class CustomerAPI {
         }
     }
 
+    public record RequestTokensBody(String customerId, int amount) {}
     public List<Token> requestTokens(String id, int amount) {
         try {
-            Response response = target.path("customers").path("tokens").request().post(Entity.text(amount));
+            RequestTokensBody body = new RequestTokensBody(id, amount);
+            Response response = target.path("customers").path("tokens").request().post(Entity.json(body));
             return response.readEntity(new GenericType<List<Token>>() {});
         } catch (Exception exception) {
             throw new Error(exception);
