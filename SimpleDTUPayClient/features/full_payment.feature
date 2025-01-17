@@ -16,7 +16,3 @@ Feature: Full Payment
     Then the payment is successful
     And the balance of the customer at the bank is 990 kr
     And the balance of the merchant at the bank is 1010 kr
-
-# Make a test to check when a token is consumed#
-
-# Make a test for reporting, for manager, customer and merchant

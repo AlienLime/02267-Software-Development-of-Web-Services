@@ -14,8 +14,8 @@ services=(
     "DTUPayFacade"
 )
 
-for service in ${services[@]}; do
-  pushd ../$service
+for service in "${services[@]}"; do
+  pushd ../"$service"
   mvn package
   popd
 done

@@ -9,10 +9,16 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - account-manager
-      - token-manager
-      - transaction-manager
-      - reporting-manager
+      account-manager:
+        condition: service_started
+      token-manager:
+        condition: service_started
+      transaction-manager:
+        condition: service_started
+      reporting-manager:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     
   account-manager:
     build: ../AccountManager
@@ -21,14 +27,15 @@ services:
     environment:
       QUEUE_NAME: "dtu-pay"
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
 
   transaction-manager:
     build: ../TransactionManager
     image: transaction-manager
     container_name: transaction-manager
     environment:
-      QUEUE_NAME: "dtu-pay"    
+      QUEUE_NAME: "dtu-pay"
     depends_on:
       - rabbitmq
 
@@ -53,3 +60,8 @@ services:
   rabbitmq:
     image: rabbitmq:4.0.5-management
     container_name: dtu-pay-rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 10s
+      retries: 3
