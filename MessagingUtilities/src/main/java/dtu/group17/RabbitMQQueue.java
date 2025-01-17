@@ -19,7 +19,7 @@ public class RabbitMQQueue implements MessageQueue {
     private String hostname;
 
     public RabbitMQQueue() {
-        this(DEFAULT_HOSTNAME);
+        this(System.getenv().getOrDefault("RABBITMQ_HOSTNAME", DEFAULT_HOSTNAME));
     }
 
     public RabbitMQQueue(String hostname) {

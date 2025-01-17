@@ -5,7 +5,7 @@ services:
     image: dtu-pay-facade
     container_name: dtu-pay-facade
     environment:
-      QUEUE_NAME: "dtu-pay"
+      RABBITMQ_HOSTNAME: "rabbitmq"
     ports:
       - "8080:8080"
     depends_on:
@@ -27,7 +27,7 @@ services:
     image: account-manager
     container_name: account-manager
     environment:
-      QUEUE_NAME: "dtu-pay"
+      RABBITMQ_HOSTNAME: "rabbitmq"
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -39,9 +39,10 @@ services:
     image: transaction-manager
     container_name: transaction-manager
     environment:
-      QUEUE_NAME: "dtu-pay"
+      RABBITMQ_HOSTNAME: "rabbitmq"
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     links:
       - rabbitmq
 
@@ -50,9 +51,10 @@ services:
     image: reporting-manager
     container_name: reporting-manager
     environment:
-      QUEUE_NAME: "dtu-pay"
+      RABBITMQ_HOSTNAME: "rabbitmq"
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     links:
       - rabbitmq
 
@@ -61,9 +63,10 @@ services:
     image: token-manager
     container_name: token-manager
     environment:
-      QUEUE_NAME: "dtu-pay"
+      RABBITMQ_HOSTNAME: "rabbitmq"
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     links:
       - rabbitmq
 
