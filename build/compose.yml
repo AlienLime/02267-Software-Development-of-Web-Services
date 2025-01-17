@@ -1,5 +1,5 @@
-version: '3'
 services:
+
   dtu-pay-facade:
     build: ../DTUPayFacade
     image: dtu-pay-facade
@@ -8,29 +8,48 @@ services:
       QUEUE_NAME: "dtu-pay"
     ports:
       - "8080:8080"
+    depends_on:
+      - account-manager
+      - token-manager
+      - transaction-manager
+      - reporting-manager
+    
   account-manager:
     build: ../AccountManager
     image: account-manager
     container_name: account-manager
     environment:
       QUEUE_NAME: "dtu-pay"
+    depends_on:
+      - rabbitmq
+
   transaction-manager:
     build: ../TransactionManager
     image: transaction-manager
     container_name: transaction-manager
     environment:
-      QUEUE_NAME: "dtu-pay"
+      QUEUE_NAME: "dtu-pay"    
+    depends_on:
+      - rabbitmq
+
   reporting-manager:
     build: ../ReportingManager
     image: reporting-manager
     container_name: reporting-manager
     environment:
       QUEUE_NAME: "dtu-pay"
+    depends_on:
+      - rabbitmq
+
   token-manager:
     build: ../TokenManager
     image: token-manager
     container_name: token-manager
     environment:
       QUEUE_NAME: "dtu-pay"
+    depends_on:
+      - rabbitmq
+
   rabbitmq:
     image: rabbitmq:4.0.5-management
+    container_name: dtu-pay-rabbitmq

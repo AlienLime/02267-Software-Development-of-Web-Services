@@ -1,4 +1,4 @@
 FROM eclipse-temurin:21 AS jre-build
 WORKDIR /usr/src
-COPY target/quarkus-app /usr/src/quarkus-app
-CMD java -Xmx64m -jar quarkus-app/quarkus-run.jar
+COPY target/ReportingManager-1.0.0-SNAPSHOT.jar /usr/src/
+CMD java -Xmx32m -jar ReportingManager-1.0.0-SNAPSHOT.jar
