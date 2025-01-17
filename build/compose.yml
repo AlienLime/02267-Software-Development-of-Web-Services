@@ -71,7 +71,7 @@ services:
     image: rabbitmq:4.0.5-management
     container_name: dtu-pay-rabbitmq
     healthcheck:
-      test: rabbitmq-diagnostics -q ping
+      test: rabbitmq-diagnostics check_port_connectivity
       interval: 10s
       timeout: 10s
-      retries: 3
+      retries: 10
