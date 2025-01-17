@@ -4,16 +4,21 @@ import dtu.group17.AccountManagerFacade;
 import dtu.group17.Customer;
 import dtu.group17.Token;
 import dtu.group17.TokenManagerFacade;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 
 import java.io.IOException;
+import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 import java.util.List;
 
 @Path("/customers")
 public class CustomerResource {
-	AccountManagerFacade accountManagerFacade = new AccountManagerFactory().getFacade();
-	TokenManagerFacade tokenManagerFacade = new TokenManagerFactory().getFacade();
+
+	@Inject
+	AccountManagerFacade accountManagerFacade;
+	@Inject
+	TokenManagerFacade tokenManagerFacade;
 
     public CustomerResource() throws IOException, TimeoutException {
     }
@@ -32,7 +37,7 @@ public class CustomerResource {
 //		return accountManagerFacade.deregisterCustomer(id);
 //	}
 
-	public record RequestTokensBody(String customerId, int amount) {}
+	public record RequestTokensBody(UUID customerId, int amount) {}
 
 	@POST
 	@Path("/tokens")

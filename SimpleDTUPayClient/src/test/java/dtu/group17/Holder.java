@@ -8,16 +8,17 @@ import dtu.group17.merchant.Payment;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class Holder {
     private Customer customer;
     private Merchant merchant;
-    private String customerId, merchantId;
+    private UUID customerId, merchantId;
     private boolean successful = false;
-    private Map<String, String> customers = new HashMap<>(); // name -> id
-    private Map<String, String> merchants = new HashMap<>(); // name -> id
+    private Map<String, UUID> customers = new HashMap<>(); // name -> id
+    private Map<String, UUID> merchants = new HashMap<>(); // name -> id
     private Map<String, String> accounts = new HashMap<>(); // cpr -> account id
-    private Map<String, List<Token>> tokens = new HashMap<>(); // id -> list of tokens
+    private Map<UUID, List<Token>> tokens = new HashMap<>(); // id -> list of tokens
     private Payment currentPayment;
     private Token presentedToken;
 
@@ -37,19 +38,19 @@ public class Holder {
         this.merchant = merchant;
     }
 
-    public String getCustomerId() {
+    public UUID getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(String customerId) {
+    public void setCustomerId(UUID customerId) {
         this.customerId = customerId;
     }
 
-    public String getMerchantId() {
+    public UUID getMerchantId() {
         return merchantId;
     }
 
-    public void setMerchantId(String merchantId) {
+    public void setMerchantId(UUID merchantId) {
         this.merchantId = merchantId;
     }
 
@@ -61,19 +62,19 @@ public class Holder {
         this.successful = successful;
     }
 
-    public Map<String, String> getCustomers() {
+    public Map<String, UUID> getCustomers() {
         return customers;
     }
 
-    public void setCustomers(Map<String, String> customers) {
+    public void setCustomers(Map<String, UUID> customers) {
         this.customers = customers;
     }
 
-    public Map<String, String> getMerchants() {
+    public Map<String, UUID> getMerchants() {
         return merchants;
     }
 
-    public void setMerchants(Map<String, String> merchants) {
+    public void setMerchants(Map<String, UUID> merchants) {
         this.merchants = merchants;
     }
 
@@ -85,11 +86,11 @@ public class Holder {
         this.accounts = accounts;
     }
 
-    public Map<String, List<Token>> getTokens() {
+    public Map<UUID, List<Token>> getTokens() {
         return tokens;
     }
 
-    public void setTokens(Map<String, List<Token>> tokens) {
+    public void setTokens(Map<UUID, List<Token>> tokens) {
         this.tokens = tokens;
     }
 

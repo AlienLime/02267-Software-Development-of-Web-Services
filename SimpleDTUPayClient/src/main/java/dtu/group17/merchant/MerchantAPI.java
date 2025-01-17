@@ -10,6 +10,7 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class MerchantAPI {
     private static final String BASE_URL = "http://localhost:8080";
@@ -27,19 +28,19 @@ public class MerchantAPI {
     }
 
     public record RegisterMerchantBody(Merchant merchant, String accountId) {}
-    public String register(Merchant merchant, String accountId) {
+    public Merchant register(Merchant merchant, String accountId) {
         try {
             RegisterMerchantBody body = new RegisterMerchantBody(merchant, accountId); //TODO: Use factory pattern
             Response response = target.path("merchants").request().post(Entity.json(body));
-            return response.readEntity(String.class);
+            return response.readEntity(Merchant.class);
         } catch (Exception exception) {
             return null;
         }
     }
 
-    public boolean deregister(String id) {
+    public boolean deregister(UUID id) { //TODO: implement
         try {
-            Response response = target.path("merchants").path(id).request().delete();
+            Response response = target.path("merchants").path(id.toString()).request().delete();
             return response.getStatus() == Response.Status.OK.getStatusCode();
         } catch (Exception exception) {
             return false;

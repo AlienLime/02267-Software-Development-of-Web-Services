@@ -1,23 +1,33 @@
 package dtu.group17;
 
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Singleton;
 import org.jboss.logging.Logger;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+@Singleton
 public class TransactionManagerFacade {
     private static final Logger LOG = Logger.getLogger(AccountManagerFacade.class);
 
     private MessageQueue queue;
     private Map<UUID, CompletableFuture<Void>> submitPaymentRequests = new HashMap<>();
 
-    public TransactionManagerFacade(MessageQueue queue) throws IOException {
-        this.queue = queue;
-        queue.subscribe("PaymentCompleted", this::handleCompleted);
+    Runnable unsubscribePaymentCompleted;
+
+    public TransactionManagerFacade() throws IOException {
+        queue = new RabbitMQQueue();
+        unsubscribePaymentCompleted = queue.subscribe("PaymentCompleted", this::handleCompleted);
     }
 
-    public void submitPayment(Payment payment) {
+    @PreDestroy // For testing, on hot reload we remove previous subscription
+    public void cleanup() {
+        unsubscribePaymentCompleted.run();
+    }
+
+    public boolean submitPayment(Payment payment) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         UUID id = UUID.randomUUID();
         submitPaymentRequests.put(id, future);
@@ -25,6 +35,7 @@ public class TransactionManagerFacade {
         queue.publish(event);
         LOG.info("Sent PaymentRequested event");
         future.join();
+        return true;
     }
 
     public void handleCompleted(Event e) {

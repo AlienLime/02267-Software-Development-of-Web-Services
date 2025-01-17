@@ -13,6 +13,7 @@ import jakarta.ws.rs.core.Response;
 import dtu.group17.Token;
 import java.util.List;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class CustomerAPI {
     private static final String BASE_URL = "http://localhost:8080";
@@ -30,31 +31,31 @@ public class CustomerAPI {
     }
 
     public record RegisterCustomerBody(Customer customer, String accountId) {}
-    public String register(Customer customer, String accountId) {
+    public Customer register(Customer customer, String accountId) {
         try {
             RegisterCustomerBody body = new RegisterCustomerBody(customer, accountId);
             Response response = target.path("customers").request().post(Entity.json(body));
-            return response.readEntity(String.class);
+            return response.readEntity(Customer.class);
         } catch (Exception exception) {
             throw new Error(exception);
         }
     }
 
-    public boolean deregister(String id) {
+    public boolean deregister(UUID id) {
         try {
-            Response response = target.path("customers").path(id).request().delete();
+            Response response = target.path("customers").path(id.toString()).request().delete();
             return response.getStatus() == Response.Status.OK.getStatusCode();
         } catch (Exception exception) {
             throw new Error(exception);
         }
     }
 
-    public record RequestTokensBody(String customerId, int amount) {}
-    public List<Token> requestTokens(String id, int amount) {
+    public record RequestTokensBody(UUID customerId, int amount) {}
+    public List<Token> requestTokens(UUID id, int amount) {
         try {
             RequestTokensBody body = new RequestTokensBody(id, amount);
             Response response = target.path("customers").path("tokens").request().post(Entity.json(body));
-            return response.readEntity(new GenericType<List<Token>>() {});
+            return response.readEntity(new GenericType<>() {});
         } catch (Exception exception) {
             throw new Error(exception);
         }

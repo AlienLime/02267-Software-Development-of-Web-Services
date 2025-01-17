@@ -10,11 +10,11 @@ import java.util.concurrent.CompletableFuture;
 
 public class TransactionManager {
     private static final Logger LOG = Logger.getLogger(TransactionManager.class);
-
+    //TODO: ERROR: The LogManager accessed before the "java.util.logging.manager" system property was set to "org.jboss.logmanager.LogManager". Results may be unexpected.
     MessageQueue queue = new RabbitMQQueue();
     BankService bankService = new BankServiceService().getBankServicePort();
 
-    private Map<UUID, CompletableFuture<String>> customerIdRequests = new HashMap<>();
+    private Map<UUID, CompletableFuture<UUID>> customerIdRequests = new HashMap<>();
     private Map<UUID, CompletableFuture<String>> customerAccountIdRequests = new HashMap<>();
     private Map<UUID, CompletableFuture<String>> merchantAccountIdRequests = new HashMap<>();
 
@@ -26,8 +26,8 @@ public class TransactionManager {
         LOG.info("Starting Transaction Manager...");
         queue.subscribe("PaymentRequested", this::onPaymentRequested);
         queue.subscribe("CustomerIdFromTokenAnswer", this::onCustomerIdFromTokenAnswer);
-        queue.subscribe("AccountIdFromCustomerIdRequest", this::onCustomerAccountIdFromCustomerIdAnswer);
-        queue.subscribe("AccountIdFromMerchantIdRequest", this::onMerchantAccountIdFromMerchantIdAnswer);
+        queue.subscribe("AccountIdFromCustomerIdAnswer", this::onCustomerAccountIdFromCustomerIdAnswer);
+        queue.subscribe("AccountIdFromMerchantIdAnswer", this::onMerchantAccountIdFromMerchantIdAnswer);
     }
 
     public void onPaymentRequested(Event e) {
@@ -37,12 +37,12 @@ public class TransactionManager {
         // Retrieve customer id from token manager
         // TODO: Refactor to maybe use rpc?
         // TODO: Reorder to minimize blocking
-        CompletableFuture<String> customerIdRequest = new CompletableFuture<>();
+        CompletableFuture<UUID> customerIdRequest = new CompletableFuture<>();
         UUID customerIdCorrelationId = UUID.randomUUID();
         customerIdRequests.put(customerIdCorrelationId, customerIdRequest);
         Event customerIdRequestEvent = new Event("CustomerIdFromTokenRequest", Map.of("id", customerIdCorrelationId, "token", payment.token()));
         queue.publish(customerIdRequestEvent);
-        String customerId = customerIdRequest.join();
+        UUID customerId = customerIdRequest.join();
 
         // Retrieve account ids from account manager
         CompletableFuture<String> customerAccountIdRequest = new CompletableFuture<>();
@@ -67,20 +67,23 @@ public class TransactionManager {
             throw new Error(ex);
         }
 
-        Event event = new Event("PaymentSubmitted", Map.of("id", e.getArgument("id", UUID.class)));
-         queue.publish(event);
-         LOG.info("Sent PaymentSubmitted event");
+        Event event = new Event("PaymentCompleted", Map.of("id", e.getArgument("id", UUID.class)));
+        queue.publish(event);
+        LOG.info("Sent PaymentCompleted event");
     }
 
     public void onCustomerIdFromTokenAnswer(Event e) {
-        customerIdRequests.remove(e.getArgument("id", UUID.class)).complete(e.getArgument("customerId", String.class));
+        LOG.info("Received CustomerIdFromTokenAnswer event");
+        customerIdRequests.remove(e.getArgument("id", UUID.class)).complete(e.getArgument("customerId", UUID.class));
     }
 
     public void onCustomerAccountIdFromCustomerIdAnswer(Event e) {
+        LOG.info("Received AccountIdFromCustomerIdAnswer event");
         customerAccountIdRequests.remove(e.getArgument("id", UUID.class)).complete(e.getArgument("accountId", String.class));
     }
 
     public void onMerchantAccountIdFromMerchantIdAnswer(Event e) {
+        LOG.info("Received AccountIdFromMerchantIdAnswer event");
         merchantAccountIdRequests.remove(e.getArgument("id", UUID.class)).complete(e.getArgument("accountId", String.class));
     }
 }

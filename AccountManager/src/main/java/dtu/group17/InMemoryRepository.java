@@ -1,9 +1,32 @@
 package dtu.group17;
 
-public class InMemoryRepository implements CustomerRepository {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+public class InMemoryRepository implements CustomerRepository, MerchantRepository {
+    Map<UUID, Customer> customers = new HashMap<>(); // DTUPay ID -> Customer
+    Map<UUID, Merchant> merchants = new HashMap<>(); // DTUPay ID -> Merchant
 
     @Override
     public Customer addCustomer(Customer customer) {
-        return null;
+        customers.put(customer.id(), customer);
+        return customer;
+    }
+
+    @Override
+    public Merchant addMerchant(Merchant merchant) {
+        merchants.put(merchant.id(), merchant);
+        return merchant;
+    }
+
+    @Override
+    public Customer getCustomerById(UUID id) {
+        return customers.get(id);
+    }
+
+    @Override
+    public Merchant getMerchantById(UUID id) {
+        return merchants.get(id);
     }
 }

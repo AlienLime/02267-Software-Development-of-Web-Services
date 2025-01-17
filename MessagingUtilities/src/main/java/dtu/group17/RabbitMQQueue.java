@@ -51,7 +51,7 @@ public class RabbitMQQueue implements MessageQueue {
     }
 
     @Override
-    public void subscribe(String topic, Consumer<Event> handler) {
+    public Runnable subscribe(String topic, Consumer<Event> handler) {
         try {
             Channel channel = createChannel();
             String queueName = channel.queueDeclare().getQueue();
@@ -64,8 +64,18 @@ public class RabbitMQQueue implements MessageQueue {
             };
 
             channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {});
-        } catch (IOException e){
+
+            return () -> {
+                try {
+                    channel.queueUnbind(queueName, EXCHANGE_NAME, topic);
+                    channel.close();
+                } catch (Exception e) {
+                    throw new Error(e);
+                }
+            };
+        } catch (IOException e) {
             throw new Error(e);
         }
     }
+
 }

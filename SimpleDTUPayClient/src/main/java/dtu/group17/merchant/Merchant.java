@@ -2,7 +2,9 @@ package dtu.group17.merchant;
 
 import dtu.ws.fastmoney.User;
 
-public record Merchant(String firstName, String lastName, String cpr) {
+import java.util.UUID;
+
+public record Merchant(UUID id, String firstName, String lastName, String cpr) {
     public User toUser() {
         User user = new User();
         user.setFirstName(firstName);

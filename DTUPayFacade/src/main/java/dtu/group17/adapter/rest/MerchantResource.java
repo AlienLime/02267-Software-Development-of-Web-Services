@@ -1,6 +1,7 @@
 package dtu.group17.adapter.rest;
 
 import dtu.group17.*;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -12,8 +13,11 @@ import java.util.concurrent.TimeoutException;
 
 @Path("/merchants")
 public class MerchantResource {
-	AccountManagerFacade accountManagerFacade = new AccountManagerFactory().getFacade();
-	TransactionManagerFacade transactionManagerFacade = new TransactionManagerFactory().getFacade();
+
+	@Inject
+	TransactionManagerFacade transactionManagerFacade;
+	@Inject
+	AccountManagerFacade accountManagerFacade;
 
     public MerchantResource() throws IOException, TimeoutException {
     }
@@ -36,7 +40,7 @@ public class MerchantResource {
 	@Path("/payment")
 	@Consumes("application/json")
 	@Produces("application/json")
-	public void submitPayment(Payment payment) {
-		transactionManagerFacade.submitPayment(payment);
+	public boolean submitPayment(Payment payment) {
+		return transactionManagerFacade.submitPayment(payment);
 	}
 }

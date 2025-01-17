@@ -4,5 +4,5 @@ import java.util.function.Consumer;
 
 public interface MessageQueue {
     void publish(Event event);
-    void subscribe(String topic, Consumer<Event> handler);
+    Runnable subscribe(String topic, Consumer<Event> handler);
 }
