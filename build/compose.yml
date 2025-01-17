@@ -19,6 +19,8 @@ services:
         condition: service_started
       rabbitmq:
         condition: service_healthy
+    links:
+      - rabbitmq
     
   account-manager:
     build: ../AccountManager
@@ -29,6 +31,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+    links:
+      - rabbitmq
 
   transaction-manager:
     build: ../TransactionManager
@@ -37,6 +41,8 @@ services:
     environment:
       QUEUE_NAME: "dtu-pay"
     depends_on:
+      - rabbitmq
+    links:
       - rabbitmq
 
   reporting-manager:
@@ -47,6 +53,8 @@ services:
       QUEUE_NAME: "dtu-pay"
     depends_on:
       - rabbitmq
+    links:
+      - rabbitmq
 
   token-manager:
     build: ../TokenManager
@@ -55,6 +63,8 @@ services:
     environment:
       QUEUE_NAME: "dtu-pay"
     depends_on:
+      - rabbitmq
+    links:
       - rabbitmq
 
   rabbitmq:
