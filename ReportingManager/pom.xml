@@ -87,7 +87,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>dtu.group17.AccountManager</mainClass>
+              <mainClass>dtu.group17.ReportingManager</mainClass>
             </manifest>
           </archive>
         </configuration>
