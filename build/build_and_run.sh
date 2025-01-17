@@ -1,39 +1,34 @@
 #!/usr/bin/env bash
 set -e
 
-pushd BankStub
-mvn jaxws:wsimport
-mvn install
-popd
+# Install local maven dependencies
+mvn clean install -f ../BankStub/pom.xml
+mvn clean install -f ../MessagingUtilities/pom.xml
 
-pushd AccountManager
-mvn package
-popd
+# Build microservices
+services=(
+    "AccountManager" 
+    "TokenManager" 
+    "TransactionManager"
+    "ReportingManager" 
+    "DTUPayFacade"
+)
 
-pushd ReportingManager
-mvn package
-popd
+for service in ${services[@]}; do
+  pushd ../$service
+  mvn package
+  popd
+done
 
-pushd DTUPayFacade
-mvn package
-popd
-
-pushd TokenManager
-mvn package
-popd
-
-pushd TransactionManager
-mvn package
-popd
-
-pushd build
+# Deploy
 docker compose build
 docker compose up -d
 docker image prune -f
-popd
+docker system prune -f
 
-sleep 2
+docker exec dtu-pay-rabbitmq rabbitmqctl await_startup
 
-pushd SimpleDTUPayClient
+# Test
+pushd ../SimpleDTUPayClient
 mvn test
 popd
