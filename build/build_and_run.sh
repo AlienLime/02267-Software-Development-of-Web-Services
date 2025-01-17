@@ -10,15 +10,18 @@ services=(
     "AccountManager" 
     "TokenManager" 
     "TransactionManager"
-    "ReportingManager" 
-    "DTUPayFacade"
+    "ReportingManager"
 )
 
 for service in "${services[@]}"; do
   pushd ../"$service"
-  mvn package
+  mvn jar:jar
   popd
 done
+
+pushd ../DTUPayFacade
+mvn package
+popd
 
 # Deploy
 docker compose build
