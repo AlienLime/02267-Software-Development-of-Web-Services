@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="true" type="CucumberJavaRunConfigurationType" factoryName="Cucumber java">
-    <module name="SimpleDTUPayClient" />
+    <module name="DTUPayClient" />
     <option name="PROGRAM_PARAMETERS" value="--plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter --snippets camelcase" />
     <shortenClasspath name="NONE" />
     <option name="VM_PARAMETERS" value="-ea -Djava.util.logging.manager=org.jboss.logmanager.LogManager" />

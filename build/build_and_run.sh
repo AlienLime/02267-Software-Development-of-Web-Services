@@ -29,6 +29,6 @@ docker system prune -f
 docker exec dtu-pay-rabbitmq rabbitmqctl await_startup
 
 # Test
-pushd ../SimpleDTUPayClient
+pushd ../DTUPayClient
 mvn test
 popd

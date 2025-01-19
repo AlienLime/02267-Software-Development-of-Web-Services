@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="true" type="JUnit" factoryName="JUnit">
-    <module name="SimpleDTUPayClient" />
+    <module name="DTUPayClient" />
     <option name="PACKAGE_NAME" value="dtu.group17" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
