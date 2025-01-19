@@ -8,7 +8,8 @@
 
     <properties>
         <project.mainClass>dtu.group17.TransactionManager</project.mainClass>
-        <maven.compiler.release>21</maven.compiler.release>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <surefire-plugin.version>3.5.0</surefire-plugin.version>
         <cucumber-plugin.version>7.15.0</cucumber-plugin.version>
