@@ -27,12 +27,12 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="AccountManager" options="-parameters" />
+      <module name="AccountManager" options="" />
       <module name="DTUPayFacade" options="-parameters" />
-      <module name="ReportingManager" options="-parameters" />
+      <module name="ReportingManager" options="" />
       <module name="SimpleDTUPayServer" options="-parameters" />
-      <module name="TokenManager" options="-parameters" />
-      <module name="TransactionManager" options="-parameters" />
+      <module name="TokenManager" options="" />
+      <module name="TransactionManager" options="" />
     </option>
   </component>
 </project>

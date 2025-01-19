@@ -16,7 +16,7 @@ services=(
 
 for service in "${services[@]}"; do
   pushd ../"$service"
-  mvn package
+  mvn clean package
   popd
 done
 

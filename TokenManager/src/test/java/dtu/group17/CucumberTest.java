@@ -18,5 +18,5 @@ import static io.cucumber.core.options.Constants.*;
 @ConfigurationParameter(key = FEATURES_PROPERTY_NAME, value = "features")
 @ConfigurationParameter(key = SNIPPET_TYPE_PROPERTY_NAME, value = "camelcase")
 @ConfigurationParameter(key = FILTER_TAGS_PROPERTY_NAME, value = "not @Ignore")
-public class  CucumberTest {
+public class CucumberTest {
 }
