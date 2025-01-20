@@ -8,6 +8,7 @@ import org.jboss.logging.Logger;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
@@ -17,16 +18,18 @@ public class TokenManagerFacade {
     private MessageQueue queue;
     private Map<UUID, CompletableFuture<List<Token>>> tokenRequests = new HashMap<>();
 
-    private Runnable unsubscribeTokensGenerated;
+    private Runnable unsubscribeTokensGenerated, unsubscribeTokensRequestedError;
 
     public TokenManagerFacade() throws IOException {
         queue = new RabbitMQQueue();
         unsubscribeTokensGenerated = queue.subscribe("TokensGenerated", this::handleTokensRegistered);
+        unsubscribeTokensRequestedError = queue.subscribe("TokensRequestedError", this::handleTokensRequestedError);
     }
 
     @PreDestroy // For testing, on hot reload we remove previous subscription
     public void cleanup() {
         unsubscribeTokensGenerated.run();
+        unsubscribeTokensRequestedError.run();
     }
 
     public List<Token> requestTokens(UUID customerId, int amount) {
@@ -43,5 +46,10 @@ public class TokenManagerFacade {
         LOG.info("Received TokensGenerated event");
         List<Token> tokens = e.getArgument("tokens", new TypeToken<>() {});
         tokenRequests.remove(e.getArgument("id", UUID.class)).complete(tokens);
+    }
+
+    public void handleTokensRequestedError(Event e) {
+        LOG.info("Received TokensRequestedError event");
+        tokenRequests.remove(e.getArgument("id", UUID.class)).completeExceptionally(new InvalidTokenRequestException(e.getArgument("message", String.class)));
     }
 }

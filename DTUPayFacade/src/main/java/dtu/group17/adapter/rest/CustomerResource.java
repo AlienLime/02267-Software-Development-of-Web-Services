@@ -9,6 +9,7 @@ import jakarta.ws.rs.*;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeoutException;
 import java.util.List;
 
@@ -43,7 +44,11 @@ public class CustomerResource {
 	@Path("/tokens")
 	@Consumes("application/json")
 	@Produces("application/json")
-	public List<Token> requestTokens(RequestTokensBody body) {
-		return tokenManagerFacade.requestTokens(body.customerId(), body.amount());
+	public List<Token> requestTokens(RequestTokensBody body) throws Throwable {
+		try {
+			return tokenManagerFacade.requestTokens(body.customerId(), body.amount());
+		} catch (CompletionException e) {
+			throw e.getCause();
+		}
 	}
 }

@@ -24,6 +24,12 @@ public class InMemoryRepository implements TokenRepository {
     public UUID getCustomerIdFromToken(Token token) {
         return tokenMap.entrySet().stream()
                 .filter(e -> e.getValue().stream().anyMatch(t -> t.equals(token)))
-                .findFirst().get().getKey();
+                .findFirst().orElseThrow().getKey();
     }
+
+    @Override
+    public int getNumberOfTokens(UUID id) {
+        return tokenMap.containsKey(id) ? tokenMap.get(id).size() : 0;
+    }
+
 }

@@ -1,10 +1,17 @@
 package dtu.group17.steps;
 
+import dtu.group17.Token;
 import dtu.group17.helpers.ErrorMessageHelper;
 import dtu.group17.helpers.AccountHelper;
 import dtu.group17.helpers.TokenHelper;
 import dtu.group17.helpers.PaymentHelper;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TokenSteps {
     private ErrorMessageHelper errorMessageHelper;
@@ -29,4 +36,22 @@ public class TokenSteps {
         paymentHelper.addToken(tokenHelper.getPresentedToken());
     }
 
+    @When("the customer requests {int} tokens")
+    public void theCustomerRequestsTokens(Integer amount) {
+        try {
+            tokenHelper.requestTokens(accountHelper.getCurrentCustomer(), amount);
+        } catch (Exception e) {
+            errorMessageHelper.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @When("the merchant receives a token with id {string}")
+    public void theMerchantReceivesATokenWithId(String tokenId) {
+        paymentHelper.addToken(new Token(UUID.fromString(tokenId)));
+    }
+
+    @Then("the customer received {int} tokens")
+    public void theCustomerReceivedTokens(int amount) {
+        assertEquals(amount, tokenHelper.getCustomersTokens(accountHelper.getCurrentCustomer()).size());
+    }
 }

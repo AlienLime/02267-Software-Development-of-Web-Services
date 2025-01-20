@@ -28,4 +28,16 @@ Feature: Full Payment
     And the balance of the customer at the bank is 0 kr
     And the balance of the merchant at the bank is 1000 kr
 
-    # TODO: check valid accountId
+  Scenario: Customer with bad account id
+    Given a customer not registered with the bank
+    And a registered merchant with 1000 kr
+    When a payment of 10 kr between the customer and merchant is submitted
+    Then the payment is unsuccessful
+    And the error message is "Debtor account does not exist"
+
+  Scenario: Merchant with bad account id
+    Given a registered customer with 1 token(s)
+    And a merchant not registered with the bank
+    When a payment of 10 kr between the customer and merchant is submitted
+    Then the payment is unsuccessful
+    And the error message is "Creditor account does not exist"

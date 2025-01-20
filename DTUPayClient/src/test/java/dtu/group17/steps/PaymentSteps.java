@@ -57,6 +57,11 @@ public class PaymentSteps {
         paymentHelper.createPayment(1, merchant);
     }
 
+    @When("the merchant creates a payment")
+    public void theMerchantCreatesAPayment() {
+        paymentHelper.createPayment(1, accountHelper.getCurrentMerchant());
+    }
+
     @Then("the payment is successful")
     public void thePaymentIsSuccessful() {
         assertNull(errorMessageHelper.getErrorMessage());
@@ -66,5 +71,4 @@ public class PaymentSteps {
     public void thePaymentIsUnsuccessful() {
         assertNotNull(errorMessageHelper.getErrorMessage());
     }
-
 }

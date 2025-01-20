@@ -21,16 +21,9 @@ public class TokenHelper {
         presentedToken = null;
     }
 
-    public List<Token> requestTokens(Customer customer, int amount) {
+    public List<Token> requestTokens(Customer customer, int amount) throws Exception {
         List<Token> newTokens = customerAPI.requestTokens(customer.id(), amount);
 
-//        if (!tokens.containsKey(customer.id())) {
-//            tokens.put(customer.id(), newTokens);
-//            return newTokens;
-//        } else {
-//            tokens.get(customer.id()).addAll(newTokens);
-//            return tokens.get(customer.id());
-//        }
         tokens.computeIfAbsent(customer.id(), id -> new ArrayList<>()).addAll(newTokens);
         return tokens.get(customer.id());
     }
@@ -44,4 +37,7 @@ public class TokenHelper {
         return presentedToken;
     }
 
+    public List<Token> getCustomersTokens(Customer customer) {
+        return tokens.get(customer.id());
+    }
 }

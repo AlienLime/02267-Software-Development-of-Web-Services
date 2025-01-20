@@ -16,13 +16,14 @@ public class TransactionManagerFacade {
     private MessageQueue queue;
     private Map<UUID, CompletableFuture<Void>> submitPaymentRequests = new HashMap<>();
 
-    Runnable unsubscribePaymentCompleted, unsubscribePaymentMerchantNotFoundError, unsubscribePaymentBankError;
+    Runnable unsubscribePaymentCompleted, unsubscribePaymentMerchantNotFoundError, unsubscribePaymentBankError, unsubscribePaymentTokenNotFoundError;
 
     public TransactionManagerFacade() throws IOException {
         queue = new RabbitMQQueue();
         unsubscribePaymentCompleted = queue.subscribe("PaymentCompleted", this::handleCompleted);
         unsubscribePaymentMerchantNotFoundError = queue.subscribe("PaymentMerchantNotFoundError", this::handlePaymentMerchantNotFoundError);
         unsubscribePaymentBankError = queue.subscribe("PaymentBankError", this::handlePaymentBankError);
+        unsubscribePaymentTokenNotFoundError = queue.subscribe("PaymentTokenNotFoundError", this::handlePaymentTokenNotFoundError);
     }
 
     @PreDestroy // For testing, on hot reload we remove previous subscription
@@ -30,6 +31,7 @@ public class TransactionManagerFacade {
         unsubscribePaymentCompleted.run();
         unsubscribePaymentMerchantNotFoundError.run();
         unsubscribePaymentBankError.run();
+        unsubscribePaymentTokenNotFoundError.run();
     }
 
     public boolean submitPayment(Payment payment) {
@@ -51,6 +53,11 @@ public class TransactionManagerFacade {
     public void handlePaymentMerchantNotFoundError(Event e) {
         LOG.info("Received PaymentMerchantNotFoundError event");
         submitPaymentRequests.remove(e.getArgument("id", UUID.class)).completeExceptionally(new MerchantNotFoundException(e.getArgument("message", String.class)));
+    }
+
+    public void handlePaymentTokenNotFoundError(Event e) {
+        LOG.info("Received PaymentTokenNotFoundError event");
+        submitPaymentRequests.remove(e.getArgument("id", UUID.class)).completeExceptionally(new TokenNotFoundException(e.getArgument("message", String.class)));
     }
 
     public void handlePaymentBankError(Event e) {

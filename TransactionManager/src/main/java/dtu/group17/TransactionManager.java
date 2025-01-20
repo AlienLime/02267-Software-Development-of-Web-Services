@@ -30,6 +30,7 @@ public class TransactionManager {
         queue.subscribe("AccountIdFromCustomerIdAnswer", this::onCustomerAccountIdFromCustomerIdAnswer);
         queue.subscribe("AccountIdFromMerchantIdAnswer", this::onMerchantAccountIdFromMerchantIdAnswer);
         queue.subscribe("AccountIdFromMerchantIdError", this::onMerchantAccountIdFromMerchantIdError);
+        queue.subscribe("CustomerIdFromTokenError", this::onCustomerIdFromTokenError);
     }
 
     public void onPaymentRequested(Event e) {
@@ -45,7 +46,17 @@ public class TransactionManager {
         Event customerIdRequestEvent = new Event("CustomerIdFromTokenRequest", Map.of("id", customerIdCorrelationId, "token", payment.token()));
         queue.publish(customerIdRequestEvent);
         LOG.info("Sent CustomerIdFromTokenRequest event");
-        UUID customerId = customerIdRequest.orTimeout(3, TimeUnit.SECONDS).join();
+        UUID customerId = customerIdRequest.orTimeout(3, TimeUnit.SECONDS).exceptionally(ex -> {
+            String errorMessage = ex.getMessage();
+            LOG.error(errorMessage);
+            Event event = new Event("PaymentTokenNotFoundError", Map.of("id", e.getArgument("id", UUID.class), "message", errorMessage));
+            queue.publish(event);
+            LOG.info("Sent PaymentTokenNotFoundError event");
+            return null;
+        }).join();
+        if (customerId == null) {
+            return;
+        }
 
         // Retrieve account ids from account manager
         CompletableFuture<String> customerAccountIdRequest = new CompletableFuture<>();
@@ -110,5 +121,10 @@ public class TransactionManager {
     public void onMerchantAccountIdFromMerchantIdError(Event e) {
         LOG.info("Received AccountIdFromMerchantIdError event");
         merchantAccountIdRequests.remove(e.getArgument("id", UUID.class)).completeExceptionally(new Exception(e.getArgument("message", String.class)));
+    }
+
+    public void onCustomerIdFromTokenError(Event e) {
+        LOG.info("Received CustomerIdFromTokenError event");
+        customerIdRequests.remove(e.getArgument("id", UUID.class)).completeExceptionally(new Exception(e.getArgument("message", String.class)));
     }
 }

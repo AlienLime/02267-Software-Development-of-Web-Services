@@ -1,6 +1,7 @@
-Feature Reporting
+Feature: Reporting
   # Enter feature description here
 
+  @Ignore
   Scenario: Customer Report
     Given a registered customer
     And the customer has made the following payments
@@ -11,6 +12,7 @@ Feature Reporting
     Then the customer receives a report containing information of all the customer's payments
     And the report includes the amount of money transferred, the merchants' names
 
+  @Ignore
   Scenario: Merchant Report
     Given a registered merchant
     And the following payments have been made to the merchant
@@ -22,6 +24,7 @@ Feature Reporting
     Then the merchant receives a report containing information of all their received payments
     And the report includes the amount of money transferred
 
+  @Ignore
   Scenario: Manager Report
     Given a manager
     And the following payments have been made

@@ -8,4 +8,5 @@ public interface TokenRepository {
     void addTokens(UUID id, List<Token> tokens);
     Token consumeFirstToken(UUID id);
     UUID getCustomerIdFromToken(Token token);
+    int getNumberOfTokens(UUID id);
 }

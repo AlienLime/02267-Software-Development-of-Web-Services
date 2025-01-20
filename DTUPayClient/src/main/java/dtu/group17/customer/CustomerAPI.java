@@ -51,13 +51,14 @@ public class CustomerAPI {
     }
 
     public record RequestTokensBody(UUID customerId, int amount) {}
-    public List<Token> requestTokens(UUID id, int amount) {
-        try {
-            RequestTokensBody body = new RequestTokensBody(id, amount);
-            Response response = target.path("customers").path("tokens").request().post(Entity.json(body));
-            return response.readEntity(new GenericType<>() {});
-        } catch (Exception exception) {
-            throw new Error(exception);
+    public List<Token> requestTokens(UUID id, int amount) throws Exception {
+        RequestTokensBody body = new RequestTokensBody(id, amount);
+        Response response = target.path("customers").path("tokens").request().post(Entity.json(body));
+
+        if (response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode()) {
+            throw new Exception(response.readEntity(String.class));
         }
+
+        return response.readEntity(new GenericType<>() {});
     }
 }
