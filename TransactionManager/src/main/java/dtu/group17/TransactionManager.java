@@ -7,6 +7,7 @@ import org.jboss.logging.Logger;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class TransactionManager {
     private static final Logger LOG = Logger.getLogger(TransactionManager.class);
@@ -28,6 +29,7 @@ public class TransactionManager {
         queue.subscribe("CustomerIdFromTokenAnswer", this::onCustomerIdFromTokenAnswer);
         queue.subscribe("AccountIdFromCustomerIdAnswer", this::onCustomerAccountIdFromCustomerIdAnswer);
         queue.subscribe("AccountIdFromMerchantIdAnswer", this::onMerchantAccountIdFromMerchantIdAnswer);
+        queue.subscribe("AccountIdFromMerchantIdError", this::onMerchantAccountIdFromMerchantIdError);
     }
 
     public void onPaymentRequested(Event e) {
@@ -42,7 +44,8 @@ public class TransactionManager {
         customerIdRequests.put(customerIdCorrelationId, customerIdRequest);
         Event customerIdRequestEvent = new Event("CustomerIdFromTokenRequest", Map.of("id", customerIdCorrelationId, "token", payment.token()));
         queue.publish(customerIdRequestEvent);
-        UUID customerId = customerIdRequest.join();
+        LOG.info("Sent CustomerIdFromTokenRequest event");
+        UUID customerId = customerIdRequest.orTimeout(3, TimeUnit.SECONDS).join();
 
         // Retrieve account ids from account manager
         CompletableFuture<String> customerAccountIdRequest = new CompletableFuture<>();
@@ -50,21 +53,38 @@ public class TransactionManager {
         customerAccountIdRequests.put(customerAccountIdCorrelationId, customerAccountIdRequest);
         Event customerAccountIdRequestEvent = new Event("AccountIdFromCustomerIdRequest", Map.of("id", customerAccountIdCorrelationId, "customerId", customerId));
         queue.publish(customerAccountIdRequestEvent);
+        LOG.info("Sent AccountIdFromCustomerIdRequest event");
 
         CompletableFuture<String> merchantAccountIdRequest = new CompletableFuture<>();
         UUID merchantAccountIdCorrelationId = UUID.randomUUID();
         merchantAccountIdRequests.put(merchantAccountIdCorrelationId, merchantAccountIdRequest);
         Event merchantAccountIdRequestEvent = new Event("AccountIdFromMerchantIdRequest", Map.of("id", merchantAccountIdCorrelationId, "merchantId", payment.merchantId()));
         queue.publish(merchantAccountIdRequestEvent);
+        LOG.info("Sent AccountIdFromMerchantIdRequest event");
         
-        String customerAccountId = customerAccountIdRequest.join();
-        String merchantAccountId = merchantAccountIdRequest.join();
+        String customerAccountId = customerAccountIdRequest.orTimeout(3, TimeUnit.SECONDS).join();
+        String merchantAccountId = merchantAccountIdRequest.orTimeout(3, TimeUnit.SECONDS).exceptionally(ex -> {
+            String errorMessage = ex.getMessage();
+            LOG.error(errorMessage);
+            Event event = new Event("PaymentMerchantNotFoundError", Map.of("id", e.getArgument("id", UUID.class), "message", errorMessage));
+            queue.publish(event);
+            LOG.info("Sent PaymentMerchantNotFoundError event");
+            return null;
+        }).join();
+        if (merchantAccountId == null) {
+            return;
+        }
 
         try {
             String description = "Group 17 - transfer of " + payment.amount() + " kr. from " + customerId + " to " + payment.merchantId();
             bankService.transferMoneyFromTo(customerAccountId, merchantAccountId, BigDecimal.valueOf(payment.amount()), description);
         } catch (Exception ex) {
-            throw new Error(ex);
+            String errorMessage = ex.getMessage();
+            LOG.error(errorMessage);
+            Event event = new Event("PaymentBankError", Map.of("id", e.getArgument("id", UUID.class), "message", errorMessage));
+            queue.publish(event);
+            LOG.info("Sent PaymentBankError event");
+            return;
         }
 
         Event event = new Event("PaymentCompleted", Map.of("id", e.getArgument("id", UUID.class)));
@@ -85,5 +105,10 @@ public class TransactionManager {
     public void onMerchantAccountIdFromMerchantIdAnswer(Event e) {
         LOG.info("Received AccountIdFromMerchantIdAnswer event");
         merchantAccountIdRequests.remove(e.getArgument("id", UUID.class)).complete(e.getArgument("accountId", String.class));
+    }
+
+    public void onMerchantAccountIdFromMerchantIdError(Event e) {
+        LOG.info("Received AccountIdFromMerchantIdError event");
+        merchantAccountIdRequests.remove(e.getArgument("id", UUID.class)).completeExceptionally(new Exception(e.getArgument("message", String.class)));
     }
 }

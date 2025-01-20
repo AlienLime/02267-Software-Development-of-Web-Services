@@ -51,7 +51,7 @@ public class MerchantAPI {
         Response response = target.path("merchants").path("payment").request().post(Entity.json(payment));
 
         if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()
-                || response.getStatus() == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()) {
+                || response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode()) {
             throw new Exception(response.readEntity(String.class));
         }
 

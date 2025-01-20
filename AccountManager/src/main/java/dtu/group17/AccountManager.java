@@ -60,7 +60,17 @@ public class AccountManager {
     public void onAccountIdFromMerchantIdRequest(Event e) {
         LOG.info("Received AccountIdFromMerchantIdRequest event");
         UUID merchantId = e.getArgument("merchantId", UUID.class);
+
+        if (merchantRepository.getMerchantById(merchantId) == null) {
+            String errorMessage = "Merchant with id '" + merchantId + "' does not exist";
+            LOG.error(errorMessage);
+            Event event = new Event("AccountIdFromMerchantIdError", Map.of("id", e.getArgument("id", UUID.class), "message", errorMessage));
+            queue.publish(event);
+            LOG.info("Sent AccountIdFromMerchantIdError event");
+            return;
+        }
         String accountId = merchantRepository.getMerchantById(merchantId).accountId();
+
         Event event = new Event("AccountIdFromMerchantIdAnswer", Map.of("id", e.getArgument("id", UUID.class), "accountId", accountId));
         queue.publish(event);
         LOG.info("Sent AccountIdFromMerchantIdAnswer event");

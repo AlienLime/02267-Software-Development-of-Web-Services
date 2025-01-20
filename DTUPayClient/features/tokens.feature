@@ -15,7 +15,7 @@ Feature Token Handling
     Given a registered merchant
     When the merchant creates a payment
     And the merchant receives an invalid token
-    And the merchant submits the transaction to the server
+    And the merchant submits the transaction
     Then the payment is unsuccessful
     And the error message is "Invalid token"
 

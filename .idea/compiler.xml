@@ -18,7 +18,6 @@
         <module name="MessagingUtilities" />
         <module name="DTUPayClient" />
         <module name="TransactionManager" />
-        <module name="SimpleDTUPayServer" />
         <module name="AccountManager" />
         <module name="TokenManager" />
         <module name="ReportingManager" />
@@ -26,6 +25,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="SimpleDTUPayClient" target="21" />
+      <module name="SimpleDTUPayServer" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

@@ -8,10 +8,11 @@ import org.jboss.logging.Logger;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class TokenManagerFacade {
-    private static final Logger LOG = Logger.getLogger(AccountManagerFacade.class);
+    private static final Logger LOG = Logger.getLogger(TokenManagerFacade.class);
 
     private MessageQueue queue;
     private Map<UUID, CompletableFuture<List<Token>>> tokenRequests = new HashMap<>();
@@ -35,7 +36,7 @@ public class TokenManagerFacade {
         Event event = new Event("TokensRequested", Map.of("id", id, "customerId", customerId, "amount", amount));
         queue.publish(event);
         LOG.info("Sent TokensRequested event");
-        return future.join();
+        return future.orTimeout(3, TimeUnit.SECONDS).join();
     }
 
     public void handleTokensRegistered(Event e) {

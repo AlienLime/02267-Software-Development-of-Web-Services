@@ -7,24 +7,29 @@ import org.jboss.logging.Logger;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class TransactionManagerFacade {
-    private static final Logger LOG = Logger.getLogger(AccountManagerFacade.class);
+    private static final Logger LOG = Logger.getLogger(TransactionManagerFacade.class);
 
     private MessageQueue queue;
     private Map<UUID, CompletableFuture<Void>> submitPaymentRequests = new HashMap<>();
 
-    Runnable unsubscribePaymentCompleted;
+    Runnable unsubscribePaymentCompleted, unsubscribePaymentMerchantNotFoundError, unsubscribePaymentBankError;
 
     public TransactionManagerFacade() throws IOException {
         queue = new RabbitMQQueue();
         unsubscribePaymentCompleted = queue.subscribe("PaymentCompleted", this::handleCompleted);
+        unsubscribePaymentMerchantNotFoundError = queue.subscribe("PaymentMerchantNotFoundError", this::handlePaymentMerchantNotFoundError);
+        unsubscribePaymentBankError = queue.subscribe("PaymentBankError", this::handlePaymentBankError);
     }
 
     @PreDestroy // For testing, on hot reload we remove previous subscription
     public void cleanup() {
         unsubscribePaymentCompleted.run();
+        unsubscribePaymentMerchantNotFoundError.run();
+        unsubscribePaymentBankError.run();
     }
 
     public boolean submitPayment(Payment payment) {
@@ -34,12 +39,22 @@ public class TransactionManagerFacade {
         Event event = new Event("PaymentRequested", Map.of("id", id, "payment", payment));
         queue.publish(event);
         LOG.info("Sent PaymentRequested event");
-        future.join();
+        future.orTimeout(3, TimeUnit.SECONDS).join();
         return true;
     }
 
     public void handleCompleted(Event e) {
         LOG.info("Received PaymentCompleted event");
         submitPaymentRequests.remove(e.getArgument("id", UUID.class)).complete(null);
+    }
+
+    public void handlePaymentMerchantNotFoundError(Event e) {
+        LOG.info("Received PaymentMerchantNotFoundError event");
+        submitPaymentRequests.remove(e.getArgument("id", UUID.class)).completeExceptionally(new MerchantNotFoundException(e.getArgument("message", String.class)));
+    }
+
+    public void handlePaymentBankError(Event e) {
+        LOG.info("Received PaymentBankError event");
+        submitPaymentRequests.remove(e.getArgument("id", UUID.class)).completeExceptionally(new BankException(e.getArgument("message", String.class)));
     }
 }

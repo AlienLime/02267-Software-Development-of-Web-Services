@@ -1,51 +1,56 @@
 package dtu.group17.steps;
 
-import dtu.group17.*;
 import dtu.group17.customer.Customer;
+import dtu.group17.helpers.AccountHelper;
+import dtu.group17.helpers.BankHelper;
+import dtu.group17.helpers.ErrorMessageHelper;
+import dtu.group17.helpers.TokenHelper;
 import dtu.group17.merchant.Merchant;
-import dtu.group17.customer.CustomerAPI;
-import dtu.group17.merchant.MerchantAPI;
+import dtu.ws.fastmoney.BankServiceException_Exception;
 import io.cucumber.java.en.Given;
 
-import java.util.UUID;
-
 public class AccountSteps {
-    private Holder holder;
-    private ErrorMessageHolder errorMessageHolder;
-    private CustomerAPI customerAPI;
-    private MerchantAPI merchantAPI;
+    private ErrorMessageHelper errorMessageHelper;
+    private AccountHelper accountHelper;
+    private BankHelper bankHelper;
+    private TokenHelper tokenHelper;
 
-    public AccountSteps(Holder holder, ErrorMessageHolder errorMessageHolder, CustomerAPI customerAPI, MerchantAPI merchantAPI) {
-        this.holder = holder;
-        this.errorMessageHolder = errorMessageHolder;
-        this.customerAPI = customerAPI;
-        this.merchantAPI = merchantAPI;
+    public AccountSteps(ErrorMessageHelper errorMessageHolder, AccountHelper accountHelper, BankHelper bankHelper, TokenHelper tokenHelper) {
+        this.errorMessageHelper = errorMessageHolder;
+        this.accountHelper = accountHelper;
+        this.bankHelper = bankHelper;
+        this.tokenHelper = tokenHelper;
     }
 
+    //#region Customer steps
     @Given("a customer with name {string}, last name {string}, and CPR {string}")
     public void aCustomerWithNameLastNameAndCPR(String firstName, String lastName, String cpr) {
-        holder.setCustomer(new Customer(null, firstName, lastName, cpr));
+        accountHelper.createCustomer();
     }
 
-    @Given("the customer is registered with DTU Pay using their bank account")
-    public void theCustomerIsRegisteredWithDTUPayUsingTheirBankAccount() {
-        String accountId = holder.getAccounts().get(holder.getCustomer().cpr());
-        Customer customer = customerAPI.register(holder.getCustomer(), accountId);
-        holder.setCustomerId(customer.id());
-        holder.getCustomers().put(holder.getCustomer().firstName(), customer.id());
+    @Given("a registered customer with {int} kr and {int} token\\(s)")
+    public void aRegisteredCustomerWithKrAndTokens(Integer balance, Integer amountTokens) throws BankServiceException_Exception {
+        Customer customer = accountHelper.createCustomer();
+        String accountId = bankHelper.createBankAccount(customer, balance);
+        customer = accountHelper.registerCustomerWithDTUPay(customer, accountId);
+        tokenHelper.requestTokens(customer, amountTokens);
     }
 
-    @Given("a merchant with name {string}, last name {string}, and CPR {string}")
-    public void aMerchantWithNameLastNameAndCPR(String firstName, String lastName, String cpr) {
-        holder.setMerchant(new Merchant(null, firstName, lastName, cpr));
+    @Given("a registered customer with {int} token\\(s)")
+    public void aRegisteredCustomerWithTokenS(Integer amountTokens) throws BankServiceException_Exception {
+        Customer customer = accountHelper.createCustomer();
+        String accountId = bankHelper.createBankAccount(customer, 10000000);
+        customer = accountHelper.registerCustomerWithDTUPay(customer, accountId);
+        tokenHelper.requestTokens(customer, amountTokens);
     }
+    //#endregion
 
-    @Given("the merchant is registered with DTU Pay using their bank account")
-    public void theMerchantIsRegisteredWithDTUPayUsingTheirBankAccount() {
-        String accountId = holder.getAccounts().get(holder.getMerchant().cpr());
-        Merchant merchant = merchantAPI.register(holder.getMerchant(), accountId);
-        holder.setMerchantId(merchant.id());
-        holder.getMerchants().put(holder.getMerchant().firstName(), merchant.id());
+    //#region Merchant steps
+    @Given("a registered merchant with {int} kr")
+    public void aRegisteredMerchantWithKr(Integer amount) throws BankServiceException_Exception {
+        Merchant merchant = accountHelper.createMerchant();
+        String accountId = bankHelper.createBankAccount(merchant, amount);
+        accountHelper.registerMerchantWithDTUPay(merchant, accountId);
     }
-
+    //#endregion
 }

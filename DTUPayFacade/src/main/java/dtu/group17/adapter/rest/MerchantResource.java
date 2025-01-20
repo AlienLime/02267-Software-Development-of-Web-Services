@@ -9,6 +9,7 @@ import jakarta.ws.rs.Produces;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeoutException;
 
 @Path("/merchants")
@@ -40,7 +41,11 @@ public class MerchantResource {
 	@Path("/payment")
 	@Consumes("application/json")
 	@Produces("application/json")
-	public boolean submitPayment(Payment payment) {
-		return transactionManagerFacade.submitPayment(payment);
+	public boolean submitPayment(Payment payment) throws Throwable {
+		try {
+			return transactionManagerFacade.submitPayment(payment);
+		} catch (CompletionException e) {
+			throw e.getCause();
+		}
 	}
 }

@@ -5,7 +5,7 @@
     <option name="VM_PARAMETERS" value="-ea -Djava.util.logging.manager=org.jboss.logmanager.LogManager" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="dtu.group17.*" />
+        <option name="PATTERN" value="dtu.group17.helpers.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class AccountManagerFacade {
@@ -39,7 +40,7 @@ public class AccountManagerFacade {
         Event event = new Event("CustomerRegistrationRequested", Map.of("id", id, "customer", customer, "bankAccountId", bankAccountId));
         queue.publish(event);
         LOG.info("Sent CustomerRegistrationRequested event");
-        return future.join();
+        return future.orTimeout(3, TimeUnit.SECONDS).join();
     }
 
     public void handleCustomerRegistered(Event e) {
@@ -55,7 +56,7 @@ public class AccountManagerFacade {
         Event event = new Event("MerchantRegistrationRequested", Map.of("id", id, "merchant", merchant, "bankAccountId", bankAccountId));
         queue.publish(event);
         LOG.info("Sent MerchantRegistrationRequested event");
-        return future.join();
+        return future.orTimeout(3, TimeUnit.SECONDS).join();
     }
 
     public void handleMerchantRegistered(Event e) {

@@ -1,7 +1,11 @@
-package dtu.group17;
+package dtu.group17.helpers;
 
-public class ErrorMessageHolder {
+public class ErrorMessageHelper {
     private String errorMessage;
+
+    public void clear() {
+        errorMessage = null;
+    }
 
     public String getErrorMessage() {
         return errorMessage;

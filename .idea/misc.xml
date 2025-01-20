@@ -5,7 +5,6 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/DTUPayClient/pom.xml" />
-        <option value="$PROJECT_DIR$/SimpleDTUPayServer/pom.xml" />
         <option value="$PROJECT_DIR$/AccountManager/pom.xml" />
         <option value="$PROJECT_DIR$/DTUPayFacade/pom.xml" />
         <option value="$PROJECT_DIR$/ReportingManager/pom.xml" />
