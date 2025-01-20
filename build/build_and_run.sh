@@ -26,8 +26,6 @@ docker compose up -d
 docker image prune -f
 docker system prune -f
 
-docker exec dtu-pay-rabbitmq rabbitmqctl await_startup
-
 # Test
 pushd ../DTUPayClient
 mvn test
