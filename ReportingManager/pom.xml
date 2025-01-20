@@ -106,6 +106,11 @@
             <artifactId>jboss-logging</artifactId>
             <version>3.6.1.Final</version>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.logmanager</groupId>
+            <artifactId>jboss-logmanager</artifactId>
+            <version>3.1.1.Final</version>
+        </dependency>
         <!-- Messaging Utilities -->
         <dependency>
             <groupId>dtu.group17</groupId>

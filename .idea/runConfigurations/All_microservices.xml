@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="All microservices" type="CompoundRunConfigurationType">
+    <toRun name="AccountManager" type="Application" />
+    <toRun name="ReportingManager" type="Application" />
+    <toRun name="TokenManager" type="Application" />
+    <toRun name="TransactionManager" type="Application" />
+    <toRun name="DTUPayFacade" type="QuarkusRunConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>
