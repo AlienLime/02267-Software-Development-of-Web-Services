@@ -9,8 +9,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public class TransactionManager {
-    private static final Logger LOG = Logger.getLogger(TransactionManager.class);
+public class PaymentManager {
+    private static final Logger LOG = Logger.getLogger(PaymentManager.class);
     //TODO: ERROR: The LogManager accessed before the "java.util.logging.manager" system property was set to "org.jboss.logmanager.LogManager". Results may be unexpected.
     MessageQueue queue = new RabbitMQQueue();
     BankService bankService = new BankServiceService().getBankServicePort();
@@ -20,10 +20,10 @@ public class TransactionManager {
     private Map<UUID, CompletableFuture<String>> merchantAccountIdRequests = new HashMap<>();
 
     public static void main(String[] args) {
-        new TransactionManager();
+        new PaymentManager();
     }
 
-    public TransactionManager() {
+    public PaymentManager() {
         LOG.info("Starting Payment Manager...");
         queue.subscribe("PaymentRequested", this::onPaymentRequested);
         queue.subscribe("CustomerIdFromTokenAnswer", this::onCustomerIdFromTokenAnswer);

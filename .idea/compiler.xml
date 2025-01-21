@@ -6,7 +6,7 @@
       <directory url="file://$PROJECT_DIR$/DTUPayFacade/src/main/resources/archetype-resources" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/ReportingManager/src/main/resources/archetype-resources" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/TokenManager/src/main/resources/archetype-resources" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/TransactionManager/src/main/resources/archetype-resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/PaymentManager/src/main/resources/archetype-resources" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/MessagingUtilities/src/main/resources/archetype-resources" includeSubdirectories="true" />
     </excludeFromCompile>
     <annotationProcessing>
@@ -17,7 +17,7 @@
         <module name="DTUPayFacade" />
         <module name="MessagingUtilities" />
         <module name="DTUPayClient" />
-        <module name="TransactionManager" />
+        <module name="PaymentManager" />
         <module name="AccountManager" />
         <module name="TokenManager" />
         <module name="ReportingManager" />
@@ -35,7 +35,7 @@
       <module name="ReportingManager" options="" />
       <module name="SimpleDTUPayServer" options="-parameters" />
       <module name="TokenManager" options="" />
-      <module name="TransactionManager" options="" />
+      <module name="PaymentManager" options="" />
     </option>
   </component>
 </project>

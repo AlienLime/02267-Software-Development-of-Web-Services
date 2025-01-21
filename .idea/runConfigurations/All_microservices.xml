@@ -3,7 +3,7 @@
     <toRun name="AccountManager" type="Application" />
     <toRun name="ReportingManager" type="Application" />
     <toRun name="TokenManager" type="Application" />
-    <toRun name="TransactionManager" type="Application" />
+    <toRun name="PaymentManager" type="Application" />
     <toRun name="DTUPayFacade" type="QuarkusRunConfigurationType" />
     <method v="2" />
   </configuration>

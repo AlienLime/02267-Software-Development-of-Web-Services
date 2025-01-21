@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="TransactionManager" type="Application" factoryName="Application" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="dtu.group17.TransactionManager" />
-    <module name="TransactionManager" />
+  <configuration default="false" name="PaymentManager" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="dtu.group17.PaymentManager" />
+    <module name="PaymentManager" />
     <option name="VM_PARAMETERS" value="-ea -Djava.util.logging.manager=org.jboss.logmanager.LogManager" />
     <extension name="coverage">
       <pattern>

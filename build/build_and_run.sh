@@ -9,7 +9,7 @@ mvn clean install -f ../MessagingUtilities/pom.xml
 services=(
     "AccountManager" 
     "TokenManager" 
-    "TransactionManager"
+    "PaymentManager"
     "ReportingManager"
     "DTUPayFacade"
 )
