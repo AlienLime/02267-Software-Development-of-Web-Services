@@ -10,15 +10,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
-public class TransactionManagerFacade {
-    private static final Logger LOG = Logger.getLogger(TransactionManagerFacade.class);
+public class PaymentManagerFacade {
+    private static final Logger LOG = Logger.getLogger(PaymentManagerFacade.class);
 
     private MessageQueue queue;
     private Map<UUID, CompletableFuture<Void>> submitPaymentRequests = new HashMap<>();
 
     Runnable unsubscribePaymentCompleted, unsubscribePaymentMerchantNotFoundError, unsubscribePaymentBankError, unsubscribePaymentTokenNotFoundError;
 
-    public TransactionManagerFacade() throws IOException {
+    public PaymentManagerFacade() {
         queue = new RabbitMQQueue();
         unsubscribePaymentCompleted = queue.subscribe("PaymentCompleted", this::handleCompleted);
         unsubscribePaymentMerchantNotFoundError = queue.subscribe("PaymentMerchantNotFoundError", this::handlePaymentMerchantNotFoundError);

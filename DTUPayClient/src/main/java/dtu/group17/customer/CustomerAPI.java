@@ -9,6 +9,7 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import dtu.group17.Token;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class CustomerAPI {
+
     private static final String BASE_URL = "http://localhost:8080";
     private Client client = ClientBuilder.newClient();
     private WebTarget target = client.target(BASE_URL);
@@ -34,26 +36,25 @@ public class CustomerAPI {
     public Customer register(Customer customer, String accountId) {
         try {
             RegisterCustomerBody body = new RegisterCustomerBody(customer, accountId);
-            Response response = target.path("customers").request().post(Entity.json(body));
-            return response.readEntity(Customer.class);
+            try (Response response = target.path("customers").request().post(Entity.json(body))) {
+                return response.readEntity(Customer.class);
+            }
         } catch (Exception exception) {
             throw new Error(exception);
         }
     }
 
-    public boolean deregister(UUID id) {
-        try {
-            Response response = target.path("customers").path(id.toString()).request().delete();
-            return response.getStatus() == Response.Status.OK.getStatusCode();
-        } catch (Exception exception) {
-            throw new Error(exception);
-        }
-    }
+//    public boolean deregister(UUID id) {
+//        try {
+//            Response response = target.path("customers").path(id.toString()).request().delete();
+//            return response.getStatus() == Response.Status.OK.getStatusCode();
+//        } catch (Exception exception) {
+//            throw new Error(exception);
+//        }
+//    }
 
-    public record RequestTokensBody(UUID customerId, int amount) {}
     public List<Token> requestTokens(UUID id, int amount) throws Exception {
-        RequestTokensBody body = new RequestTokensBody(id, amount);
-        Response response = target.path("customers").path("tokens").request().post(Entity.json(body));
+        Response response = target.path("customers").path(id.toString()).path("tokens").queryParam("amount", amount).request().post(null);
 
         if (response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode()) {
             throw new Exception(response.readEntity(String.class));
@@ -61,4 +62,10 @@ public class CustomerAPI {
 
         return response.readEntity(new GenericType<>() {});
     }
+
+    public List<CustomerReportEntry> requestCustomerReport(UUID id) {
+        Response response = target.path("customers").path(id.toString()).path("report").request().get();
+        return response.readEntity(new GenericType<>() {});
+    }
+
 }

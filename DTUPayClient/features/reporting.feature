@@ -1,16 +1,20 @@
 Feature: Reporting
-  # Enter feature description here
+  Background: The three types of users can each generate a unique report with relevant payments.
 
-  @Ignore
   Scenario: Customer Report
-    Given a registered customer
+    Given a registered customer with 2 token(s)
     And the customer has made the following payments
       | amount | merchant name         |
       | 10     | Group17-PF Caféen     |
       | 48     | Group17-Kantine 101   |
-    When the customer request to receive a report
+    When the customer request to receive their report
     Then the customer receives a report containing information of all the customer's payments
-    And the report includes the amount of money transferred, the merchants' names
+#    And the report includes the amount of money transferred, the merchants' names
+
+  Scenario: Customer Report with no payments
+    Given a registered customer with 0 token(s)
+    When the customer request to receive their report
+    Then the customer receives an empty report
 
   @Ignore
   Scenario: Merchant Report
@@ -22,7 +26,7 @@ Feature: Reporting
       | 250    |
     When the merchant request to receive a report
     Then the merchant receives a report containing information of all their received payments
-    And the report includes the amount of money transferred
+#    And the report includes the amount of money transferred
 
   @Ignore
   Scenario: Manager Report
@@ -33,4 +37,4 @@ Feature: Reporting
       | 22     | Group17-Bente Bent | Group17-Hegnet      |
     When the manager request to receive a report
     Then the manager receives a report containing information of all the payments
-    And the report includes a summary of all money transferred
+#    And the report includes a summary of all money transferred

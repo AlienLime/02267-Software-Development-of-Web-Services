@@ -1,51 +1,47 @@
 package dtu.group17.adapter.rest;
 
-import dtu.group17.*;
+import dtu.group17.MerchantReportEntry;
+import dtu.group17.Payment;
+import dtu.group17.PaymentManagerFacade;
+import dtu.group17.ReportingManagerFacade;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.TimeoutException;
 
-@Path("/merchants")
+@Path("/merchants/{id}")
 public class MerchantResource {
 
-	@Inject
-	TransactionManagerFacade transactionManagerFacade;
-	@Inject
-	AccountManagerFacade accountManagerFacade;
-
-    public MerchantResource() throws IOException, TimeoutException {
-    }
-
-	public record RegisterMerchantBody(Merchant merchant, String accountId) {}
+    @Inject
+    PaymentManagerFacade paymentManagerFacade;
+    @Inject
+    ReportingManagerFacade reportingManagerFacade;
 
     @POST
-	@Consumes("application/json")
-	@Produces("application/json")
-	public Merchant registerMerchant(RegisterMerchantBody body) {
-		return accountManagerFacade.registerMerchant(body.merchant(), body.accountId());
-	}
+    @Path("/payment") //TODO: should be merchant based?
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public boolean submitPayment(Payment payment) throws Throwable {
+        try {
+            return paymentManagerFacade.submitPayment(payment);
+        } catch (CompletionException e) {
+            throw e.getCause();
+        }
+    }
 
-//	@DELETE
-//	public void deregisterMerchant(@PathParam("id") String id) {
-//		return accountManagerFacade.deregisterMerchant(id);
-//	}
+    @GET
+    @Path("/report")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<MerchantReportEntry> getMerchantReport(@PathParam("id") UUID id) {
+        return reportingManagerFacade.getMerchantReport(id);
+    }
 
-	@POST
-	@Path("/payment")
-	@Consumes("application/json")
-	@Produces("application/json")
-	public boolean submitPayment(Payment payment) throws Throwable {
-		try {
-			return transactionManagerFacade.submitPayment(payment);
-		} catch (CompletionException e) {
-			throw e.getCause();
-		}
-	}
+    //	@DELETE
+    //	public void deregisterMerchant(@PathParam("id") String id) {
+    //		return accountManagerFacade.deregisterMerchant(id);
+    //	}
+
 }

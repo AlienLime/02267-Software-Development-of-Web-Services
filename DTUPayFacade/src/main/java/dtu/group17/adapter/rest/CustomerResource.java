@@ -1,54 +1,47 @@
 package dtu.group17.adapter.rest;
 
-import dtu.group17.AccountManagerFacade;
-import dtu.group17.Customer;
+import dtu.group17.CustomerReportEntry;
+import dtu.group17.ReportingManagerFacade;
 import dtu.group17.Token;
 import dtu.group17.TokenManagerFacade;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
-import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.TimeoutException;
-import java.util.List;
 
-@Path("/customers")
+@Path("/customers/{id}")
 public class CustomerResource {
 
-	@Inject
-	AccountManagerFacade accountManagerFacade;
-	@Inject
-	TokenManagerFacade tokenManagerFacade;
+//    @Inject
+//    AccountManagerFacade accountManagerFacade;
+    @Inject
+    TokenManagerFacade tokenManagerFacade;
+    @Inject
+    ReportingManagerFacade reportingManagerFacade;
 
-    public CustomerResource() throws IOException, TimeoutException {
+    @GET
+    @Path("/report")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<CustomerReportEntry> getCustomerReport(@PathParam("id") UUID id) {
+        return reportingManagerFacade.getCustomerReport(id);
     }
 
-	public record RegisterCustomerBody(Customer customer, String accountId) {}
-
     @POST
-	@Consumes("application/json")
-	@Produces("application/json")
-	public Customer registerCustomer(RegisterCustomerBody body) {
-		return accountManagerFacade.registerCustomer(body.customer(), body.accountId());
-	}
+    @Path("/tokens")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Token> requestTokens(@PathParam("id") UUID id, @QueryParam("amount") int amount) throws Throwable {
+        try {
+            return tokenManagerFacade.requestTokens(id, amount);
+        } catch (CompletionException e) {
+            throw e.getCause();
+        }
+    }
 
-//	@DELETE
-//	public void deregisterCustomer(@PathParam("id") String id) {
-//		return accountManagerFacade.deregisterCustomer(id);
-//	}
-
-	public record RequestTokensBody(UUID customerId, int amount) {}
-
-	@POST
-	@Path("/tokens")
-	@Consumes("application/json")
-	@Produces("application/json")
-	public List<Token> requestTokens(RequestTokensBody body) throws Throwable {
-		try {
-			return tokenManagerFacade.requestTokens(body.customerId(), body.amount());
-		} catch (CompletionException e) {
-			throw e.getCause();
-		}
-	}
+//    @DELETE
+//    public void deregisterCustomer(@PathParam("id") UUID id) {
+//        return accountManagerFacade.deregisterCustomer(id);
+//    }
 }

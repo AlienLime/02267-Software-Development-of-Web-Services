@@ -24,7 +24,7 @@ public class TransactionManager {
     }
 
     public TransactionManager() {
-        LOG.info("Starting Transaction Manager...");
+        LOG.info("Starting Payment Manager...");
         queue.subscribe("PaymentRequested", this::onPaymentRequested);
         queue.subscribe("CustomerIdFromTokenAnswer", this::onCustomerIdFromTokenAnswer);
         queue.subscribe("AccountIdFromCustomerIdAnswer", this::onCustomerAccountIdFromCustomerIdAnswer);
@@ -98,7 +98,10 @@ public class TransactionManager {
             return;
         }
 
-        Event event = new Event("PaymentCompleted", Map.of("id", e.getArgument("id", UUID.class)));
+        Event event = new Event("PaymentCompleted", Map.of(
+                "id", e.getArgument("id", UUID.class),
+                "payment", payment,
+                "customerId", customerId));
         queue.publish(event);
         LOG.info("Sent PaymentCompleted event");
     }

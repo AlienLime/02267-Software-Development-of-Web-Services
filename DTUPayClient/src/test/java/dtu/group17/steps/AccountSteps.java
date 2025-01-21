@@ -26,10 +26,12 @@ public class AccountSteps {
     }
 
     //#region Customer steps
-    @Given("a customer with name {string}, last name {string}, and CPR {string}")
-    public void aCustomerWithNameLastNameAndCPR(String firstName, String lastName, String cpr) {
-        accountHelper.createCustomer();
-    }
+//    @Given("a registered customer")
+//    public void aRegisteredCustomer() throws BankServiceException_Exception {
+//        Customer customer = accountHelper.createCustomer();
+//        String accountId = bankHelper.createBankAccount(customer, 10000000);
+//        accountHelper.registerCustomerWithDTUPay(customer, accountId);
+//    }
 
     @Given("a registered customer with {int} kr and {int} token\\(s)")
     public void aRegisteredCustomerWithKrAndTokens(Integer balance, Integer amountTokens) throws Exception {
@@ -53,13 +55,6 @@ public class AccountSteps {
         String accountId = UUID.randomUUID().toString();
         customer = accountHelper.registerCustomerWithDTUPay(customer, accountId);
         tokenHelper.requestTokens(customer, 5);
-    }
-
-    @When("a customer is registered")
-    public void aCustomerIsRegistered() throws BankServiceException_Exception {
-        Customer customer = accountHelper.createCustomer();
-        String accountId = bankHelper.createBankAccount(customer, 10000000);
-        accountHelper.registerCustomerWithDTUPay(customer, accountId);
     }
     //#endregion
 

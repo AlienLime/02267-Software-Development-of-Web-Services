@@ -10,6 +10,7 @@ public class TokenHelper {
     CustomerAPI customerAPI;
 
     private Map<UUID, List<Token>> tokens = new HashMap<>(); // id -> list of tokens
+    private Map<Token, UUID> consumedTokens = new HashMap<>(); // token -> customer id
     private Token presentedToken;
 
     public TokenHelper(CustomerAPI customerAPI) {
@@ -18,6 +19,7 @@ public class TokenHelper {
 
     public void clear() {
         tokens.clear();
+        consumedTokens.clear();
         presentedToken = null;
     }
 
@@ -39,5 +41,9 @@ public class TokenHelper {
 
     public List<Token> getCustomersTokens(Customer customer) {
         return tokens.get(customer.id());
+    }
+
+    public UUID getCustomerFromConsumedToken(Token token) {
+        return consumedTokens.get(token);
     }
 }

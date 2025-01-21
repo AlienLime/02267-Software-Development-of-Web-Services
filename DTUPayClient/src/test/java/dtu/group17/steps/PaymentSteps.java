@@ -1,13 +1,15 @@
 package dtu.group17.steps;
 
-import dtu.group17.helpers.ErrorMessageHelper;
-import dtu.group17.helpers.AccountHelper;
-import dtu.group17.helpers.TokenHelper;
-import dtu.group17.helpers.PaymentHelper;
+import dtu.group17.Token;
+import dtu.group17.customer.Customer;
+import dtu.group17.helpers.*;
 import dtu.group17.merchant.Merchant;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,12 +19,33 @@ public class PaymentSteps {
     private AccountHelper accountHelper;
     private PaymentHelper paymentHelper;
     private TokenHelper tokenHelper;
+    private BankHelper bankHelper;
 
-    public PaymentSteps(ErrorMessageHelper errorMessageHolder, AccountHelper accountHelper, PaymentHelper paymentHelper, TokenHelper tokenHelper) {
+    public PaymentSteps(ErrorMessageHelper errorMessageHolder, AccountHelper accountHelper, PaymentHelper paymentHelper, TokenHelper tokenHelper, BankHelper bankHelper) {
         this.errorMessageHelper = errorMessageHolder;
         this.accountHelper = accountHelper;
         this.paymentHelper = paymentHelper;
         this.tokenHelper = tokenHelper;
+        this.bankHelper = bankHelper;
+    }
+
+    @Given("the customer has made the following payments")
+    public void theCustomerHasMadeTheFollowingPayments(io.cucumber.datatable.DataTable paymentDataTable) throws Exception {
+        List<Map<String, String>> rows = paymentDataTable.asMaps(String.class, String.class);
+        Customer customer = accountHelper.getCurrentCustomer();
+
+        for (Map<String, String> columns : rows) {
+            String[] name = columns.get("merchant name").trim().split(" ");
+            Merchant merchant = accountHelper.createMerchant(name[0], name[1]);
+            int amount = Integer.parseInt(columns.get("amount"));
+
+            String accountId = bankHelper.createBankAccount(merchant, 0);
+            merchant = accountHelper.registerMerchantWithDTUPay(merchant, accountId);
+            paymentHelper.createPayment(amount, merchant);
+            Token token = tokenHelper.consumeFirstToken(customer);
+            paymentHelper.addToken(token);
+            paymentHelper.submitPayment(customer.id());
+        }
     }
 
     @When("the merchant creates a payment for {int} kr")
@@ -31,9 +54,10 @@ public class PaymentSteps {
     }
 
     @When("the merchant submits the payment")
-    public void theMerchantSubmitsTheTransaction() {
+    public void theMerchantSubmitsThePayment() {
         try {
-            paymentHelper.submitTransaction();
+            UUID customerId = tokenHelper.getCustomerFromConsumedToken(tokenHelper.getPresentedToken());
+            paymentHelper.submitPayment(customerId);
         } catch (Exception e) {
             errorMessageHelper.setErrorMessage(e.getMessage());
         }
@@ -45,7 +69,8 @@ public class PaymentSteps {
         tokenHelper.consumeFirstToken(accountHelper.getCurrentCustomer());
         paymentHelper.addToken(tokenHelper.getPresentedToken());
         try {
-            paymentHelper.submitTransaction();
+            UUID customerId = tokenHelper.getCustomerFromConsumedToken(tokenHelper.getPresentedToken());
+            paymentHelper.submitPayment(customerId);
         } catch (Exception e) {
             errorMessageHelper.setErrorMessage(e.getMessage());
         }
@@ -71,4 +96,5 @@ public class PaymentSteps {
     public void thePaymentIsUnsuccessful() {
         assertNotNull(errorMessageHelper.getErrorMessage());
     }
+
 }

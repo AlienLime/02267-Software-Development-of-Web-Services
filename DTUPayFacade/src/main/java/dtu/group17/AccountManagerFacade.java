@@ -40,7 +40,8 @@ public class AccountManagerFacade {
         Event event = new Event("CustomerRegistrationRequested", Map.of("id", id, "customer", customer, "bankAccountId", bankAccountId));
         queue.publish(event);
         LOG.info("Sent CustomerRegistrationRequested event");
-        return future.orTimeout(3, TimeUnit.SECONDS).join();
+//        return future.orTimeout(3, TimeUnit.SECONDS).join();
+        return future.join();
     }
 
     public void handleCustomerRegistered(Event e) {
