@@ -29,7 +29,7 @@ Feature: Full Payment
     And the balance of the merchant at the bank is 1000 kr
 
   Scenario: Customer with bad account id
-    Given a customer not registered with the bank
+    Given a customer who is not registered with the bank
     And a registered merchant with 1000 kr
     When a payment of 10 kr between the customer and merchant is submitted
     Then the payment is unsuccessful
@@ -37,7 +37,7 @@ Feature: Full Payment
 
   Scenario: Merchant with bad account id
     Given a registered customer with 1 token(s)
-    And a merchant not registered with the bank
+    And a merchant who is not registered with the bank
     When a payment of 10 kr between the customer and merchant is submitted
     Then the payment is unsuccessful
     And the error message is "Creditor account does not exist"

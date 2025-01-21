@@ -47,9 +47,4 @@ public class ReportSteps {
         assertEquals(0, receivedReport.size());
     }
 
-//    @Then("the report includes the amount of money transferred, the merchants' names")
-//    public void theReportIncludesTheAmountOfMoneyTransferredTheMerchantsNames() {
-//        throw new io.cucumber.java.PendingException();
-//    }
-
 }

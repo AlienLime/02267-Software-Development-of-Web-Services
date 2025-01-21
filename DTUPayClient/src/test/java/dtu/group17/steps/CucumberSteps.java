@@ -41,7 +41,6 @@ public class CucumberSteps {
     public void after() throws BankServiceException_Exception {
         bankHelper.retireAccounts();
         accountHelper.deregisterUsers();
-        //        paymentHelper.clearPayments();
     }
 
     @Then("the error message is {string}")

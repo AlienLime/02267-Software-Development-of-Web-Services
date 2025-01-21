@@ -8,7 +8,6 @@ import dtu.group17.helpers.TokenHelper;
 import dtu.group17.merchant.Merchant;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
 
 import java.util.UUID;
 
@@ -26,12 +25,12 @@ public class AccountSteps {
     }
 
     //#region Customer steps
-//    @Given("a registered customer")
-//    public void aRegisteredCustomer() throws BankServiceException_Exception {
-//        Customer customer = accountHelper.createCustomer();
-//        String accountId = bankHelper.createBankAccount(customer, 10000000);
-//        accountHelper.registerCustomerWithDTUPay(customer, accountId);
-//    }
+    @Given("a registered customer")
+    public void aRegisteredCustomer() throws BankServiceException_Exception {
+        Customer customer = accountHelper.createCustomer();
+        String accountId = bankHelper.createBankAccount(customer, 10000000);
+        accountHelper.registerCustomerWithDTUPay(customer, accountId);
+    }
 
     @Given("a registered customer with {int} kr and {int} token\\(s)")
     public void aRegisteredCustomerWithKrAndTokens(Integer balance, Integer amountTokens) throws Exception {
@@ -49,8 +48,8 @@ public class AccountSteps {
         if (amountTokens != 0) tokenHelper.requestTokens(customer, amountTokens);
     }
 
-    @Given("a customer not registered with the bank")
-    public void aCustomerNotRegisteredWithTheBank() throws Exception {
+    @Given("a customer who is not registered with the bank")
+    public void aCustomerWhoIsNotRegisteredWithTheBank() throws Exception {
         Customer customer = accountHelper.createCustomer();
         String accountId = UUID.randomUUID().toString();
         customer = accountHelper.registerCustomerWithDTUPay(customer, accountId);
@@ -59,6 +58,13 @@ public class AccountSteps {
     //#endregion
 
     //#region Merchant steps
+    @Given("a registered merchant")
+    public void aRegisteredMerchant() throws BankServiceException_Exception {
+        Merchant merchant = accountHelper.createMerchant();
+        String accountId = bankHelper.createBankAccount(merchant, 100000);
+        accountHelper.registerMerchantWithDTUPay(merchant, accountId);
+    }
+
     @Given("a registered merchant with {int} kr")
     public void aRegisteredMerchantWithKr(Integer amount) throws BankServiceException_Exception {
         Merchant merchant = accountHelper.createMerchant();
@@ -66,17 +72,10 @@ public class AccountSteps {
         accountHelper.registerMerchantWithDTUPay(merchant, accountId);
     }
 
-    @Given("a merchant not registered with the bank")
-    public void aMerchantNotRegisteredWithTheBank() {
+    @Given("a merchant who is not registered with the bank")
+    public void aMerchantWhoIsNotRegisteredWithTheBank() {
         Merchant merchant = accountHelper.createMerchant();
         String accountId = UUID.randomUUID().toString();
-        accountHelper.registerMerchantWithDTUPay(merchant, accountId);
-    }
-
-    @Given("a registered merchant")
-    public void aRegisteredMerchant() throws BankServiceException_Exception {
-        Merchant merchant = accountHelper.createMerchant();
-        String accountId = bankHelper.createBankAccount(merchant, 100000);
         accountHelper.registerMerchantWithDTUPay(merchant, accountId);
     }
     //#endregion
