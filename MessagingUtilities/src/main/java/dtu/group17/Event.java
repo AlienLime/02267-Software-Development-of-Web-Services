@@ -43,6 +43,7 @@ public class Event implements Serializable {
         return gson.fromJson(jsonString, typeToken);
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

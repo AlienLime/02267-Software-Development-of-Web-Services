@@ -14,10 +14,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="PaymentManager" />
         <module name="DTUPayFacade" />
         <module name="MessagingUtilities" />
         <module name="DTUPayClient" />
-        <module name="PaymentManager" />
         <module name="AccountManager" />
         <module name="TokenManager" />
         <module name="ReportingManager" />
@@ -26,16 +26,17 @@
     <bytecodeTargetLevel>
       <module name="SimpleDTUPayClient" target="21" />
       <module name="SimpleDTUPayServer" target="21" />
+      <module name="TransactionManager" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="AccountManager" options="" />
       <module name="DTUPayFacade" options="-parameters" />
+      <module name="PaymentManager" options="" />
       <module name="ReportingManager" options="" />
       <module name="SimpleDTUPayServer" options="-parameters" />
       <module name="TokenManager" options="" />
-      <module name="PaymentManager" options="" />
     </option>
   </component>
 </project>

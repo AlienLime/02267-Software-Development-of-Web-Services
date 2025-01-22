@@ -4,7 +4,6 @@
     <groupId>dtu.group17</groupId>
     <artifactId>MessagingUtilities</artifactId>
     <version>3.4.2</version>
-    <name>hubert-message-utilities</name>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -31,7 +30,7 @@
         <dependency>
             <groupId>com.rabbitmq</groupId>
             <artifactId>amqp-client</artifactId>
-            <version>5.10.0</version>
+            <version>5.24.0</version>
         </dependency>
         <!-- Fix sl4j logging and logmanager error -->
         <dependency>

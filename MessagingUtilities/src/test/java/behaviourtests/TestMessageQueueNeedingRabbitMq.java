@@ -32,13 +32,13 @@ public class TestMessageQueueNeedingRabbitMq extends TestUtilities {
 	@Test
 	public void testDeserializationOfLists() throws InterruptedException, ExecutionException {
 		var q = new RabbitMQQueue();
-		bodyTestDeserialisationOfLists(q);
+		bodyTestDeserializationOfLists(q);
 	}
 
 	@Test
 	public void testGsonDeserializationWithRecordsRabbitMq() throws InterruptedException, ExecutionException {
 		var q = new RabbitMQQueue();
-		bodyTestDeserialisationGsonRecords(q);
+		bodyTestDeserializationGsonRecords(q);
 	}
 
 }

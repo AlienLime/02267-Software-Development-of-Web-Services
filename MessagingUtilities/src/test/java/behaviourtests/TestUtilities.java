@@ -22,17 +22,17 @@ public class TestUtilities {
 		}
 	}
 
-	protected void bodyTestDeserialisationGsonRecords(MessageQueue q) throws InterruptedException, ExecutionException {
+	protected void bodyTestDeserializationGsonRecords(MessageQueue q) throws InterruptedException, ExecutionException {
 		CompletableFuture<Person> actual = new CompletableFuture<Person>();
-		q.subscribe("list", e -> {
+		q.subscribe("person", e -> {
 			actual.complete(e.getArgument("0", Person.class));
 		});
 		Person expected = new Person("some name", 321);
-		q.publish(new Event("list", Map.of("0", expected)));
+		q.publish(new Event("person", Map.of("0", expected)));
 		assertEquals(expected, actual.orTimeout(1, TimeUnit.SECONDS).get());
 	}
 
-	protected void bodyTestDeserialisationOfLists(MessageQueue q) throws InterruptedException, ExecutionException {
+	protected void bodyTestDeserializationOfLists(MessageQueue q) throws InterruptedException, ExecutionException {
 		CompletableFuture<List<String>> actual = new CompletableFuture<List<String>>();
 		q.subscribe("list", e -> {
 			actual.complete(e.getArgument("0", new TypeToken<List<String>>(){}));
