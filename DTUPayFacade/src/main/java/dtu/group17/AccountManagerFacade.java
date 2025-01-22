@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import static dtu.group17.HandlerUtil.completedHandler;
+
 @Singleton
 public class AccountManagerFacade {
     private MessageQueue queue;
@@ -29,10 +31,10 @@ public class AccountManagerFacade {
         unsubscribeMerchantRegistered = queue.subscribe("MerchantRegistered", this::confirmMerchantRegistration);
 
         unsubscribeCustomerDeregistered = queue.subscribe("CustomerDeregistered", e ->
-                confirmDeregistration(deregisteredCustomers, e)
+                completedHandler(deregisteredCustomers, e)
         );
         unsubscribeMerchantDeregistered = queue.subscribe("MerchantDeregistered", e ->
-                confirmDeregistration(deregisteredMerchants, e)
+                completedHandler(deregisteredMerchants, e)
         );
     }
 
@@ -92,11 +94,6 @@ public class AccountManagerFacade {
         Merchant merchant = e.getArgument("merchant", Merchant.class);
         UUID eventId = e.getArgument("id", UUID.class);
         registeredMerchants.remove(eventId).complete(merchant);
-    }
-
-    public void confirmDeregistration(Map<UUID, CompletableFuture<Void>> deregistered, Event e) {
-        UUID eventId = e.getArgument("id", UUID.class);
-        deregistered.remove(eventId).complete(null);
     }
 
 }

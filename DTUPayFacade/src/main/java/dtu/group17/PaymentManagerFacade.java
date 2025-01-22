@@ -7,34 +7,36 @@ import dtu.group17.records.Payment;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static dtu.group17.HandlerUtil.onErrorHandler;
+import static dtu.group17.HandlerUtil.completedHandler;
+import static dtu.group17.HandlerUtil.errorHandler;
 
 @Singleton
 public class PaymentManagerFacade {
     private MessageQueue queue;
 
-    private Map<UUID, CompletableFuture<Void>> submitPaymentRequests = new HashMap<>();
+    private Map<UUID, CompletableFuture<Void>> submitPaymentRequests = new ConcurrentHashMap<>();
 
     private Runnable unsubscribePaymentCompleted, unsubscribePaymentMerchantNotFoundError,
             unsubscribePaymentBankError, unsubscribePaymentTokenNotFoundError; //TODO: Rename events to past tense (also methods?)
 
     public PaymentManagerFacade() {
         queue = new RabbitMQQueue();
-        unsubscribePaymentCompleted = queue.subscribe("PaymentCompleted", this::handleCompleted);
+        unsubscribePaymentCompleted = queue.subscribe("PaymentCompleted", e ->
+                completedHandler(submitPaymentRequests, e)
+        );
         unsubscribePaymentMerchantNotFoundError = queue.subscribe("RetrieveMerchantBankAccountFailed", e ->
-                onErrorHandler(submitPaymentRequests, MerchantNotFoundException::new, e)
+                errorHandler(submitPaymentRequests, MerchantNotFoundException::new, e)
         );
         unsubscribePaymentBankError = queue.subscribe("PaymentFailed", e ->
-                onErrorHandler(submitPaymentRequests, TokenNotFoundException::new, e)
+                errorHandler(submitPaymentRequests, TokenNotFoundException::new, e)
         );
         unsubscribePaymentTokenNotFoundError = queue.subscribe("TokenValidationFailed", e ->
-                onErrorHandler(submitPaymentRequests, BankException::new, e)
+                errorHandler(submitPaymentRequests, BankException::new, e)
         );
     }
 
@@ -58,11 +60,6 @@ public class PaymentManagerFacade {
         queue.publish(event);
         future.join();
         return true;
-    }
-
-    public void handleCompleted(Event e) {
-        UUID eventId = e.getArgument("id", UUID.class);
-        submitPaymentRequests.remove(eventId).complete(null);
     }
 
 }

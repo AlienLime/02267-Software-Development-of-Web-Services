@@ -5,7 +5,10 @@ import dtu.ws.fastmoney.BankServiceService;
 import org.jboss.logging.Logger;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -15,7 +18,7 @@ public class PaymentManager {
     MessageQueue queue = new RabbitMQQueue();
     BankService bankService = new BankServiceService().getBankServicePort();
 
-    private ConcurrentHashMap<UUID, PaymentData> paymentDatas = new ConcurrentHashMap<>();
+    private Map<UUID, PaymentData> paymentDatas = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
         new PaymentManager();
@@ -121,7 +124,9 @@ public class PaymentManager {
         eventData.put("merchantId", data.getMerchantId().get());
         eventData.put("customerAccountId", data.getCustomerAccountId().get());
         eventData.put("merchantAccountId", data.getMerchantAccountId().get());
+
         Event event = new Event("PaymentCompleted", eventData);
         queue.publish(event);
     }
+
 }

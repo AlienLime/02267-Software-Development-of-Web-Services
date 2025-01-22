@@ -106,15 +106,16 @@ public class AccountManager {
         UUID merchantId = e.getArgument("merchantId", UUID.class);
         UUID eventId = e.getArgument("id", UUID.class);
 
-        if (merchantRepository.getMerchantById(merchantId) == null) {
+        Merchant merchant = merchantRepository.getMerchantById(merchantId);
+        if (merchant == null) {
             String errorMessage = "Merchant with id '" + merchantId + "' does not exist";
             LOG.error(errorMessage);
             Event event = new Event("RetrieveMerchantBankAccountFailed", Map.of("id", eventId, "merchantId", merchantId, "message", errorMessage));
             queue.publish(event);
             return;
         }
-        String accountId = merchantRepository.getMerchantById(merchantId).accountId();
 
+        String accountId = merchant.accountId();
         Event event = new Event("MerchantBankAccountRetrieved", Map.of("id", eventId, "accountId", accountId));
         queue.publish(event);
     }

@@ -7,13 +7,13 @@
 
 package dtu.group17;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryRepository implements CustomerRepository, MerchantRepository {
-    Map<UUID, Customer> customers = new HashMap<>(); // DTUPay ID -> Customer
-    Map<UUID, Merchant> merchants = new HashMap<>(); // DTUPay ID -> Merchant
+    private Map<UUID, Customer> customers = new ConcurrentHashMap<>(); // DTUPay ID -> Customer
+    private Map<UUID, Merchant> merchants = new ConcurrentHashMap<>(); // DTUPay ID -> Merchant
 
     @Override
     public Customer addCustomer(Customer customer) {

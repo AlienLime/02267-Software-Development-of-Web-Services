@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import static dtu.group17.HandlerUtil.completedHandler;
+
 @Singleton
 public class Clear {
     private MessageQueue queue;
@@ -20,9 +22,15 @@ public class Clear {
 
     public Clear() {
         queue = new RabbitMQQueue();
-        unsubscribeClearAccounts = queue.subscribe("AccountsCleared", this::handleAccountsCleared);
-        unsubscribeClearReports = queue.subscribe("ReportsCleared", this::handleReportsCleared);
-        unsubscribeClearTokens = queue.subscribe("TokensCleared", this::handleTokensCleared);
+        unsubscribeClearAccounts = queue.subscribe("AccountsCleared", e ->
+                completedHandler(clearAccounts, e)
+        );
+        unsubscribeClearReports = queue.subscribe("ReportsCleared", e ->
+                completedHandler(clearReports, e)
+        );
+        unsubscribeClearTokens = queue.subscribe("TokensCleared", e ->
+                completedHandler(clearTokens, e)
+        );
     }
 
     @PreDestroy // For testing, on hot reload we remove the previous subscription
@@ -52,18 +60,4 @@ public class Clear {
         return true;
     }
 
-    public void handleAccountsCleared(Event e) {
-        UUID eventId = e.getArgument("id", UUID.class);
-        clearAccounts.remove(eventId).complete(null);
-    }
-
-    public void handleReportsCleared(Event e) {
-        UUID eventId = e.getArgument("id", UUID.class);
-        clearReports.remove(eventId).complete(null);
-    }
-
-    public void handleTokensCleared(Event e) {
-        UUID eventId = e.getArgument("id", UUID.class);
-        clearTokens.remove(eventId).complete(null);
-    }
 }

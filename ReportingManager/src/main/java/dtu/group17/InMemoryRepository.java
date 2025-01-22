@@ -1,12 +1,13 @@
 package dtu.group17;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryRepository implements ReportRepository {
 
-    private Map<UUID, List<Token>> customerTokens = new HashMap<>();
-    private Map<UUID, List<Token>> merchantTokens = new HashMap<>();
-    private Map<Token, PaymentInfo> tokenPaymentInfo = new HashMap<>();
+    private Map<UUID, List<Token>> customerTokens = new ConcurrentHashMap<>();
+    private Map<UUID, List<Token>> merchantTokens = new ConcurrentHashMap<>();
+    private Map<Token, PaymentInfo> tokenPaymentInfo = new ConcurrentHashMap<>();
 
     @Override
     public void savePayment(UUID customerId, UUID merchantId, int amount, Token token) {

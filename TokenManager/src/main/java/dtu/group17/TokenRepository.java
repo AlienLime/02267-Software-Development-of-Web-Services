@@ -2,6 +2,7 @@ package dtu.group17;
 
 import java.util.UUID;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public interface TokenRepository {
 

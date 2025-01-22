@@ -12,16 +12,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static dtu.group17.HandlerUtil.onErrorHandler;
+import static dtu.group17.HandlerUtil.completedHandler;
+import static dtu.group17.HandlerUtil.errorHandler;
 
 @Singleton
 public class TokenManagerFacade {
     private MessageQueue queue;
 
     private Map<UUID, CompletableFuture<List<Token>>> tokenRequests = new HashMap<>();
-    private Map<UUID, CompletableFuture<Void>> consumeTokenRequests = new HashMap<>();
+    private Map<UUID, CompletableFuture<Void>> consumeTokenRequests = new ConcurrentHashMap<>();
 
     private Runnable unsubscribeTokensGenerated, unsubscribeRequestTokensFailed,
             unsubscribeTokenConsumed, unsubscribeTokenConsumptionFailed;
@@ -30,11 +31,13 @@ public class TokenManagerFacade {
         queue = new RabbitMQQueue();    
         unsubscribeTokensGenerated = queue.subscribe("TokensGenerated", this::handleTokensRegistered);
         unsubscribeRequestTokensFailed = queue.subscribe("RequestTokensFailed", e ->
-                onErrorHandler(tokenRequests, InvalidTokenRequestException::new, e)
+                errorHandler(tokenRequests, InvalidTokenRequestException::new, e)
         );
-        unsubscribeTokenConsumed = queue.subscribe("TokenConsumed", this::handleTokenConsumed);
+        unsubscribeTokenConsumed = queue.subscribe("TokenConsumed", e ->
+                completedHandler(consumeTokenRequests, e)
+        );
         unsubscribeTokenConsumptionFailed = queue.subscribe("TokenConsumptionFailed", e ->
-                onErrorHandler(consumeTokenRequests, TokenNotFoundException::new, e)
+                errorHandler(consumeTokenRequests, TokenNotFoundException::new, e)
         );
     }
 
@@ -69,11 +72,6 @@ public class TokenManagerFacade {
         UUID eventId = e.getArgument("id", UUID.class);
         List<Token> tokens = e.getArgument("tokens", new TypeToken<>() {});
         tokenRequests.remove(eventId).complete(tokens);
-    }
-
-    public void handleTokenConsumed(Event e) {
-        UUID eventId = e.getArgument("id", UUID.class);
-        consumeTokenRequests.remove(eventId).complete(null);
     }
 
 }
