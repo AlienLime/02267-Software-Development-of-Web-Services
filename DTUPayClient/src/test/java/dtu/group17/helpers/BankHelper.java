@@ -50,6 +50,14 @@ public class BankHelper {
         return merchantAPI.getBalance(accountId);
     }
 
+    public String getAccountId(Customer customer) {
+        return accounts.get(customer.cpr());
+    }
+
+    public String getAccountId(Merchant merchant) {
+        return accounts.get(merchant.cpr());
+    }
+
     public void retireAccounts() throws BankServiceException_Exception {
         for (String accountId : accounts.values()) {
             bankService.retireAccount(accountId);

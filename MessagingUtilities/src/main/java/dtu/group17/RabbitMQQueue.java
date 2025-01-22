@@ -8,6 +8,7 @@ import com.rabbitmq.client.DeliverCallback;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 public class RabbitMQQueue implements MessageQueue {
@@ -35,13 +36,14 @@ public class RabbitMQQueue implements MessageQueue {
             Channel channel = connection.createChannel();
             channel.exchangeDeclare(EXCHANGE_NAME, EXCHANGE_TYPE);
             return channel;
-        } catch (Exception e) {
+        } catch (IOException | TimeoutException e) {
             throw new Error(e);
         }
     }
 
     @Override
     public void publish(Event event) {
+        System.out.format("[x] publish(%s)\n", event);
         String message = new Gson().toJson(event);
         try {
             channel.basicPublish(EXCHANGE_NAME, event.getTopic(), null, message.getBytes(StandardCharsets.UTF_8));
@@ -52,14 +54,16 @@ public class RabbitMQQueue implements MessageQueue {
 
     @Override
     public Runnable subscribe(String topic, Consumer<Event> handler) {
+        System.out.format("[x] subscribe(%s)\n", topic);
+        Channel channel = createChannel();
         try {
-            Channel channel = createChannel();
             String queueName = channel.queueDeclare().getQueue();
             channel.queueBind(queueName, EXCHANGE_NAME, topic);
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
                 Event event = new Gson().fromJson(message, Event.class);
+                System.out.format("[x] executingHandler(%s)\n", event);
                 handler.accept(event);
             };
 
@@ -69,7 +73,7 @@ public class RabbitMQQueue implements MessageQueue {
                 try {
                     channel.queueUnbind(queueName, EXCHANGE_NAME, topic);
                     channel.close();
-                } catch (Exception e) {
+                } catch (IOException | TimeoutException e) {
                     throw new Error(e);
                 }
             };

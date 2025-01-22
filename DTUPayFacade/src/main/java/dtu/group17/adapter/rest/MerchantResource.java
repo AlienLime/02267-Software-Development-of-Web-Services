@@ -1,9 +1,6 @@
 package dtu.group17.adapter.rest;
 
-import dtu.group17.MerchantReportEntry;
-import dtu.group17.Payment;
-import dtu.group17.PaymentManagerFacade;
-import dtu.group17.ReportingManagerFacade;
+import dtu.group17.*;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -16,12 +13,14 @@ import java.util.concurrent.CompletionException;
 public class MerchantResource {
 
     @Inject
+    AccountManagerFacade accountManagerFacade;
+    @Inject
     PaymentManagerFacade paymentManagerFacade;
     @Inject
     ReportingManagerFacade reportingManagerFacade;
 
     @POST
-    @Path("/payment") //TODO: should be merchant based?
+    @Path("/payment")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public boolean submitPayment(Payment payment) throws Throwable {
@@ -39,9 +38,9 @@ public class MerchantResource {
         return reportingManagerFacade.getMerchantReport(id);
     }
 
-    //	@DELETE
-    //	public void deregisterMerchant(@PathParam("id") String id) {
-    //		return accountManagerFacade.deregisterMerchant(id);
-    //	}
+    @DELETE
+    public boolean deregisterMerchant(@PathParam("id") UUID id) {
+        return accountManagerFacade.deregisterMerchant(id);
+    }
 
 }

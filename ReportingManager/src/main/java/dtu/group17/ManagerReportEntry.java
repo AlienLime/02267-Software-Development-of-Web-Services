@@ -2,4 +2,4 @@ package dtu.group17;
 
 import java.util.UUID;
 
-public record ManagerReportEntry(UUID merchantId, int amount, UUID customerId, Token token) {}
+public record ManagerReportEntry(int amount, UUID merchantId, UUID customerId, Token token) {}

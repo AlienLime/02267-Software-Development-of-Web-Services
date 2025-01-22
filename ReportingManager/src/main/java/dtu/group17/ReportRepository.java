@@ -12,4 +12,5 @@ public interface ReportRepository {
     List<MerchantReportEntry> getMerchantReport(UUID merchantID);
 
     List<ManagerReportEntry> getManagerReport();
+
 }

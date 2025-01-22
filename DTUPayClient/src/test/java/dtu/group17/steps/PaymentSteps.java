@@ -63,13 +63,6 @@ public class PaymentSteps {
         }
     }
 
-    // TODO: This covers
-    /*
-    *   When the merchant creates a payment for 10 kr
-    *   And the customer presents a valid token to the merchant
-    *   And the merchant receives the token
-    *   And the merchant submits the payment
-    * */
     @When("a payment of {int} kr between the customer and merchant is submitted")
     public void aPaymentOfKrBetweenTheCustomerAndMerchantIsSubmitted(Integer amount) {
         paymentHelper.createPayment(amount, accountHelper.getCurrentMerchant());

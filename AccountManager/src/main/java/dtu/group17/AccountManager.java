@@ -26,53 +26,78 @@ public class AccountManager {
 
         queue.subscribe("CustomerRegistrationRequested", this::onCustomerRegistrationRequested);
         queue.subscribe("MerchantRegistrationRequested", this::onMerchantRegistrationRequested);
+
         queue.subscribe("AccountIdFromCustomerIdRequest", this::onAccountIdFromCustomerIdRequest);
         queue.subscribe("AccountIdFromMerchantIdRequest", this::onAccountIdFromMerchantIdRequest);
+
+        queue.subscribe("CustomerDeregistrationRequested", this::onCustomerDeregistrationRequested);
+        queue.subscribe("MerchantDeregistrationRequested", this::onMerchantDeregistrationRequested);
     }
 
     public void onCustomerRegistrationRequested(Event e) {
-        LOG.info("Received CustomerRegistrationRequested event");
-        Customer customer = accountFactory.createCustomerWithID(e.getArgument("customer", Customer.class), e.getArgument("bankAccountId", String.class));
+        Customer namedCustomer = e.getArgument("customer", Customer.class);
+        String accountId = e.getArgument("bankAccountId", String.class);
+        Customer customer = accountFactory.createCustomerWithID(namedCustomer, accountId);
         customerRepository.addCustomer(customer);
-        Event event = new Event("CustomerRegistered", Map.of("id", e.getArgument("id", UUID.class), "customer", customer));
+
+        UUID eventId = e.getArgument("id", UUID.class);
+        Event event = new Event("CustomerRegistered", Map.of("id", eventId, "customer", customer));
         queue.publish(event);
-        LOG.info("Sent CustomerRegistered event");
     }
     
     public void onMerchantRegistrationRequested(Event e) {
-        LOG.info("Received MerchantRegistrationRequested event");
-        Merchant merchant = accountFactory.createMerchantWithID(e.getArgument("merchant", Merchant.class), e.getArgument("bankAccountId", String.class));
+        Merchant namedMerchant = e.getArgument("merchant", Merchant.class);
+        String accountId = e.getArgument("bankAccountId", String.class);
+        Merchant merchant = accountFactory.createMerchantWithID(namedMerchant, accountId);
         merchantRepository.addMerchant(merchant);
-        Event event = new Event("MerchantRegistered", Map.of("id", e.getArgument("id", UUID.class), "merchant", merchant));
+
+        UUID eventId = e.getArgument("id", UUID.class);
+        Event event = new Event("MerchantRegistered", Map.of("id", eventId, "merchant", merchant));
         queue.publish(event);
-        LOG.info("Sent MerchantRegistered event");
     }
 
     public void onAccountIdFromCustomerIdRequest(Event e) {
-        LOG.info("Received AccountIdFromCustomerIdRequest event");
         UUID customerId = e.getArgument("customerId", UUID.class);
         String accountId = customerRepository.getCustomerById(customerId).accountId();
-        Event event = new Event("AccountIdFromCustomerIdAnswer", Map.of("id", e.getArgument("id", UUID.class), "accountId", accountId));
+
+        UUID eventId = e.getArgument("id", UUID.class);
+        Event event = new Event("AccountIdFromCustomerIdAnswer", Map.of("id", eventId, "accountId", accountId));
         queue.publish(event);
-        LOG.info("Sent AccountIdFromCustomerIdAnswer event");
     }
 
     public void onAccountIdFromMerchantIdRequest(Event e) {
-        LOG.info("Received AccountIdFromMerchantIdRequest event");
         UUID merchantId = e.getArgument("merchantId", UUID.class);
+        UUID eventId = e.getArgument("id", UUID.class);
 
         if (merchantRepository.getMerchantById(merchantId) == null) {
             String errorMessage = "Merchant with id '" + merchantId + "' does not exist";
             LOG.error(errorMessage);
-            Event event = new Event("AccountIdFromMerchantIdError", Map.of("id", e.getArgument("id", UUID.class), "message", errorMessage));
+            Event event = new Event("AccountIdFromMerchantIdError", Map.of("id", eventId, "message", errorMessage));
             queue.publish(event);
-            LOG.info("Sent AccountIdFromMerchantIdError event");
             return;
         }
         String accountId = merchantRepository.getMerchantById(merchantId).accountId();
 
-        Event event = new Event("AccountIdFromMerchantIdAnswer", Map.of("id", e.getArgument("id", UUID.class), "accountId", accountId));
+        Event event = new Event("AccountIdFromMerchantIdAnswer", Map.of("id", eventId, "accountId", accountId));
         queue.publish(event);
-        LOG.info("Sent AccountIdFromMerchantIdAnswer event");
     }
+
+    public void onCustomerDeregistrationRequested(Event e) {
+        UUID customerId = e.getArgument("customerId", UUID.class);
+        customerRepository.removeCustomer(customerId);
+
+        UUID eventId = e.getArgument("id", UUID.class);
+        Event event = new Event("CustomerDeregistered", Map.of("id", eventId));
+        queue.publish(event);
+    }
+
+    public void onMerchantDeregistrationRequested(Event e) {
+        UUID merchantId = e.getArgument("merchantId", UUID.class);
+        merchantRepository.removeMerchant(merchantId);
+
+        UUID eventId = e.getArgument("id", UUID.class);
+        Event event = new Event("MerchantDeregistered", Map.of("id", eventId));
+        queue.publish(event);
+    }
+
 }

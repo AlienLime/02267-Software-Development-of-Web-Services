@@ -29,4 +29,15 @@ public class InMemoryRepository implements CustomerRepository, MerchantRepositor
     public Merchant getMerchantById(UUID id) {
         return merchants.get(id);
     }
+
+    @Override
+    public void removeCustomer(UUID id) {
+        customers.remove(id);
+    }
+
+    @Override
+    public void removeMerchant(UUID id) {
+        merchants.remove(id);
+    }
+
 }

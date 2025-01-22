@@ -25,7 +25,7 @@ public class InMemoryRepository implements ReportRepository {
 
         return tokens.stream().map(token -> {
             PaymentInfo info = tokenPaymentInfo.get(token);
-            return new CustomerReportEntry(info.merchantId(), info.amount(), token);
+            return new CustomerReportEntry(info.amount(), info.merchantId(), token);
         }).toList();
     }
 
@@ -48,7 +48,7 @@ public class InMemoryRepository implements ReportRepository {
         return customerTokens.entrySet().stream().flatMap(entry ->
             entry.getValue().stream().map(token -> {
                 PaymentInfo info = tokenPaymentInfo.get(token);
-                return new ManagerReportEntry(info.merchantId(), info.amount(), entry.getKey(), token);
+                return new ManagerReportEntry(info.amount(), info.merchantId(), entry.getKey(), token);
             })
         ).toList();
     }

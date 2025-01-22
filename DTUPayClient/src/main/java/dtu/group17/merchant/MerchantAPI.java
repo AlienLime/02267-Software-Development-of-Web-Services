@@ -43,14 +43,14 @@ public class MerchantAPI {
         }
     }
 
-//    public boolean deregister(UUID id) { //TODO: implement
-//        try {
-//            Response response = target.path("merchants").path(id.toString()).request().delete();
-//            return response.getStatus() == Response.Status.OK.getStatusCode();
-//        } catch (Exception exception) {
-//            return false;
-//        }
-//    }
+    public boolean deregister(UUID id) {
+        try {
+            Response response = target.path("merchants").path(id.toString()).request().delete();
+            return response.getStatus() == Response.Status.OK.getStatusCode();
+        } catch (Exception exception) {
+            return false;
+        }
+    }
 
     public boolean submitPayment(Payment payment) throws Exception {
         Response response = target.path("merchants").path(payment.merchantId().toString()).path("payment").request().post(Entity.json(payment));

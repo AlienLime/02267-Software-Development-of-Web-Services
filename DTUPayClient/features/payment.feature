@@ -1,4 +1,4 @@
-Feature: Full Payment
+Feature: Payment
   Scenario: Successful Payment
     Given a registered customer with 1000 kr and 5 token(s)
     And a registered merchant with 1000 kr

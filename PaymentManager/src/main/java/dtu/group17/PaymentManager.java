@@ -9,9 +9,11 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import static dtu.group17.HandlerUtil.onErrorHandler;
+
 public class PaymentManager {
     private static final Logger LOG = Logger.getLogger(PaymentManager.class);
-    //TODO: ERROR: The LogManager accessed before the "java.util.logging.manager" system property was set to "org.jboss.logmanager.LogManager". Results may be unexpected.
+
     MessageQueue queue = new RabbitMQQueue();
     BankService bankService = new BankServiceService().getBankServicePort();
 
@@ -25,16 +27,27 @@ public class PaymentManager {
 
     public PaymentManager() {
         LOG.info("Starting Payment Manager...");
+
         queue.subscribe("PaymentRequested", this::onPaymentRequested);
+
         queue.subscribe("CustomerIdFromTokenAnswer", this::onCustomerIdFromTokenAnswer);
-        queue.subscribe("AccountIdFromCustomerIdAnswer", this::onCustomerAccountIdFromCustomerIdAnswer);
-        queue.subscribe("AccountIdFromMerchantIdAnswer", this::onMerchantAccountIdFromMerchantIdAnswer);
-        queue.subscribe("AccountIdFromMerchantIdError", this::onMerchantAccountIdFromMerchantIdError);
-        queue.subscribe("CustomerIdFromTokenError", this::onCustomerIdFromTokenError);
+
+        queue.subscribe("AccountIdFromCustomerIdAnswer", e ->
+                onAccountIdFromUserIdAnswer(customerAccountIdRequests, e)
+        );
+        queue.subscribe("AccountIdFromMerchantIdAnswer", e ->
+                onAccountIdFromUserIdAnswer(merchantAccountIdRequests, e)
+        );
+
+        queue.subscribe("AccountIdFromMerchantIdError", e ->
+                onErrorHandler(merchantAccountIdRequests, Exception::new, e)
+        );
+        queue.subscribe("CustomerIdFromTokenError", e ->
+                onErrorHandler(customerIdRequests, Exception::new, e)
+        );
     }
 
     public void onPaymentRequested(Event e) {
-        LOG.info("Received PaymentRequested event");
         Payment payment = e.getArgument("payment", Payment.class);
 
         // Retrieve customer id from token manager
@@ -45,13 +58,11 @@ public class PaymentManager {
         customerIdRequests.put(customerIdCorrelationId, customerIdRequest);
         Event customerIdRequestEvent = new Event("CustomerIdFromTokenRequest", Map.of("id", customerIdCorrelationId, "token", payment.token()));
         queue.publish(customerIdRequestEvent);
-        LOG.info("Sent CustomerIdFromTokenRequest event");
         UUID customerId = customerIdRequest.orTimeout(3, TimeUnit.SECONDS).exceptionally(ex -> {
             String errorMessage = ex.getMessage();
             LOG.error(errorMessage);
             Event event = new Event("PaymentTokenNotFoundError", Map.of("id", e.getArgument("id", UUID.class), "message", errorMessage));
             queue.publish(event);
-            LOG.info("Sent PaymentTokenNotFoundError event");
             return null;
         }).join();
         if (customerId == null) {
@@ -64,22 +75,19 @@ public class PaymentManager {
         customerAccountIdRequests.put(customerAccountIdCorrelationId, customerAccountIdRequest);
         Event customerAccountIdRequestEvent = new Event("AccountIdFromCustomerIdRequest", Map.of("id", customerAccountIdCorrelationId, "customerId", customerId));
         queue.publish(customerAccountIdRequestEvent);
-        LOG.info("Sent AccountIdFromCustomerIdRequest event");
 
         CompletableFuture<String> merchantAccountIdRequest = new CompletableFuture<>();
         UUID merchantAccountIdCorrelationId = UUID.randomUUID();
         merchantAccountIdRequests.put(merchantAccountIdCorrelationId, merchantAccountIdRequest);
         Event merchantAccountIdRequestEvent = new Event("AccountIdFromMerchantIdRequest", Map.of("id", merchantAccountIdCorrelationId, "merchantId", payment.merchantId()));
         queue.publish(merchantAccountIdRequestEvent);
-        LOG.info("Sent AccountIdFromMerchantIdRequest event");
-        
+
         String customerAccountId = customerAccountIdRequest.orTimeout(3, TimeUnit.SECONDS).join();
         String merchantAccountId = merchantAccountIdRequest.orTimeout(3, TimeUnit.SECONDS).exceptionally(ex -> {
             String errorMessage = ex.getMessage();
             LOG.error(errorMessage);
             Event event = new Event("PaymentMerchantNotFoundError", Map.of("id", e.getArgument("id", UUID.class), "message", errorMessage));
             queue.publish(event);
-            LOG.info("Sent PaymentMerchantNotFoundError event");
             return null;
         }).join();
         if (merchantAccountId == null) {
@@ -94,7 +102,6 @@ public class PaymentManager {
             LOG.error(errorMessage);
             Event event = new Event("PaymentBankError", Map.of("id", e.getArgument("id", UUID.class), "message", errorMessage));
             queue.publish(event);
-            LOG.info("Sent PaymentBankError event");
             return;
         }
 
@@ -103,31 +110,18 @@ public class PaymentManager {
                 "payment", payment,
                 "customerId", customerId));
         queue.publish(event);
-        LOG.info("Sent PaymentCompleted event");
     }
 
     public void onCustomerIdFromTokenAnswer(Event e) {
-        LOG.info("Received CustomerIdFromTokenAnswer event");
-        customerIdRequests.remove(e.getArgument("id", UUID.class)).complete(e.getArgument("customerId", UUID.class));
+        UUID eventId = e.getArgument("id", UUID.class);
+        UUID customerId = e.getArgument("customerId", UUID.class);
+        customerIdRequests.remove(eventId).complete(customerId);
     }
 
-    public void onCustomerAccountIdFromCustomerIdAnswer(Event e) {
-        LOG.info("Received AccountIdFromCustomerIdAnswer event");
-        customerAccountIdRequests.remove(e.getArgument("id", UUID.class)).complete(e.getArgument("accountId", String.class));
+    public void onAccountIdFromUserIdAnswer(Map<UUID, CompletableFuture<String>> accountIdRequests, Event e) {
+        UUID eventId = e.getArgument("id", UUID.class);
+        String accountId = e.getArgument("accountId", String.class);
+        accountIdRequests.remove(eventId).complete(accountId);
     }
 
-    public void onMerchantAccountIdFromMerchantIdAnswer(Event e) {
-        LOG.info("Received AccountIdFromMerchantIdAnswer event");
-        merchantAccountIdRequests.remove(e.getArgument("id", UUID.class)).complete(e.getArgument("accountId", String.class));
-    }
-
-    public void onMerchantAccountIdFromMerchantIdError(Event e) {
-        LOG.info("Received AccountIdFromMerchantIdError event");
-        merchantAccountIdRequests.remove(e.getArgument("id", UUID.class)).completeExceptionally(new Exception(e.getArgument("message", String.class)));
-    }
-
-    public void onCustomerIdFromTokenError(Event e) {
-        LOG.info("Received CustomerIdFromTokenError event");
-        customerIdRequests.remove(e.getArgument("id", UUID.class)).completeExceptionally(new Exception(e.getArgument("message", String.class)));
-    }
 }

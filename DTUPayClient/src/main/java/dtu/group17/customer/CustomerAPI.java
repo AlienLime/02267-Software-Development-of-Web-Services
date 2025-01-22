@@ -44,14 +44,14 @@ public class CustomerAPI {
         }
     }
 
-//    public boolean deregister(UUID id) {
-//        try {
-//            Response response = target.path("customers").path(id.toString()).request().delete();
-//            return response.getStatus() == Response.Status.OK.getStatusCode();
-//        } catch (Exception exception) {
-//            throw new Error(exception);
-//        }
-//    }
+    public boolean deregister(UUID id) {
+        try {
+            Response response = target.path("customers").path(id.toString()).request().delete();
+            return response.getStatus() == Response.Status.OK.getStatusCode();
+        } catch (Exception exception) {
+            throw new Error(exception);
+        }
+    }
 
     public List<Token> requestTokens(UUID id, int amount) throws Exception {
         Response response = target.path("customers").path(id.toString()).path("tokens").queryParam("amount", amount).request().post(null);

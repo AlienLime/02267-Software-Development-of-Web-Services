@@ -3,30 +3,29 @@ package dtu.group17;
 import com.google.gson.reflect.TypeToken;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
-import org.jboss.logging.Logger;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class TokenManagerFacade {
-    private static final Logger LOG = Logger.getLogger(TokenManagerFacade.class);
-
     private MessageQueue queue;
+
     private Map<UUID, CompletableFuture<List<Token>>> tokenRequests = new HashMap<>();
 
     private Runnable unsubscribeTokensGenerated, unsubscribeTokensRequestedError;
 
-    public TokenManagerFacade() throws IOException {
+    public TokenManagerFacade() {
         queue = new RabbitMQQueue();
         unsubscribeTokensGenerated = queue.subscribe("TokensGenerated", this::handleTokensRegistered);
         unsubscribeTokensRequestedError = queue.subscribe("TokensRequestedError", this::handleTokensRequestedError);
     }
 
-    @PreDestroy // For testing, on hot reload we remove previous subscription
+    @PreDestroy // For testing, on hot reload we the remove previous subscription
     public void cleanup() {
         unsubscribeTokensGenerated.run();
         unsubscribeTokensRequestedError.run();
@@ -38,18 +37,19 @@ public class TokenManagerFacade {
         tokenRequests.put(id, future);
         Event event = new Event("TokensRequested", Map.of("id", id, "customerId", customerId, "amount", amount));
         queue.publish(event);
-        LOG.info("Sent TokensRequested event");
         return future.orTimeout(3, TimeUnit.SECONDS).join();
     }
 
     public void handleTokensRegistered(Event e) {
-        LOG.info("Received TokensGenerated event");
+        UUID eventId = e.getArgument("id", UUID.class);
         List<Token> tokens = e.getArgument("tokens", new TypeToken<>() {});
-        tokenRequests.remove(e.getArgument("id", UUID.class)).complete(tokens);
+        tokenRequests.remove(eventId).complete(tokens);
     }
 
     public void handleTokensRequestedError(Event e) {
-        LOG.info("Received TokensRequestedError event");
-        tokenRequests.remove(e.getArgument("id", UUID.class)).completeExceptionally(new InvalidTokenRequestException(e.getArgument("message", String.class)));
+        UUID eventId = e.getArgument("id", UUID.class);
+        String message = e.getArgument("message", String.class);
+        tokenRequests.remove(eventId).completeExceptionally(new InvalidTokenRequestException(message));
     }
+
 }

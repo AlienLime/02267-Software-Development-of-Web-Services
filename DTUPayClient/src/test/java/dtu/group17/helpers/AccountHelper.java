@@ -48,8 +48,18 @@ public class AccountHelper {
         return currentCustomer;
     }
 
+    public void deregisterCustomerWithDTUPay(Customer customer) {
+        customerAPI.deregister(customer.id());
+        customers.removeIf(c -> c.cpr().equals(customer.cpr()));
+        currentCustomer = null;
+    }
+
     public Customer getCurrentCustomer() {
         return currentCustomer;
+    }
+
+    public void setCurrentCustomer(Customer customer) {
+        currentCustomer = customer;
     }
 
     public Merchant createMerchant(String firstName, String lastName) {
@@ -69,16 +79,35 @@ public class AccountHelper {
         return currentMerchant;
     }
 
+    public void deregisterMerchantWithDTUPay(Merchant merchant) {
+        merchantAPI.deregister(merchant.id());
+        merchants.removeIf(m -> m.cpr().equals(merchant.cpr()));
+        currentMerchant = null;
+    }
+
     public Merchant getCurrentMerchant() {
         return currentMerchant;
     }
 
+    public void setCurrentMerchant(Merchant merchant) {
+        currentMerchant = merchant;
+    }
+
     public void deregisterUsers() {
-//        if (currentCustomer != null) customerAPI.deregister(currentCustomer.id());
-//        if (currentMerchant != null) merchantAPI.deregister(currentMerchant.id());
+        if (currentCustomer != null) customerAPI.deregister(currentCustomer.id());
+        if (currentMerchant != null) merchantAPI.deregister(currentMerchant.id());
     }
 
     public Customer getCustomerById(UUID id) {
         return customers.stream().filter(c -> c.id().equals(id)).findFirst().get();
     }
+
+    public List<Customer> getCustomers() {
+        return customers;
+    }
+
+    public List<Merchant> getMerchants() {
+        return merchants;
+    }
+
 }

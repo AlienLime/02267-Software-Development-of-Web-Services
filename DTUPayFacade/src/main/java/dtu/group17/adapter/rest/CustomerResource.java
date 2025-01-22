@@ -1,9 +1,6 @@
 package dtu.group17.adapter.rest;
 
-import dtu.group17.CustomerReportEntry;
-import dtu.group17.ReportingManagerFacade;
-import dtu.group17.Token;
-import dtu.group17.TokenManagerFacade;
+import dtu.group17.*;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -15,8 +12,8 @@ import java.util.concurrent.CompletionException;
 @Path("/customers/{id}")
 public class CustomerResource {
 
-//    @Inject
-//    AccountManagerFacade accountManagerFacade;
+    @Inject
+    AccountManagerFacade accountManagerFacade;
     @Inject
     TokenManagerFacade tokenManagerFacade;
     @Inject
@@ -40,8 +37,9 @@ public class CustomerResource {
         }
     }
 
-//    @DELETE
-//    public void deregisterCustomer(@PathParam("id") UUID id) {
-//        return accountManagerFacade.deregisterCustomer(id);
-//    }
+    @DELETE
+    public boolean deregisterCustomer(@PathParam("id") UUID id) {
+        return accountManagerFacade.deregisterCustomer(id);
+    }
+
 }
