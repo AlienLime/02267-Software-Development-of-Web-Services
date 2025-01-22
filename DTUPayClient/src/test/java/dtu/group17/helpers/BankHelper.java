@@ -1,3 +1,9 @@
+/**
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * Helper class for interacting with the bank service.
+ */
+
 package dtu.group17.helpers;
 
 import dtu.group17.customer.Customer;
@@ -22,23 +28,49 @@ public class BankHelper {
         accounts.clear();
     }
 
+    /**
+     * Create a bank account for a customer with a given balance.
+     * @param customer The customer for whom the account should be created.
+     * @param balance The initial balance of the account.
+     * @throws BankServiceException_Exception
+     * @author Katja
+     */
     public String createBankAccount(Customer customer, int balance) throws BankServiceException_Exception {
         String accountId = bankService.createAccountWithBalance(customer.toUser(), BigDecimal.valueOf(balance));
         accounts.put(customer.cpr(), accountId);
         return accountId;
     }
 
+    /**
+     * Create a bank account for a merchant with a given balance.
+     * @param merchant The merchant for whom the account should be created.
+     * @param balance The initial balance of the account.
+     * @throws BankServiceException_Exception
+     * @author Katja
+     */
     public String createBankAccount(Merchant merchant, int balance) throws BankServiceException_Exception {
         String accountId = bankService.createAccountWithBalance(merchant.toUser(), BigDecimal.valueOf(balance));
         accounts.put(merchant.cpr(), accountId);
         return accountId;
     }
 
+    /**
+     * Get the bank account of a customer.
+     * @param customer The customer for whom the account should be retrieved.
+     * @throws BankServiceException_Exception
+     * @author Katja
+     */
     public Account getAccount(Customer customer) throws BankServiceException_Exception {
         String accountId = accounts.get(customer.cpr());
         return bankService.getAccount(accountId);
     }
 
+    /**
+     * Get the bank account of a merchant.
+     * @param merchant The merchant for whom the account should be retrieved.
+     * @throws BankServiceException_Exception
+     * @author Katja
+     */
     public Account getAccount(Merchant merchant) throws BankServiceException_Exception {
         String accountId = accounts.get(merchant.cpr());
         return bankService.getAccount(accountId);

@@ -1,3 +1,9 @@
+/**
+ * Description:
+ * Represents an error message.
+ * @Author Katja
+ */
+
 package dtu.group17.helpers;
 
 public class ErrorMessageHelper {

@@ -2,7 +2,7 @@
  * Author: Katja Kaj (s123456)
  * Description:
  * CustomerAPI provides an interface for interacting with customer-related functionalities (including banking services and REST APIs).
- * It connector between the backend service and the application logic to enable managing customer accounts, tokens, and reports.
+ * It connects between the backend service and the application logic to enable managing customer accounts, tokens, and reports.
  */
 
 package dtu.group17.customer;

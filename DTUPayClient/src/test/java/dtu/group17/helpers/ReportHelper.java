@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * Helper class for requesting reports.
+ * Contains methods for requesting customer, merchant and manager reports.
+ */
+
 package dtu.group17.helpers;
 
 import dtu.group17.customer.Customer;

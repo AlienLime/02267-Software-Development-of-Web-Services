@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * Helper class for managing tokens.
+ * Allows for requesting tokens, consuming tokens and keeping track of which tokens have been consumed.
+ */
+
 package dtu.group17.helpers;
 
 import dtu.group17.Token;
@@ -23,6 +30,13 @@ public class TokenHelper {
         presentedToken = null;
     }
 
+    /**
+     * Request a number of tokens for a customer.
+     * @param customer The customer for whom the tokens should be requested.
+     * @param amount The number of tokens to request.
+     * @throws Exception
+     * @author Katja
+     */
     public List<Token> requestTokens(Customer customer, int amount) throws Exception {
         List<Token> newTokens = customerAPI.requestTokens(customer.id(), amount);
 
@@ -30,6 +44,12 @@ public class TokenHelper {
         return tokens.get(customer.id());
     }
 
+    /**
+     * Consumes the first token of a customer.
+     * @param customer The customer for whom the token should be consumed.
+     * @throws Exception
+     * @author Katja
+     * */
     public Token consumeFirstToken(Customer customer) throws Exception {
         presentedToken = tokens.get(customer.id()).removeFirst();
         consumedTokens.put(presentedToken, customer.id());
