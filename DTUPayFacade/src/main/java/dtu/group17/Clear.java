@@ -41,7 +41,7 @@ public class Clear {
     }
 
     public boolean clearEverything() {
-        UUID id = UUID.randomUUID();
+        UUID id = CorrelationId.randomCorrelationId();
         CompletableFuture<Void> accountFuture = new CompletableFuture<>();
         CompletableFuture<Void> reportFuture = new CompletableFuture<>();
         CompletableFuture<Void> tokenFuture = new CompletableFuture<>();

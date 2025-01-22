@@ -23,7 +23,7 @@ public class TokenConcurrencySteps {
     }
 
     @When("the customer submits two requests for {int} token")
-    public void theCustomerSubmitsTwoRequestsForToken(Integer tokenAmount) throws Exception {
+    public void theCustomerSubmitsTwoRequestsForToken(Integer tokenAmount) {
         Customer customer = accountHelper.getCurrentCustomer();
         CompletableFuture<List<Token>> request1 = new CompletableFuture<>();
         CompletableFuture<List<Token>> request2 = new CompletableFuture<>();
@@ -44,6 +44,7 @@ public class TokenConcurrencySteps {
                 throw new RuntimeException(e);
             }
         });
+
         t1.start();
         t2.start();
         List<Token> tokens1 = request1.join();

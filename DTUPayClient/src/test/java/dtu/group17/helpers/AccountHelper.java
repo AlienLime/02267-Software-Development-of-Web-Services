@@ -8,7 +8,6 @@ import dtu.group17.merchant.MerchantAPI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 public class AccountHelper {
     private CustomerAPI customerAPI;
@@ -18,6 +17,9 @@ public class AccountHelper {
     private Merchant currentMerchant;
     private List<Customer> customers = new ArrayList<>();
     private List<Merchant> merchants = new ArrayList<>();
+
+    private boolean customerIsDeregistered;
+    private boolean merchantIsDeregistered;
 
     public AccountHelper(CustomerAPI customerAPI, MerchantAPI merchantAPI) {
         this.customerAPI = customerAPI;
@@ -29,6 +31,8 @@ public class AccountHelper {
         currentMerchant = null;
         customers.clear();
         merchants.clear();
+        customerIsDeregistered = false;
+        merchantIsDeregistered = false;
     }
 
     public static String randomCPR() {
@@ -54,10 +58,15 @@ public class AccountHelper {
         return currentCustomer;
     }
 
-    public void deregisterCustomerWithDTUPay(Customer customer) {
-        customerAPI.deregister(customer.id());
+    public boolean deregisterCustomerWithDTUPay(Customer customer) throws Exception {
+        customerIsDeregistered = customerAPI.deregister(customer.id());
         customers.removeIf(c -> c.cpr().equals(customer.cpr()));
         currentCustomer = null;
+        return customerIsDeregistered;
+    }
+
+    public boolean getCustomerIsDeregistered() {
+        return customerIsDeregistered;
     }
 
     public Customer getCurrentCustomer() {
@@ -85,10 +94,15 @@ public class AccountHelper {
         return currentMerchant;
     }
 
-    public void deregisterMerchantWithDTUPay(Merchant merchant) {
-        merchantAPI.deregister(merchant.id());
+    public boolean deregisterMerchantWithDTUPay(Merchant merchant) throws Exception {
+        merchantIsDeregistered = merchantAPI.deregister(merchant.id());
         merchants.removeIf(m -> m.cpr().equals(merchant.cpr()));
         currentMerchant = null;
+        return merchantIsDeregistered;
+    }
+
+    public boolean getMerchantIsDeregistered() {
+        return merchantIsDeregistered;
     }
 
     public Merchant getCurrentMerchant() {

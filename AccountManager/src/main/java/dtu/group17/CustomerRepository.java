@@ -14,7 +14,7 @@ public interface CustomerRepository {
 
     Customer getCustomerById(UUID id);
 
-    void removeCustomer(UUID id);
+    Customer removeCustomer(UUID id);
 
     void clearCustomers();
 

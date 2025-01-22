@@ -91,8 +91,18 @@ public class AccountSteps {
     }
 
     @When("the customer tries to deregister their account from DTU Pay")
-    public void theCustomerTriesToDeregisterTheirAccountFromDTUPay() {
+    public void theCustomerTriesToDeregisterTheirAccountFromDTUPay() throws Exception {
         accountHelper.deregisterCustomerWithDTUPay(accountHelper.getCurrentCustomer());
+    }
+
+    @When("a customer with id {string} tries to deregister their account from DTU Pay")
+    public void aCustomerWithIdTriesToDeregisterTheirAccountFromDTUPay(String id) {
+        Customer customer = new Customer(UUID.fromString(id), "DummyFirstName", "DummyLastName", AccountHelper.randomCPR());
+        try {
+            accountHelper.deregisterCustomerWithDTUPay(customer);
+        } catch (Exception e) {
+            errorMessageHelper.setErrorMessage(e.getMessage());
+        }
     }
 
     @Then("the customer is registered successfully and with the name {string}, last name {string}, and CPR {string}")
@@ -110,9 +120,15 @@ public class AccountSteps {
     public void theCustomerWithCprIsSuccessfullyDeregistered(String cpr) {
         List<Customer> customers = accountHelper.getCustomers();
 
+        assertTrue(accountHelper.getCustomerIsDeregistered());
         assertFalse(customers.stream().anyMatch(customer ->
             customer.cpr().equals(cpr)
         ));
+    }
+
+    @Then("the customer could not be deregistered")
+    public void theCustomerCouldNotBeDeregistered() {
+        assertFalse(accountHelper.getCustomerIsDeregistered());
     }
     //#endregion
 
@@ -159,8 +175,18 @@ public class AccountSteps {
     }
 
     @When("the merchant tries to deregister their account from DTU Pay")
-    public void theMerchantTriesToDeregisterTheirAccountFromDTUPay() {
+    public void theMerchantTriesToDeregisterTheirAccountFromDTUPay() throws Exception {
         accountHelper.deregisterMerchantWithDTUPay(accountHelper.getCurrentMerchant());
+    }
+
+    @When("a merchant with id {string} tries to deregister their account from DTU Pay")
+    public void aMerchantWithIdTriesToDeregisterTheirAccountFromDTUPay(String id) {
+        Merchant merchant = new Merchant(UUID.fromString(id), "DummyFirstName", "DummyLastName", AccountHelper.randomCPR());
+        try {
+            accountHelper.deregisterMerchantWithDTUPay(merchant);
+        } catch (Exception e) {
+            errorMessageHelper.setErrorMessage(e.getMessage());
+        }
     }
 
     @Then("the merchant is registered successfully and with the name {string}, last name {string}, and CPR {string}")
@@ -181,6 +207,11 @@ public class AccountSteps {
         assertFalse(merchants.stream().anyMatch(merchant ->
                 merchant.cpr().equals(cpr)
         ));
+    }
+
+    @Then("the merchant could not be deregistered")
+    public void theMerchantCouldNotBeDeregistered() {
+        assertFalse(accountHelper.getMerchantIsDeregistered());
     }
     //#endregion
 

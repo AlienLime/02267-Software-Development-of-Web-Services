@@ -50,7 +50,7 @@ public class PaymentManagerFacade {
 
     public boolean submitPayment(Payment payment) {
         CompletableFuture<Void> future = new CompletableFuture<>();
-        UUID id = UUID.randomUUID();
+        UUID id = CorrelationId.randomCorrelationId();
         submitPaymentRequests.put(id, future);
         Event event = new Event("PaymentRequested", Map.of(
                 "id", id,

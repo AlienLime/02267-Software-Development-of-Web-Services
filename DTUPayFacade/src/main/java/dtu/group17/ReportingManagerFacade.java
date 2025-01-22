@@ -46,7 +46,7 @@ public class ReportingManagerFacade {
 
     public List<CustomerReportEntry> getCustomerReport(UUID customerId) {
         CompletableFuture<List<CustomerReportEntry>> future = new CompletableFuture<>();
-        UUID id = UUID.randomUUID();
+        UUID id = CorrelationId.randomCorrelationId();
         customerReportRequests.put(id, future);
         Event event = new Event("CustomerReportRequested", Map.of("id", id, "customerId", customerId));
         queue.publish(event);
@@ -55,7 +55,7 @@ public class ReportingManagerFacade {
 
     public List<MerchantReportEntry> getMerchantReport(UUID merchantId) {
         CompletableFuture<List<MerchantReportEntry>> future = new CompletableFuture<>();
-        UUID id = UUID.randomUUID();
+        UUID id = CorrelationId.randomCorrelationId();
         merchantReportRequests.put(id, future);
         Event event = new Event("MerchantReportRequested", Map.of("id", id, "merchantId", merchantId));
         queue.publish(event);
@@ -64,7 +64,7 @@ public class ReportingManagerFacade {
 
     public List<ManagerReportEntry> getManagerReport() {
         CompletableFuture<List<ManagerReportEntry>> future = new CompletableFuture<>();
-        UUID id = UUID.randomUUID();
+        UUID id = CorrelationId.randomCorrelationId();
         managerReportRequests.put(id, future);
         Event event = new Event("ManagerReportRequested", Map.of("id", id));
         queue.publish(event);

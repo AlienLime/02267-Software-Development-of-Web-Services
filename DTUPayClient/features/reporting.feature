@@ -77,7 +77,7 @@ Feature: Reporting
 
   @Ignore
   Scenario: Payments make concurrently are reported
-    Given the following payments have been concurrently
+    Given the following payments have been submitted concurrently
       | amount | customer name      | merchant name       |
       | 10     | Group17-Katja Kaj  | Group17-Kantine 101 |
       | 22     | Group17-Bente Bent | Group17-Hegnet 358  |

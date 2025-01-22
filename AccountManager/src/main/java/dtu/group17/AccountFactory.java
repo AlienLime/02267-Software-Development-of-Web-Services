@@ -17,7 +17,7 @@ public class AccountFactory {
      * @param bankAccountId: The bank account ID of the customer.
      * @author Katja Kaj (s123456)
      */
-    public Customer createCustomerWithID(Customer customer, String bankAccountId) {
+    public synchronized Customer createCustomerWithID(Customer customer, String bankAccountId) {
         UUID id = UUID.randomUUID();
         return new Customer(id, bankAccountId, customer.firstName(), customer.lastName(), customer.cpr());
     }
@@ -27,7 +27,7 @@ public class AccountFactory {
      * @param bankAccountId: The bank account ID of the merchant.
      * @author Katja Kaj (s123456)
      */
-    public Merchant createMerchantWithID(Merchant merchant, String bankAccountId) {
+    public synchronized Merchant createMerchantWithID(Merchant merchant, String bankAccountId) {
         UUID id = UUID.randomUUID();
         return new Merchant(id, bankAccountId, merchant.firstName(), merchant.lastName(), merchant.cpr());
     }

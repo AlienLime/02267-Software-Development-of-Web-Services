@@ -48,13 +48,14 @@ public class CustomerAPI {
      * @throws Error
      * @author Katja
      */
-    public boolean deregister(UUID id) {
-        try {
-            Response response = target.path("customers").path(id.toString()).request().delete();
-            return response.getStatus() == Response.Status.OK.getStatusCode();
-        } catch (Exception exception) {
-            throw new Error(exception);
+    public boolean deregister(UUID id) throws Exception {
+        Response response = target.path("customers").path(id.toString()).request().delete();
+
+        if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+            throw new Exception(response.readEntity(String.class));
         }
+
+        return response.getStatus() == Response.Status.OK.getStatusCode();
     }
 
     /**

@@ -50,7 +50,7 @@ public class TokenManagerFacade {
 
     public List<Token> requestTokens(UUID customerId, int amount) {
         CompletableFuture<List<Token>> future = new CompletableFuture<>();
-        UUID id = UUID.randomUUID();
+        UUID id = CorrelationId.randomCorrelationId();
         tokenRequests.put(id, future);
         Event event = new Event("TokensRequested", Map.of("id", id, "customerId", customerId, "amount", amount));
         queue.publish(event);
@@ -59,7 +59,7 @@ public class TokenManagerFacade {
 
     public boolean consumeToken(UUID customerId, Token token) {
         CompletableFuture<Void> future = new CompletableFuture<>();
-        UUID id = UUID.randomUUID();
+        UUID id = CorrelationId.randomCorrelationId();
         consumeTokenRequests.put(id, future);
         Event event = new Event("TokenConsumptionRequested", Map.of("id", id, "customerId", customerId, "token", token));
         queue.publish(event);

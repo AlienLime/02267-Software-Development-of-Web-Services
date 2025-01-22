@@ -41,8 +41,12 @@ public class MerchantResource {
     }
 
     @DELETE
-    public boolean deregisterMerchant(@PathParam("id") UUID id) {
-        return accountManagerFacade.deregisterMerchant(id);
+    public boolean deregisterMerchant(@PathParam("id") UUID id) throws Throwable {
+        try {
+            return accountManagerFacade.deregisterMerchant(id);
+        } catch (CompletionException e) {
+            throw e.getCause();
+        }
     }
 
 }

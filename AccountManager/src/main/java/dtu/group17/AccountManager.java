@@ -110,7 +110,7 @@ public class AccountManager {
         if (merchant == null) {
             String errorMessage = "Merchant with id '" + merchantId + "' does not exist";
             LOG.error(errorMessage);
-            Event event = new Event("RetrieveMerchantBankAccountFailed", Map.of("id", eventId, "merchantId", merchantId, "message", errorMessage));
+            Event event = new Event("RetrieveMerchantBankAccountFailed", Map.of("id", eventId, "message", errorMessage));
             queue.publish(event);
             return;
         }
@@ -127,9 +127,17 @@ public class AccountManager {
      */
     public void deregisterCustomer(Event e) {
         UUID customerId = e.getArgument("customerId", UUID.class);
-        customerRepository.removeCustomer(customerId);
-
         UUID eventId = e.getArgument("id", UUID.class);
+
+        Customer customer = customerRepository.removeCustomer(customerId);
+        if (customer == null) {
+            String errorMessage = "Customer with id '" + customerId + "' does not exist";
+            LOG.error(errorMessage);
+            Event event = new Event("DeregisterCustomerFailed", Map.of("id", eventId, "message", errorMessage));
+            queue.publish(event);
+            return;
+        }
+
         Event event = new Event("CustomerDeregistered", Map.of("id", eventId));
         queue.publish(event);
     }
@@ -141,9 +149,17 @@ public class AccountManager {
      */
     public void deregisterMerchant(Event e) {
         UUID merchantId = e.getArgument("merchantId", UUID.class);
-        merchantRepository.removeMerchant(merchantId);
-
         UUID eventId = e.getArgument("id", UUID.class);
+
+        Merchant merchant = merchantRepository.removeMerchant(merchantId);
+        if (merchant == null) {
+            String errorMessage = "Merchant with id '" + merchantId + "' does not exist";
+            LOG.error(errorMessage);
+            Event event = new Event("DeregisterMerchantFailed", Map.of("id", eventId, "message", errorMessage));
+            queue.publish(event);
+            return;
+        }
+
         Event event = new Event("MerchantDeregistered", Map.of("id", eventId));
         queue.publish(event);
     }

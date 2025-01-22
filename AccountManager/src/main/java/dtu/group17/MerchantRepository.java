@@ -14,7 +14,7 @@ public interface MerchantRepository {
 
     Merchant getMerchantById(UUID id);
 
-    void removeMerchant(UUID id);
+    Merchant removeMerchant(UUID id);
 
     void clearMerchants();
 

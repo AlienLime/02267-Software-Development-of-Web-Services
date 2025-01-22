@@ -17,14 +17,12 @@ public class InMemoryRepository implements CustomerRepository, MerchantRepositor
 
     @Override
     public Customer addCustomer(Customer customer) {
-        customers.put(customer.id(), customer);
-        return customer;
+        return customers.put(customer.id(), customer);
     }
 
     @Override
     public Merchant addMerchant(Merchant merchant) {
-        merchants.put(merchant.id(), merchant);
-        return merchant;
+        return merchants.put(merchant.id(), merchant);
     }
 
     @Override
@@ -38,13 +36,13 @@ public class InMemoryRepository implements CustomerRepository, MerchantRepositor
     }
 
     @Override
-    public void removeCustomer(UUID id) {
-        customers.remove(id);
+    public Customer removeCustomer(UUID id) {
+        return customers.remove(id);
     }
 
     @Override
-    public void removeMerchant(UUID id) {
-        merchants.remove(id);
+    public Merchant removeMerchant(UUID id) {
+        return merchants.remove(id);
     }
 
     @Override

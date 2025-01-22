@@ -4,21 +4,22 @@ import dtu.group17.Token;
 import dtu.group17.customer.Customer;
 import dtu.group17.customer.CustomerAPI;
 import dtu.group17.helpers.AccountHelper;
+import dtu.group17.helpers.BankHelper;
 import dtu.group17.helpers.ErrorMessageHelper;
 import dtu.group17.helpers.TokenHelper;
 import dtu.group17.merchant.Merchant;
 import dtu.group17.merchant.MerchantAPI;
 import dtu.group17.merchant.Payment;
 import dtu.ws.fastmoney.Account;
-import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
-import dtu.ws.fastmoney.BankServiceService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,55 +27,51 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PaymentConcurrencySteps {
 
     private AccountHelper accountHelper;
+    private BankHelper bankHelper;
     private TokenHelper tokenHelper;
     private ErrorMessageHelper errorMessageHelper;
     private CustomerAPI customerAPI;
     private MerchantAPI merchantAPI;
 
-    private Map<UUID, Customer> customers = new HashMap<>();
-    private Map<UUID, List<Token>> customerTokens = new HashMap<>();
-    private Map<UUID, Merchant> merchants = new HashMap<>();
-    private Map<UUID, String> actorAccounts = new HashMap<>();
+    private List<Customer> customers = new ArrayList<>();
+    private List<Merchant> merchants = new ArrayList<>();
 
-    private BankService bankService = new BankServiceService().getBankServicePort();
-
-    public PaymentConcurrencySteps(AccountHelper accountHelper, TokenHelper tokenHelper, ErrorMessageHelper errorMessageHelper, CustomerAPI customerAPI, MerchantAPI merchantAPI) {
+    public PaymentConcurrencySteps(AccountHelper accountHelper, BankHelper bankHelper, TokenHelper tokenHelper,
+                                   ErrorMessageHelper errorMessageHelper, CustomerAPI customerAPI, MerchantAPI merchantAPI) {
         this.accountHelper = accountHelper;
+        this.bankHelper = bankHelper;
         this.tokenHelper = tokenHelper;
         this.errorMessageHelper = errorMessageHelper;
         this.customerAPI = customerAPI;
         this.merchantAPI = merchantAPI;
     }
 
-    private void newCustomer(int balance, int tokenAmount) throws Exception {
-        Customer c = new Customer(null, "DummyFirstname", "DummyLastName", AccountHelper.randomCPR());
-        String accountId = bankService.createAccountWithBalance(c.toUser(), BigDecimal.valueOf(balance));
-        c = customerAPI.register(c, accountId);
-        customers.put(c.id(), c);
-        actorAccounts.put(c.id(), accountId);
+    private void newRegisteredCustomer(int balance, int tokenAmount) throws Exception {
+        Customer customer = accountHelper.createCustomer();
+        String accountId = bankHelper.createBankAccount(customer, balance);
+        customer = accountHelper.registerCustomerWithDTUPay(customer, accountId);
 
-        List<Token> tokens = customerAPI.requestTokens(c.id(), tokenAmount);
-        customerTokens.put(c.id(), tokens);
+        customers.add(customer);
+        tokenHelper.requestTokens(customer, tokenAmount);
     }
 
-    private void newMerchant(int balance) throws Exception {
-        Merchant m = new Merchant(null, "DummyFirstname", "DummyLastName", AccountHelper.randomCPR());
-        String accountId = bankService.createAccountWithBalance(m.toUser(), BigDecimal.valueOf(balance));
-        m = merchantAPI.register(m, accountId);
-        merchants.put(m.id(), m);
-        actorAccounts.put(m.id(), accountId);
+    private void newRegisteredMerchant(int balance) throws Exception {
+        Merchant merchant = accountHelper.createMerchant();
+        String accountId = bankHelper.createBankAccount(merchant, balance);
+        merchant = accountHelper.registerMerchantWithDTUPay(merchant, accountId);
+        merchants.add(merchant);
     }
 
     @Given("two registered customers each with a balance of {int} kr and {int} token\\(s)")
     public void twoRegisteredCustomersWithABalanceOfKrAndTokens(int balance, int tokens) throws Exception {
-        newCustomer(balance, tokens);
-        newCustomer(balance, tokens);
+        newRegisteredCustomer(balance, tokens);
+        newRegisteredCustomer(balance, tokens);
     }
 
     @Given("two registered merchants each with a balance of {int} kr")
     public void twoRegisteredMerchantsEachWithABalanceOfKr(Integer balance) throws Exception {
-        newMerchant(balance);
-        newMerchant(balance);
+        newRegisteredMerchant(balance);
+        newRegisteredMerchant(balance);
     }
 
     private void submitTwoPayments(int amount, UUID customerId1, UUID customerId2,
@@ -100,6 +97,7 @@ public class PaymentConcurrencySteps {
                 }
             }
         });
+
         t1.start();
         t2.start();
         t1.join();
@@ -108,21 +106,21 @@ public class PaymentConcurrencySteps {
 
     @When("the merchant submits a payment of {int} kr for each customer at the same time")
     public void theMerchantSubmitsAPaymentOfKrForEachCustomerAtTheSameTime(Integer amount) throws Exception {
-        List<UUID> ids = customers.keySet().stream().toList();
-        assertEquals(2, ids.size());
+        assertEquals(2, customers.size());
 
         Merchant merchant = accountHelper.getCurrentMerchant();
+        Customer customer1 = customers.get(0);
+        Customer customer2 = customers.get(1);
 
-        Token token1 = customerTokens.get(ids.get(0)).getFirst();
-        Token token2 = customerTokens.get(ids.get(1)).getFirst();
+        Token token1 = tokenHelper.getCustomersTokens(customer1).getFirst();
+        Token token2 = tokenHelper.getCustomersTokens(customer2).getFirst();
 
-        submitTwoPayments(amount, ids.get(0), ids.get(1), token1, token2, merchant.id(), merchant.id());
+        submitTwoPayments(amount, customer1.id(), customer2.id(), token1, token2, merchant.id(), merchant.id());
     }
 
     @When("both merchants submit a payment of {int} kr to the customer")
     public void bothMerchantsSubmitAPaymentOfKrToTheCustomer(Integer amount) throws InterruptedException {
-        List<UUID> ids = merchants.keySet().stream().toList();
-        assertEquals(2, ids.size());
+        assertEquals(2, merchants.size());
 
         Customer customer = accountHelper.getCurrentCustomer();
         List<Token> customerTokens = tokenHelper.getCustomersTokens(customer);
@@ -131,35 +129,35 @@ public class PaymentConcurrencySteps {
         Token token1 = customerTokens.get(0);
         Token token2 = customerTokens.get(1);
 
-        submitTwoPayments(amount, customer.id(), customer.id(), token1, token2, ids.get(0), ids.get(1));
+        submitTwoPayments(amount, customer.id(), customer.id(), token1, token2, merchants.get(0).id(), merchants.get(1).id());
     }
 
-    private void checkBalanceOfActors(List<UUID> ids, int newBalance) throws BankServiceException_Exception {
-        assertEquals(2, ids.size());
-        Account account1 = bankService.getAccount(actorAccounts.get(ids.get(0)));
-        Account account2 = bankService.getAccount(actorAccounts.get(ids.get(1)));
+    @Then("the balance of both customers at the bank is {int} kr")
+    public void theBalanceOfBothCustomersAtTheBankIsKr(Integer newBalance) throws BankServiceException_Exception {
+        assertEquals(2, customers.size());
+        Account account1 = bankHelper.getAccount(customers.get(0));
+        Account account2 = bankHelper.getAccount(customers.get(1));
 
         assertEquals(BigDecimal.valueOf(newBalance), account1.getBalance());
         assertEquals(BigDecimal.valueOf(newBalance), account2.getBalance());
     }
 
-    @Then("the balance of both customers at the bank is {int} kr")
-    public void theBalanceOfBothCustomersAtTheBankIsKr(Integer newBalance) throws BankServiceException_Exception {
-        checkBalanceOfActors(customers.keySet().stream().toList(), newBalance);
-    }
-
     @Then("the balance of both merchants at the bank is {int} kr")
     public void theBalanceOfBothMerchantsAtTheBankIsKr(Integer newBalance) throws BankServiceException_Exception {
-        checkBalanceOfActors(merchants.keySet().stream().toList(), newBalance);
+        assertEquals(2, merchants.size());
+        Account account1 = bankHelper.getAccount(merchants.get(0));
+        Account account2 = bankHelper.getAccount(merchants.get(1));
+
+        assertEquals(BigDecimal.valueOf(newBalance), account1.getBalance());
+        assertEquals(BigDecimal.valueOf(newBalance), account2.getBalance());
     }
 
     @Then("one of the two merchants balance at the bank is {int} kr")
     public void oneOfTheMerchantsBalanceAtTheBankIsKr(Integer newBalance) throws BankServiceException_Exception {
-        List<UUID> ids = merchants.keySet().stream().toList();
-        assertEquals(2, ids.size());
+        assertEquals(2, merchants.size());
 
-        Account account1 = bankService.getAccount(actorAccounts.get(ids.get(0)));
-        Account account2 = bankService.getAccount(actorAccounts.get(ids.get(1)));
+        Account account1 = bankHelper.getAccount(merchants.get(0));
+        Account account2 = bankHelper.getAccount(merchants.get(1));
 
         assertTrue(BigDecimal.valueOf(newBalance).equals(account1.getBalance())
                 || BigDecimal.valueOf(newBalance).equals(account2.getBalance()));

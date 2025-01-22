@@ -50,8 +50,12 @@ public class CustomerResource {
     }
 
     @DELETE
-    public boolean deregisterCustomer(@PathParam("id") UUID id) {
-        return accountManagerFacade.deregisterCustomer(id);
+    public boolean deregisterCustomer(@PathParam("id") UUID id) throws Throwable {
+        try {
+            return accountManagerFacade.deregisterCustomer(id);
+        } catch (CompletionException e) {
+            throw e.getCause();
+        }
     }
 
 }
