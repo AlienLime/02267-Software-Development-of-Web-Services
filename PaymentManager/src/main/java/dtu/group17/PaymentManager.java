@@ -6,10 +6,8 @@ import org.jboss.logging.Logger;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static dtu.group17.HandlerUtil.onErrorHandler;
 
 public class PaymentManager {
     private static final Logger LOG = Logger.getLogger(PaymentManager.class);

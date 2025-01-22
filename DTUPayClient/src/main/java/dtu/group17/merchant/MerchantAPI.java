@@ -27,7 +27,7 @@ public class MerchantAPI {
         return bankService.createAccountWithBalance(merchant.toUser(), BigDecimal.valueOf(balance));
     }
 
-    public Account getBalance(String bankAccountId) throws BankServiceException_Exception {
+    public Account getAccount(String bankAccountId) throws BankServiceException_Exception {
         return bankService.getAccount(bankAccountId);
     }
 

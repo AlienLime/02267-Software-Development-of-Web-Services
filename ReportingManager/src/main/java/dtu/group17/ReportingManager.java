@@ -24,11 +24,11 @@ public class ReportingManager {
 
         queue.subscribe("PaymentCompleted", this::onPaymentCompleted);
 
-        queue.subscribe("CustomerReportRequested", this::onCustomerReportRequested);
-        queue.subscribe("MerchantReportRequested", this::onMerchantReportRequested);
-        queue.subscribe("ManagerReportRequested", this::onManagerReportRequested);
+        queue.subscribe("CustomerReportRequested", this::generateCustomerReport);
+        queue.subscribe("MerchantReportRequested", this::generateMerchantReport);
+        queue.subscribe("ManagerReportRequested", this::generateManagerReport);
 
-        queue.subscribe("ClearRequested", this::onClearRequested);
+        queue.subscribe("ClearRequested", this::clearReports);
     }
 
     public void onPaymentCompleted(Event e) {
@@ -39,7 +39,7 @@ public class ReportingManager {
         reportingRepository.savePayment(customerId, merchantId, amount, token);
     }
 
-    public void onCustomerReportRequested(Event e) {
+    public void generateCustomerReport(Event e) {
         UUID customerId = e.getArgument("customerId", UUID.class);
         List<CustomerReportEntry> customerReport = reportingRepository.getCustomerReport(customerId);
 
@@ -48,7 +48,7 @@ public class ReportingManager {
         queue.publish(event);
     }
 
-    public void onMerchantReportRequested(Event e) {
+    public void generateMerchantReport(Event e) {
         UUID merchantId = e.getArgument("merchantId", UUID.class);
         List<MerchantReportEntry> merchantReport = reportingRepository.getMerchantReport(merchantId);
 
@@ -57,7 +57,7 @@ public class ReportingManager {
         queue.publish(event);
     }
 
-    public void onManagerReportRequested(Event e) {
+    public void generateManagerReport(Event e) {
         List<ManagerReportEntry> managerReport = reportingRepository.getManagerReport();
 
         UUID eventId = e.getArgument("id", UUID.class);
@@ -65,7 +65,7 @@ public class ReportingManager {
         queue.publish(event);
     }
 
-    public void onClearRequested(Event e) {
+    public void clearReports(Event e) {
         reportingRepository.clearReports();
 
         UUID eventId = e.getArgument("id", UUID.class);

@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * A simple in-memory implementation of the CustomerRepository and MerchantRepository interfaces.
+ * This is useful for testing the DTUPay system without needing to set up a database.
+ */
+
 package dtu.group17;
 
 import java.util.HashMap;

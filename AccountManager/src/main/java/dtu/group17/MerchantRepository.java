@@ -1,3 +1,9 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * Defines the methods the merchant repository needs (adding, retrieving and removing merchants).
+ */
+
 package dtu.group17;
 
 import java.util.UUID;

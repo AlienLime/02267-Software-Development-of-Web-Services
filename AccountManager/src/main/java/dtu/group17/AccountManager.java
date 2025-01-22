@@ -27,9 +27,10 @@ public class AccountManager {
 
     /**
      * Constructor for AccountManager.
-     * 
-     * @param customerRepository
-     * @param merchantRepository
+     * Subscribes to all registration, deregistration and retrieval events.
+     * @param customerRepository: Repository for customers
+     * @param merchantRepository: Repository for merchants
+     * @author Katja Kaj
      */
     public AccountManager(CustomerRepository customerRepository, MerchantRepository merchantRepository) {
         LOG.info("Starting Account Manager...");
@@ -37,19 +38,25 @@ public class AccountManager {
         this.customerRepository = customerRepository;
         this.merchantRepository = merchantRepository;
 
-        queue.subscribe("CustomerRegistrationRequested", this::onCustomerRegistrationRequested);
-        queue.subscribe("MerchantRegistrationRequested", this::onMerchantRegistrationRequested);
+        queue.subscribe("CustomerRegistrationRequested", this::registerCustomer);
+        queue.subscribe("MerchantRegistrationRequested", this::registerMerchant);
 
         queue.subscribe("TokenValidated", this::retrieveCustomerBankAccount);
         queue.subscribe("PaymentRequested", this::retrieveMerchantBankAccount);
 
-        queue.subscribe("CustomerDeregistrationRequested", this::onCustomerDeregistrationRequested);
-        queue.subscribe("MerchantDeregistrationRequested", this::onMerchantDeregistrationRequested);
+        queue.subscribe("CustomerDeregistrationRequested", this::deregisterCustomer);
+        queue.subscribe("MerchantDeregistrationRequested", this::deregisterMerchant);
 
-        queue.subscribe("ClearRequested", this::onClearRequested);
+        queue.subscribe("ClearRequested", this::clearAccounts);
     }
 
-    public void onCustomerRegistrationRequested(Event e) {
+    /**
+     * Uses the AccountFactory to create a new customer with a unique ID and adds it to the customer repository.
+     * Publishes an event with the customer ID.
+     * @param e: Event containing the customer and bank account ID
+     * @author Katja
+     */
+    public void registerCustomer(Event e) {
         Customer namedCustomer = e.getArgument("customer", Customer.class);
         String accountId = e.getArgument("bankAccountId", String.class);
         Customer customer = accountFactory.createCustomerWithID(namedCustomer, accountId);
@@ -59,8 +66,14 @@ public class AccountManager {
         Event event = new Event("CustomerRegistered", Map.of("id", eventId, "customer", customer));
         queue.publish(event);
     }
-    
-    public void onMerchantRegistrationRequested(Event e) {
+
+    /**
+     * Uses the AccountFactory to create a new merchant with a unique ID and adds it to the merchant repository.
+     * Publishes an event with the merchant ID.
+     * @param e: Event containing the merchant and bank account ID
+     *         @author Katja
+     */
+    public void registerMerchant(Event e) {
         Merchant namedMerchant = e.getArgument("merchant", Merchant.class);
         String accountId = e.getArgument("bankAccountId", String.class);
         Merchant merchant = accountFactory.createMerchantWithID(namedMerchant, accountId);
@@ -71,6 +84,11 @@ public class AccountManager {
         queue.publish(event);
     }
 
+    /**
+     * Publishes an event with a customer's bank account ID.
+     * @param e Event containing the customer ID
+     *        @Author Katja
+     */
     public void retrieveCustomerBankAccount(Event e) {
         UUID customerId = e.getArgument("customerId", UUID.class);
         String accountId = customerRepository.getCustomerById(customerId).accountId();
@@ -80,6 +98,10 @@ public class AccountManager {
         queue.publish(event);
     }
 
+    /**
+     * Publishes an event with a merchant's bank account ID.
+     * @param e Event containing the merchant ID
+     */
     public void retrieveMerchantBankAccount(Event e) {
         UUID merchantId = e.getArgument("merchantId", UUID.class);
         UUID eventId = e.getArgument("id", UUID.class);
@@ -97,7 +119,12 @@ public class AccountManager {
         queue.publish(event);
     }
 
-    public void onCustomerDeregistrationRequested(Event e) {
+    /**
+     * Removes a customer from the customer repository and publishes an event with the customer ID.
+     * @param e Event containing the customer ID
+     *       @Author Katja
+     */
+    public void deregisterCustomer(Event e) {
         UUID customerId = e.getArgument("customerId", UUID.class);
         customerRepository.removeCustomer(customerId);
 
@@ -106,7 +133,12 @@ public class AccountManager {
         queue.publish(event);
     }
 
-    public void onMerchantDeregistrationRequested(Event e) {
+    /**
+     * Removes a merchant from the merchant repository and publishes an event with the merchant ID.
+     * @param e Event containing the merchant ID
+     *        @Author Katja
+     */
+    public void deregisterMerchant(Event e) {
         UUID merchantId = e.getArgument("merchantId", UUID.class);
         merchantRepository.removeMerchant(merchantId);
 
@@ -115,7 +147,12 @@ public class AccountManager {
         queue.publish(event);
     }
 
-    public void onClearRequested(Event e) {
+    /**
+     * Clears all customers and merchants from the repositories and publishes an event.
+     * @param e Event containing the event ID
+     *        @Author Katja
+     */
+    public void clearAccounts(Event e) {
         customerRepository.clearCustomers();
         merchantRepository.clearMerchants();
 

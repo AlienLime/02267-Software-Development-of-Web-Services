@@ -40,14 +40,14 @@ public class BankHelper {
         return accountId;
     }
 
-    public Account getBalance(Customer customer) throws BankServiceException_Exception {
+    public Account getAccount(Customer customer) throws BankServiceException_Exception {
         String accountId = accounts.get(customer.cpr());
-        return customerAPI.getBalance(accountId);
+        return customerAPI.getAccount(accountId);
     }
 
-    public Account getBalance(Merchant merchant) throws BankServiceException_Exception {
+    public Account getAccount(Merchant merchant) throws BankServiceException_Exception {
         String accountId = accounts.get(merchant.cpr());
-        return merchantAPI.getBalance(accountId);
+        return merchantAPI.getAccount(accountId);
     }
 
     public String getAccountId(Customer customer) {

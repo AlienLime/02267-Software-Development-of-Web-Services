@@ -23,13 +23,13 @@ public class TokenManagerFacade {
     private Map<UUID, CompletableFuture<List<Token>>> tokenRequests = new HashMap<>();
     private Map<UUID, CompletableFuture<Void>> consumeTokenRequests = new HashMap<>();
 
-    private Runnable unsubscribeTokensGenerated, unsubscribeTokensRequestedFailed,
+    private Runnable unsubscribeTokensGenerated, unsubscribeRequestTokensFailed,
             unsubscribeTokenConsumed, unsubscribeTokenConsumptionFailed;
 
     public TokenManagerFacade() {
-        queue = new RabbitMQQueue();
+        queue = new RabbitMQQueue();    
         unsubscribeTokensGenerated = queue.subscribe("TokensGenerated", this::handleTokensRegistered);
-        unsubscribeTokensRequestedFailed = queue.subscribe("TokensRequestedFailed", e ->
+        unsubscribeRequestTokensFailed = queue.subscribe("RequestTokensFailed", e ->
                 onErrorHandler(tokenRequests, InvalidTokenRequestException::new, e)
         );
         unsubscribeTokenConsumed = queue.subscribe("TokenConsumed", this::handleTokenConsumed);
@@ -41,7 +41,7 @@ public class TokenManagerFacade {
     @PreDestroy // For testing, on hot reload we the remove previous subscription
     public void cleanup() {
         unsubscribeTokensGenerated.run();
-        unsubscribeTokensRequestedFailed.run();
+        unsubscribeRequestTokensFailed.run();
         unsubscribeTokenConsumed.run();
         unsubscribeTokenConsumptionFailed.run();
     }
@@ -50,7 +50,7 @@ public class TokenManagerFacade {
         CompletableFuture<List<Token>> future = new CompletableFuture<>();
         UUID id = UUID.randomUUID();
         tokenRequests.put(id, future);
-        Event event = new Event("TokensRequested", Map.of("id", id, "customerId", customerId, "amount", amount));
+        Event event = new Event("RequestTokens", Map.of("id", id, "customerId", customerId, "amount", amount));
         queue.publish(event);
         return future.join();
     }
@@ -59,7 +59,7 @@ public class TokenManagerFacade {
         CompletableFuture<Void> future = new CompletableFuture<>();
         UUID id = UUID.randomUUID();
         consumeTokenRequests.put(id, future);
-        Event event = new Event("ConsumeToken", Map.of("id", id, "customerId", customerId, "token", token));
+        Event event = new Event("TokenConsumptionRequested", Map.of("id", id, "customerId", customerId, "token", token));
         queue.publish(event);
         future.join();
         return true;
