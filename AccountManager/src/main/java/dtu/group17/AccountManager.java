@@ -27,7 +27,7 @@ public class AccountManager {
         queue.subscribe("CustomerRegistrationRequested", this::onCustomerRegistrationRequested);
         queue.subscribe("MerchantRegistrationRequested", this::onMerchantRegistrationRequested);
 
-        queue.subscribe("AccountIdFromCustomerIdRequest", this::onAccountIdFromCustomerIdRequest);
+        queue.subscribe("AccountIdFromCustomerIdRequest", this::onAccountIdFromCustomerIdRequest); //TODO: Rename to past tense
         queue.subscribe("AccountIdFromMerchantIdRequest", this::onAccountIdFromMerchantIdRequest);
 
         queue.subscribe("CustomerDeregistrationRequested", this::onCustomerDeregistrationRequested);

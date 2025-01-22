@@ -34,6 +34,7 @@
       <profile>dev</profile>
     </QsMavenRunConfiguration>
     <method v="2">
+      <option name="Maven.BeforeRunTask" enabled="true" file="C:\Users\benja\Programming\02267-Software-Development-of-Web-Services\MessagingUtilities/pom.xml" goal="install" />
       <option name="Make" enabled="true" />
     </method>
   </configuration>

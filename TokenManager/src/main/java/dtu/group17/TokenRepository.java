@@ -9,7 +9,7 @@ public interface TokenRepository {
 
     void addTokens(UUID id, List<Token> tokens);
 
-    Token consumeFirstToken(UUID id);
+    void consumeToken(UUID id, Token token) throws TokenNotFoundException;
 
     UUID getCustomerIdFromToken(Token token);
 

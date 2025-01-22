@@ -44,7 +44,7 @@ public class AccountHelper {
     public Customer registerCustomerWithDTUPay(Customer customer, String accountId) {
         currentCustomer = customerAPI.register(customer, accountId);
         customers.removeIf(c -> c.cpr().equals(customer.cpr())); // Remove version of customer without id
-        customers.add(customer);
+        customers.add(currentCustomer);
         return currentCustomer;
     }
 

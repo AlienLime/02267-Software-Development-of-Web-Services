@@ -31,7 +31,7 @@ public class InMemoryRepository implements ReportRepository {
 
     @Override
     public List<MerchantReportEntry> getMerchantReport(UUID merchantId) {
-        if (!customerTokens.containsKey(merchantId)) {
+        if (!merchantTokens.containsKey(merchantId)) {
             return new ArrayList<>();
         }
 

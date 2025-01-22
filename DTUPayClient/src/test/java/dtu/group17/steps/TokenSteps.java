@@ -26,7 +26,7 @@ public class TokenSteps {
     }
 
     @When("the customer presents a valid token to the merchant")
-    public void theCustomerPresentsAValidTokenToTheMerchant() {
+    public void theCustomerPresentsAValidTokenToTheMerchant() throws Exception {
         tokenHelper.consumeFirstToken(accountHelper.getCurrentCustomer());
     }
 

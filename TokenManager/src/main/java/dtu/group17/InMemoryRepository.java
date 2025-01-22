@@ -3,33 +3,40 @@ package dtu.group17;
 import java.util.*;
 
 public class InMemoryRepository implements TokenRepository {
-    Map<UUID, List<Token>> tokenMap = new HashMap<>(); //Customer ID -> List of Tokens
+    Map<UUID, List<Token>> tokens = new HashMap<>(); // Customer ID -> List of Tokens
+    Map<Token, UUID> consumedTokens = new HashMap<>(); // Token -> Customer ID
 
     @Override
     public void addCustomer(UUID id) {
-        tokenMap.put(id, new ArrayList<>());
+        tokens.put(id, new ArrayList<>());
     }
 
     @Override
     public void addTokens(UUID id, List<Token> tokens) {
-        tokenMap.get(id).addAll(tokens);
+        this.tokens.get(id).addAll(tokens);
     }
 
     @Override
-    public Token consumeFirstToken(UUID id) {
-        return tokenMap.get(id).removeFirst();
+    public void consumeToken(UUID id, Token token) throws TokenNotFoundException {
+        if (tokens.get(id).removeIf(t -> t.equals(token))) {
+            consumedTokens.put(token, id);
+        } else {
+            throw new TokenNotFoundException("Token with id '" + token.id() + "' not found");
+        }
     }
 
     @Override
     public UUID getCustomerIdFromToken(Token token) {
-        return tokenMap.entrySet().stream()
-                .filter(e -> e.getValue().stream().anyMatch(t -> t.equals(token)))
-                .findFirst().orElseThrow().getKey();
+        if (consumedTokens.containsKey(token)) {
+            return consumedTokens.remove(token);
+        } else {
+            throw new TokenNotFoundException("Token with id '" + token.id() + "' not found");
+        }
     }
 
     @Override
     public int getNumberOfTokens(UUID id) {
-        return tokenMap.containsKey(id) ? tokenMap.get(id).size() : 0;
+        return tokens.containsKey(id) ? tokens.get(id).size() : 0;
     }
 
 }

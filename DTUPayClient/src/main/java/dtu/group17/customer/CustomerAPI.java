@@ -67,4 +67,14 @@ public class CustomerAPI {
         return response.readEntity(new GenericType<>() {});
     }
 
+    public boolean consumeToken(UUID id, Token token) throws Exception {
+        Response response = target.path("customers").path(id.toString()).path("tokens").path("consume").request().post(Entity.json(token));
+
+        if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+            throw new Exception(response.readEntity(String.class));
+        }
+
+        return response.getStatus() == Response.Status.OK.getStatusCode();
+    }
+
 }

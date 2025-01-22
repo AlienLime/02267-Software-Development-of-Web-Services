@@ -18,7 +18,7 @@ public class PaymentManagerFacade {
     private Map<UUID, CompletableFuture<Void>> submitPaymentRequests = new HashMap<>();
 
     private Runnable unsubscribePaymentCompleted, unsubscribePaymentMerchantNotFoundError,
-            unsubscribePaymentBankError, unsubscribePaymentTokenNotFoundError;
+            unsubscribePaymentBankError, unsubscribePaymentTokenNotFoundError; //TODO: Rename events to past tense (also methods?)
 
     public PaymentManagerFacade() {
         queue = new RabbitMQQueue();

@@ -23,7 +23,8 @@ public class TokenManager {
 
         queue.subscribe("TokensRequested", this::onTokensRequested);
         queue.subscribe("CustomerRegistered", this::onCustomerRegistered);
-        queue.subscribe("CustomerIdFromTokenRequest", this::onCustomerIdFromTokenRequest);
+        queue.subscribe("CustomerIdFromTokenRequest", this::onCustomerIdFromTokenRequest); //TODO: Event to past tense
+        queue.subscribe("ConsumeToken", this::onConsumeToken); //TODO: Event to past tense
     }
 
     public void onTokensRequested(Event e) {
@@ -69,15 +70,31 @@ public class TokenManager {
         UUID eventId = e.getArgument("id", UUID.class);
         Token token = e.getArgument("token", Token.class);
 
-        // We assume the token is in the normal list right now - when we add consumption it will change
         try {
             UUID customerId = tokenRepository.getCustomerIdFromToken(token);
             Event event = new Event("CustomerIdFromTokenAnswer", Map.of("id", eventId, "customerId", customerId));
             queue.publish(event);
-        } catch (NoSuchElementException ex) {
-            String errorMessage = "Token with id '" + token.id() + "' not found";
+        } catch (TokenNotFoundException ex) {
+            String errorMessage = ex.getMessage();
             LOG.error(errorMessage);
             Event event = new Event("CustomerIdFromTokenError", Map.of("id", eventId, "message", errorMessage));
+            queue.publish(event);
+        }
+    }
+
+    private void onConsumeToken(Event e) {
+        UUID eventId = e.getArgument("id", UUID.class);
+        UUID customerId = e.getArgument("customerId", UUID.class);
+        Token token = e.getArgument("token", Token.class);
+
+        try {
+            tokenRepository.consumeToken(customerId, token);
+            Event event = new Event("TokenConsumed", Map.of("id", eventId, "customerId", customerId, "token", token));
+            queue.publish(event);
+        } catch (TokenNotFoundException ex) {
+            String errorMessage = ex.getMessage();
+            LOG.error(errorMessage);
+            Event event = new Event("ConsumeTokenErrored", Map.of("id", eventId, "message", errorMessage));
             queue.publish(event);
         }
     }

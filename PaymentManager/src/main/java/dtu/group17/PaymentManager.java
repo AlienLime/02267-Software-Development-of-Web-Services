@@ -30,19 +30,19 @@ public class PaymentManager {
 
         queue.subscribe("PaymentRequested", this::onPaymentRequested);
 
-        queue.subscribe("CustomerIdFromTokenAnswer", this::onCustomerIdFromTokenAnswer);
+        queue.subscribe("CustomerIdFromTokenAnswer", this::onCustomerIdFromTokenAnswer); //TODO: Event to past tense
 
-        queue.subscribe("AccountIdFromCustomerIdAnswer", e ->
+        queue.subscribe("AccountIdFromCustomerIdAnswer", e -> //TODO: Event to past tense
                 onAccountIdFromUserIdAnswer(customerAccountIdRequests, e)
         );
-        queue.subscribe("AccountIdFromMerchantIdAnswer", e ->
+        queue.subscribe("AccountIdFromMerchantIdAnswer", e -> //TODO: Event to past tense
                 onAccountIdFromUserIdAnswer(merchantAccountIdRequests, e)
         );
 
-        queue.subscribe("AccountIdFromMerchantIdError", e ->
+        queue.subscribe("AccountIdFromMerchantIdError", e -> //TODO: Event to past tense
                 onErrorHandler(merchantAccountIdRequests, Exception::new, e)
         );
-        queue.subscribe("CustomerIdFromTokenError", e ->
+        queue.subscribe("CustomerIdFromTokenError", e -> //TODO: Event to past tense
                 onErrorHandler(customerIdRequests, Exception::new, e)
         );
     }

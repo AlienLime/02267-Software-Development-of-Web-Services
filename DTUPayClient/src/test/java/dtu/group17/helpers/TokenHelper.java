@@ -30,8 +30,10 @@ public class TokenHelper {
         return tokens.get(customer.id());
     }
 
-    public Token consumeFirstToken(Customer customer) {
+    public Token consumeFirstToken(Customer customer) throws Exception {
         presentedToken = tokens.get(customer.id()).removeFirst();
+        consumedTokens.put(presentedToken, customer.id());
+        customerAPI.consumeToken(customer.id(), presentedToken);
         return presentedToken;
     }
 

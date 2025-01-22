@@ -2,6 +2,7 @@ package dtu.group17.helpers;
 
 import dtu.group17.FullPayment;
 import dtu.group17.Token;
+import dtu.group17.customer.Customer;
 import dtu.group17.merchant.Merchant;
 import dtu.group17.merchant.MerchantAPI;
 import dtu.group17.merchant.Payment;
@@ -40,8 +41,12 @@ public class PaymentHelper {
         return currentPayment;
     }
 
-    public List<FullPayment> getCustomerPayments(UUID id) {
-        return previousPayments.stream().filter(p -> p.customerId().equals(id)).toList();
+    public List<FullPayment> getCustomerPayments(Customer customer) {
+        return previousPayments.stream().filter(p -> p.customerId().equals(customer.id())).toList();
+    }
+
+    public List<FullPayment> getMerchantPayments(Merchant merchant) {
+        return previousPayments.stream().filter(p -> p.merchantId().equals(merchant.id())).toList();
     }
 
 }

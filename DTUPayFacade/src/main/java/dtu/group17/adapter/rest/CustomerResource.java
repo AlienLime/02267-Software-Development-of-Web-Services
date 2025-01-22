@@ -37,6 +37,16 @@ public class CustomerResource {
         }
     }
 
+    @POST
+    @Path("/tokens/consume")
+    public boolean consumeToken(@PathParam("id") UUID id, Token token) throws Throwable {
+        try {
+            return tokenManagerFacade.consumeToken(id, token);
+        } catch (CompletionException e) {
+            throw e.getCause();
+        }
+    }
+
     @DELETE
     public boolean deregisterCustomer(@PathParam("id") UUID id) {
         return accountManagerFacade.deregisterCustomer(id);

@@ -8,12 +8,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import dtu.group17.Event;
 import dtu.group17.MessageQueue;
 import dtu.group17.RabbitMQQueue;
 
+@Disabled("Only works when using RabbitMq")
 public class TestMessageQueue extends TestUtilities {
 
 	@Test

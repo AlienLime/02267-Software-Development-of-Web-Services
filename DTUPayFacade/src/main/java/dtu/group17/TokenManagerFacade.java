@@ -11,24 +11,36 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import static dtu.group17.HandlerUtil.onErrorHandler;
+
 @Singleton
 public class TokenManagerFacade {
     private MessageQueue queue;
 
     private Map<UUID, CompletableFuture<List<Token>>> tokenRequests = new HashMap<>();
+    private Map<UUID, CompletableFuture<Void>> consumeTokenRequests = new HashMap<>();
 
-    private Runnable unsubscribeTokensGenerated, unsubscribeTokensRequestedError;
+    private Runnable unsubscribeTokensGenerated, unsubscribeTokensRequestedError,
+            unsubscribeTokenConsumed, unsubscribeConsumeTokenErrored;
 
     public TokenManagerFacade() {
         queue = new RabbitMQQueue();
         unsubscribeTokensGenerated = queue.subscribe("TokensGenerated", this::handleTokensRegistered);
-        unsubscribeTokensRequestedError = queue.subscribe("TokensRequestedError", this::handleTokensRequestedError);
+        unsubscribeTokensRequestedError = queue.subscribe("TokensRequestedError", e ->
+                onErrorHandler(tokenRequests, InvalidTokenRequestException::new, e)
+        ); //TODO: Change event to past tense (also method?)
+        unsubscribeTokenConsumed = queue.subscribe("TokenConsumed", this::handleTokenConsumed);
+        unsubscribeConsumeTokenErrored = queue.subscribe("ConsumeTokenErrored", e ->
+                onErrorHandler(consumeTokenRequests, TokenNotFoundException::new, e)
+        );
     }
 
     @PreDestroy // For testing, on hot reload we the remove previous subscription
     public void cleanup() {
         unsubscribeTokensGenerated.run();
         unsubscribeTokensRequestedError.run();
+        unsubscribeTokenConsumed.run();
+        unsubscribeConsumeTokenErrored.run();
     }
 
     public List<Token> requestTokens(UUID customerId, int amount) {
@@ -40,16 +52,25 @@ public class TokenManagerFacade {
         return future.orTimeout(3, TimeUnit.SECONDS).join();
     }
 
+    public boolean consumeToken(UUID customerId, Token token) {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        UUID id = UUID.randomUUID();
+        consumeTokenRequests.put(id, future);
+        Event event = new Event("ConsumeToken", Map.of("id", id, "customerId", customerId, "token", token));
+        queue.publish(event);
+        future.orTimeout(3, TimeUnit.SECONDS).join();
+        return true;
+    }
+
     public void handleTokensRegistered(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
         List<Token> tokens = e.getArgument("tokens", new TypeToken<>() {});
         tokenRequests.remove(eventId).complete(tokens);
     }
 
-    public void handleTokensRequestedError(Event e) {
+    public void handleTokenConsumed(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
-        String message = e.getArgument("message", String.class);
-        tokenRequests.remove(eventId).completeExceptionally(new InvalidTokenRequestException(message));
+        consumeTokenRequests.remove(eventId).complete(null);
     }
 
 }
