@@ -13,7 +13,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <surefire-plugin.version>3.5.0</surefire-plugin.version>
         <cucumber-plugin.version>7.15.0</cucumber-plugin.version>
-        <skipTests>true</skipTests>
     </properties>
 
     <build>
@@ -26,14 +25,6 @@
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                     </systemPropertyVariables>
-                </configuration>
-            </plugin>
-            <!-- Skip tests when packaging -->
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${surefire-plugin.version}</version>
-                <configuration>
-                    <skipITs>${skipTests}</skipITs>
                 </configuration>
             </plugin>
             <!-- Package into one uber jar -->
@@ -98,6 +89,13 @@
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
             <version>1.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Mocking -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.5.0</version>
             <scope>test</scope>
         </dependency>
         <!-- Logging -->

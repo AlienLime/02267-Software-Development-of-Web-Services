@@ -1,17 +1,11 @@
 package dtu.group17.merchant;
 
-import dtu.ws.fastmoney.Account;
-import dtu.ws.fastmoney.BankService;
-import dtu.ws.fastmoney.BankServiceException_Exception;
-import dtu.ws.fastmoney.BankServiceService;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
-
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,16 +14,6 @@ public class MerchantAPI {
     private static final String BASE_URL = "http://localhost:8080";
     private Client client = ClientBuilder.newClient();
     private WebTarget target = client.target(BASE_URL);
-
-    BankService bankService = new BankServiceService().getBankServicePort(); //TODO: Use factory pattern
-
-    public String createBankAccount(Merchant merchant, int balance) throws BankServiceException_Exception {
-        return bankService.createAccountWithBalance(merchant.toUser(), BigDecimal.valueOf(balance));
-    }
-
-    public Account getBalance(String bankAccountId) throws BankServiceException_Exception {
-        return bankService.getAccount(bankAccountId);
-    }
 
     public record RegisterMerchantBody(Merchant merchant, String accountId) {}
     public Merchant register(Merchant merchant, String accountId) {

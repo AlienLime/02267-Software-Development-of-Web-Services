@@ -29,6 +29,13 @@ public class PaymentSteps {
         this.bankHelper = bankHelper;
     }
 
+    public void submitPayment(Customer customer, Merchant merchant, int amount) throws Exception {
+        paymentHelper.createPayment(amount, merchant);
+        Token token = tokenHelper.consumeFirstToken(customer);
+        paymentHelper.addToken(token);
+        paymentHelper.submitPayment(customer.id());
+    }
+
     @Given("the customer has made the following payments")
     public void theCustomerHasMadeTheFollowingPayments(io.cucumber.datatable.DataTable paymentDataTable) throws Exception {
         List<Map<String, String>> rows = paymentDataTable.asMaps(String.class, String.class);
@@ -41,10 +48,7 @@ public class PaymentSteps {
 
             String accountId = bankHelper.createBankAccount(merchant, 0);
             merchant = accountHelper.registerMerchantWithDTUPay(merchant, accountId);
-            paymentHelper.createPayment(amount, merchant);
-            Token token = tokenHelper.consumeFirstToken(customer);
-            paymentHelper.addToken(token);
-            paymentHelper.submitPayment(customer.id());
+            submitPayment(customer, merchant, amount);
         }
     }
 
@@ -62,11 +66,7 @@ public class PaymentSteps {
             int amount = Integer.parseInt(columns.get("amount"));
 
             tokenHelper.requestTokens(customer, 1);
-            Token token = tokenHelper.consumeFirstToken(customer);
-
-            paymentHelper.createPayment(amount, merchant);
-            paymentHelper.addToken(token);
-            paymentHelper.submitPayment(customer.id());
+            submitPayment(customer, merchant, amount);
         }
     }
 

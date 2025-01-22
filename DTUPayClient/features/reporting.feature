@@ -17,7 +17,7 @@ Feature: Reporting
     Then the customer receives an empty report
 
   Scenario: Merchant requests report
-    Given a registered merchant
+    Given a registered merchant with a bank account
     And the following payments have been made to the merchant
       | amount |
       | 1000   |
@@ -28,7 +28,7 @@ Feature: Reporting
 #    And the report includes the amount of money transferred
 
   Scenario: Merchant with no payments requests report
-    Given a registered merchant
+    Given a registered merchant with a bank account
     When the merchant request to receive their report
     Then the merchant receives an empty report
   

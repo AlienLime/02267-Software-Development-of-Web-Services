@@ -9,45 +9,41 @@ import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
 public class BankHelper {
-    private CustomerAPI customerAPI;
-    private MerchantAPI merchantAPI;
     private BankService bankService = new BankServiceService().getBankServicePort();
 
     private Map<String, String> accounts = new HashMap<>(); // cpr -> account id
 
-    public BankHelper(CustomerAPI customerAPI, MerchantAPI merchantAPI) {
-        this.customerAPI = customerAPI;
-        this.merchantAPI = merchantAPI;
-    }
+    public BankHelper() {}
 
     public void clear() {
         accounts.clear();
     }
 
     public String createBankAccount(Customer customer, int balance) throws BankServiceException_Exception {
-        String accountId = customerAPI.createBankAccount(customer, balance);
+        String accountId = bankService.createAccountWithBalance(customer.toUser(), BigDecimal.valueOf(balance));
         accounts.put(customer.cpr(), accountId);
         return accountId;
     }
 
     public String createBankAccount(Merchant merchant, int balance) throws BankServiceException_Exception {
-        String accountId = merchantAPI.createBankAccount(merchant, balance);
+        String accountId = bankService.createAccountWithBalance(merchant.toUser(), BigDecimal.valueOf(balance));
         accounts.put(merchant.cpr(), accountId);
         return accountId;
     }
 
     public Account getBalance(Customer customer) throws BankServiceException_Exception {
         String accountId = accounts.get(customer.cpr());
-        return customerAPI.getBalance(accountId);
+        return bankService.getAccount(accountId);
     }
 
     public Account getBalance(Merchant merchant) throws BankServiceException_Exception {
         String accountId = accounts.get(merchant.cpr());
-        return merchantAPI.getBalance(accountId);
+        return bankService.getAccount(accountId);
     }
 
     public String getAccountId(Customer customer) {

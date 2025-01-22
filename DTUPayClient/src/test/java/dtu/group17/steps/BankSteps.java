@@ -1,5 +1,6 @@
 package dtu.group17.steps;
 
+import dtu.group17.customer.Customer;
 import dtu.group17.helpers.AccountHelper;
 import dtu.group17.helpers.BankHelper;
 import dtu.ws.fastmoney.Account;

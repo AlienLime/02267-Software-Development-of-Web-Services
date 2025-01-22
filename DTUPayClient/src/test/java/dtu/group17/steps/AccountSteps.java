@@ -62,8 +62,8 @@ public class AccountSteps {
         registerCustomer(customer, 1000000);
     }
 
-    @Given("a registered customer with {int} kr and {int} token\\(s)")
-    public void aRegisteredCustomerWithKrAndTokens(Integer balance, Integer amountTokens) throws Exception {
+    @Given("a registered customer with a balance of {int} kr and {int} token\\(s)")
+    public void aRegisteredCustomerWithABalanceOfKrAndTokens(Integer balance, Integer amountTokens) throws Exception {
         Customer customer = accountHelper.createCustomer();
         customer = registerCustomer(customer, balance);
         tokenHelper.requestTokens(customer, amountTokens);
@@ -127,8 +127,8 @@ public class AccountSteps {
         bankHelper.createBankAccount(accountHelper.getCurrentMerchant(), 1000000);
     }
 
-    @Given("a registered merchant")
-    public void aRegisteredMerchant() throws BankServiceException_Exception {
+    @Given("a registered merchant with a bank account")
+    public void aRegisteredMerchantWithABankAccount() throws BankServiceException_Exception {
         Merchant merchant = accountHelper.createMerchant();
         registerMerchant(merchant, 1000000);
     }
@@ -139,8 +139,8 @@ public class AccountSteps {
         registerMerchant(merchant, 1000000);
     }
 
-    @Given("a registered merchant with {int} kr")
-    public void aRegisteredMerchantWithKr(Integer balance) throws BankServiceException_Exception {
+    @Given("a registered merchant with a bank account and a balance of {int} kr")
+    public void aRegisteredMerchantWithABankAccountAndABalanceOfKr(Integer balance) throws BankServiceException_Exception {
         Merchant merchant = accountHelper.createMerchant();
         registerMerchant(merchant, balance);
     }

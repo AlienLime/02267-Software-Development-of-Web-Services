@@ -7,7 +7,7 @@ Feature: Token Handling
     Then the customer received 2 tokens
 
   Scenario: Payment fails because token does not exist
-    Given a registered merchant
+    Given a registered merchant with a bank account
     When the merchant creates a payment
     And the merchant receives a token with id '14ff4718-1261-4b95-907c-c99ce807c318'
     And the merchant submits the payment
