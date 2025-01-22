@@ -67,7 +67,7 @@ public class ReportingManager {
         reportingRepository.clearReports();
 
         UUID eventId = e.getArgument("id", UUID.class);
-        Event event = new Event("ReportingCleared", Map.of("id", eventId));
+        Event event = new Event("ReportsCleared", Map.of("id", eventId));
         queue.publish(event);
     }
 
