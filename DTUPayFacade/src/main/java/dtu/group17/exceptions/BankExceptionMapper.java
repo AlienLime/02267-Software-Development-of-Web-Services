@@ -1,4 +1,4 @@
-package dtu.group17;
+package dtu.group17.exceptions;
 
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;

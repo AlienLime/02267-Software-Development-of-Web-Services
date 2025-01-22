@@ -58,7 +58,7 @@ public class PaymentManager {
         customerIdRequests.put(customerIdCorrelationId, customerIdRequest);
         Event customerIdRequestEvent = new Event("CustomerIdFromTokenRequest", Map.of("id", customerIdCorrelationId, "token", payment.token()));
         queue.publish(customerIdRequestEvent);
-        UUID customerId = customerIdRequest.orTimeout(3, TimeUnit.SECONDS).exceptionally(ex -> {
+        UUID customerId = customerIdRequest.exceptionally(ex -> {
             String errorMessage = ex.getMessage();
             LOG.error(errorMessage);
             Event event = new Event("PaymentTokenNotFoundError", Map.of("id", e.getArgument("id", UUID.class), "message", errorMessage));
@@ -82,8 +82,8 @@ public class PaymentManager {
         Event merchantAccountIdRequestEvent = new Event("AccountIdFromMerchantIdRequest", Map.of("id", merchantAccountIdCorrelationId, "merchantId", payment.merchantId()));
         queue.publish(merchantAccountIdRequestEvent);
 
-        String customerAccountId = customerAccountIdRequest.orTimeout(3, TimeUnit.SECONDS).join();
-        String merchantAccountId = merchantAccountIdRequest.orTimeout(3, TimeUnit.SECONDS).exceptionally(ex -> {
+        String customerAccountId = customerAccountIdRequest.join();
+        String merchantAccountId = merchantAccountIdRequest.exceptionally(ex -> {
             String errorMessage = ex.getMessage();
             LOG.error(errorMessage);
             Event event = new Event("PaymentMerchantNotFoundError", Map.of("id", e.getArgument("id", UUID.class), "message", errorMessage));

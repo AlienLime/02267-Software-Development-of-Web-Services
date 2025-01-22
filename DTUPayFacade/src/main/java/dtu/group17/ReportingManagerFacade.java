@@ -1,6 +1,9 @@
 package dtu.group17;
 
 import com.google.gson.reflect.TypeToken;
+import dtu.group17.records.CustomerReportEntry;
+import dtu.group17.records.ManagerReportEntry;
+import dtu.group17.records.MerchantReportEntry;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
@@ -48,7 +51,7 @@ public class ReportingManagerFacade {
         customerReportRequests.put(id, future);
         Event event = new Event("CustomerReportRequested", Map.of("id", id, "customerId", customerId));
         queue.publish(event);
-        return future.orTimeout(3, TimeUnit.SECONDS).join();
+        return future.join();
     }
 
     public List<MerchantReportEntry> getMerchantReport(UUID merchantId) {
@@ -57,7 +60,7 @@ public class ReportingManagerFacade {
         merchantReportRequests.put(id, future);
         Event event = new Event("MerchantReportRequested", Map.of("id", id, "merchantId", merchantId));
         queue.publish(event);
-        return future.orTimeout(3, TimeUnit.SECONDS).join();
+        return future.join();
     }
 
     public List<ManagerReportEntry> getManagerReport() {
@@ -66,7 +69,7 @@ public class ReportingManagerFacade {
         managerReportRequests.put(id, future);
         Event event = new Event("ManagerReportRequested", Map.of("id", id));
         queue.publish(event);
-        return future.orTimeout(3, TimeUnit.SECONDS).join();
+        return future.join();
     }
 
     private <T> void handleReportGenerated(Map<UUID, CompletableFuture<T>> reportRequests,

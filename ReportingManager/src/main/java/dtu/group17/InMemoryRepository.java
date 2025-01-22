@@ -52,4 +52,12 @@ public class InMemoryRepository implements ReportRepository {
             })
         ).toList();
     }
+
+    @Override
+    public void clearReports() {
+        customerTokens.clear();
+        merchantTokens.clear();
+        tokenPaymentInfo.clear();
+    }
+
 }

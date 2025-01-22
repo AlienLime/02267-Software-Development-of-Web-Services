@@ -1,7 +1,7 @@
 package dtu.group17.adapter.rest;
 
 import dtu.group17.AccountManagerFacade;
-import dtu.group17.Merchant;
+import dtu.group17.records.Merchant;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;

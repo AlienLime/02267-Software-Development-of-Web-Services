@@ -25,6 +25,7 @@ public class TokenManager {
         queue.subscribe("CustomerRegistered", this::onCustomerRegistered);
         queue.subscribe("CustomerIdFromTokenRequest", this::onCustomerIdFromTokenRequest); //TODO: Event to past tense
         queue.subscribe("ConsumeToken", this::onConsumeToken); //TODO: Event to past tense
+        queue.subscribe("ClearRequested", this::onClearRequested);
     }
 
     public void onTokensRequested(Event e) {
@@ -99,4 +100,11 @@ public class TokenManager {
         }
     }
 
+    private void onClearRequested(Event e) {
+        tokenRepository.clear();
+
+        UUID eventId = e.getArgument("id", UUID.class);
+        Event event = new Event("TokensCleared", Map.of("id", eventId));
+        queue.publish(event);
+    }
 }

@@ -39,4 +39,9 @@ public class InMemoryRepository implements TokenRepository {
         return tokens.containsKey(id) ? tokens.get(id).size() : 0;
     }
 
+    @Override
+    public void clear() {
+        tokens.clear();
+        consumedTokens.clear();
+    }
 }

@@ -32,6 +32,8 @@ public class AccountManager {
 
         queue.subscribe("CustomerDeregistrationRequested", this::onCustomerDeregistrationRequested);
         queue.subscribe("MerchantDeregistrationRequested", this::onMerchantDeregistrationRequested);
+
+        queue.subscribe("ClearRequested", this::onClearRequested);
     }
 
     public void onCustomerRegistrationRequested(Event e) {
@@ -97,6 +99,15 @@ public class AccountManager {
 
         UUID eventId = e.getArgument("id", UUID.class);
         Event event = new Event("MerchantDeregistered", Map.of("id", eventId));
+        queue.publish(event);
+    }
+
+    public void onClearRequested(Event e) {
+        customerRepository.clearCustomers();
+        merchantRepository.clearMerchants();
+
+        UUID eventId = e.getArgument("id", UUID.class);
+        Event event = new Event("AccountsCleared", Map.of("id", eventId));
         queue.publish(event);
     }
 

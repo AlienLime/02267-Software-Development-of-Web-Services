@@ -1,5 +1,7 @@
 package dtu.group17;
 
+import dtu.group17.records.Customer;
+import dtu.group17.records.Merchant;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
@@ -49,7 +51,7 @@ public class AccountManagerFacade {
         registeredCustomers.put(id, future);
         Event event = new Event("CustomerRegistrationRequested", Map.of("id", id, "customer", customer, "bankAccountId", bankAccountId));
         queue.publish(event);
-        return future.orTimeout(3, TimeUnit.SECONDS).join();
+        return future.join();
     }
 
     public boolean deregisterCustomer(UUID customerId) {
@@ -58,7 +60,7 @@ public class AccountManagerFacade {
         deregisteredCustomers.put(id, future);
         Event event = new Event("CustomerDeregistrationRequested", Map.of("id", id, "customerId", customerId));
         queue.publish(event);
-        future.orTimeout(3, TimeUnit.SECONDS).join();
+        future.join();
         return true;
     }
 
@@ -68,7 +70,7 @@ public class AccountManagerFacade {
         registeredMerchants.put(id, future);
         Event event = new Event("MerchantRegistrationRequested", Map.of("id", id, "merchant", merchant, "bankAccountId", bankAccountId));
         queue.publish(event);
-        return future.orTimeout(3, TimeUnit.SECONDS).join();
+        return future.join();
     }
 
     public boolean deregisterMerchant(UUID merchantId) {
@@ -77,7 +79,7 @@ public class AccountManagerFacade {
         deregisteredMerchants.put(id, future);
         Event event = new Event("MerchantDeregistrationRequested", Map.of("id", id, "merchantId", merchantId));
         queue.publish(event);
-        future.orTimeout(3, TimeUnit.SECONDS).join();
+        future.join();
         return true;
     }
 

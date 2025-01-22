@@ -1,6 +1,9 @@
 package dtu.group17;
 
 import com.google.gson.reflect.TypeToken;
+import dtu.group17.exceptions.InvalidTokenRequestException;
+import dtu.group17.exceptions.TokenNotFoundException;
+import dtu.group17.records.Token;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
@@ -49,7 +52,7 @@ public class TokenManagerFacade {
         tokenRequests.put(id, future);
         Event event = new Event("TokensRequested", Map.of("id", id, "customerId", customerId, "amount", amount));
         queue.publish(event);
-        return future.orTimeout(3, TimeUnit.SECONDS).join();
+        return future.join();
     }
 
     public boolean consumeToken(UUID customerId, Token token) {
@@ -58,7 +61,7 @@ public class TokenManagerFacade {
         consumeTokenRequests.put(id, future);
         Event event = new Event("ConsumeToken", Map.of("id", id, "customerId", customerId, "token", token));
         queue.publish(event);
-        future.orTimeout(3, TimeUnit.SECONDS).join();
+        future.join();
         return true;
     }
 

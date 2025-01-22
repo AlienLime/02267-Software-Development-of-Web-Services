@@ -49,4 +49,8 @@ public class PaymentHelper {
         return previousPayments.stream().filter(p -> p.merchantId().equals(merchant.id())).toList();
     }
 
+    public List<FullPayment> getPayments() {
+        return previousPayments;
+    }
+
 }

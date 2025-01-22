@@ -13,4 +13,6 @@ public interface ReportRepository {
 
     List<ManagerReportEntry> getManagerReport();
 
+    void clearReports();
+
 }

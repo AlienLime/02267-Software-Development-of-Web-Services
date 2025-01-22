@@ -2,6 +2,7 @@ package dtu.group17.steps;
 
 import dtu.group17.helpers.ErrorMessageHelper;
 import dtu.group17.helpers.*;
+import dtu.group17.manager.ManagerAPI;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -18,13 +19,17 @@ public class CucumberSteps {
     private ReportHelper reportHelper;
     private TokenHelper tokenHelper;
 
-    public CucumberSteps(ErrorMessageHelper errorMessageHolder, AccountHelper accountHelper, BankHelper bankHelper, PaymentHelper paymentHelper, ReportHelper reportHelper, TokenHelper tokenHelper) {
+    private ManagerAPI managerAPI;
+
+    public CucumberSteps(ErrorMessageHelper errorMessageHolder, AccountHelper accountHelper, BankHelper bankHelper,
+                         PaymentHelper paymentHelper, ReportHelper reportHelper, TokenHelper tokenHelper, ManagerAPI managerAPI) {
         this.errorMessageHelper = errorMessageHolder;
         this.accountHelper = accountHelper;
         this.bankHelper = bankHelper;
         this.paymentHelper = paymentHelper;
         this.reportHelper = reportHelper;
         this.tokenHelper = tokenHelper;
+        this.managerAPI = managerAPI;
     }
 
     @Before
@@ -40,7 +45,7 @@ public class CucumberSteps {
     @After
     public void after() throws BankServiceException_Exception {
         bankHelper.retireAccounts();
-        accountHelper.deregisterUsers();
+        managerAPI.clearEverything();
     }
 
     @Then("the error message is {string}")

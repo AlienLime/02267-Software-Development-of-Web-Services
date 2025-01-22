@@ -1,4 +1,4 @@
-package dtu.group17;
+package dtu.group17.exceptions;
 
 public class TokenNotFoundException extends RuntimeException {
     public TokenNotFoundException(String message) {

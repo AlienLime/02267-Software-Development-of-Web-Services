@@ -40,4 +40,14 @@ public class InMemoryRepository implements CustomerRepository, MerchantRepositor
         merchants.remove(id);
     }
 
+    @Override
+    public void clearCustomers() {
+        customers.clear();
+    }
+
+    @Override
+    public void clearMerchants() {
+        merchants.clear();
+    }
+
 }

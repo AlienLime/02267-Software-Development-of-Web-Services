@@ -10,4 +10,6 @@ public interface MerchantRepository {
 
     void removeMerchant(UUID id);
 
+    void clearMerchants();
+
 }

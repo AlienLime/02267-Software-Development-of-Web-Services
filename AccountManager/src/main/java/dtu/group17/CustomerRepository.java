@@ -10,4 +10,6 @@ public interface CustomerRepository {
 
     void removeCustomer(UUID id);
 
+    void clearCustomers();
+
 }

@@ -4,6 +4,7 @@ import dtu.group17.customer.Customer;
 import dtu.group17.customer.CustomerAPI;
 import dtu.group17.customer.CustomerReportEntry;
 import dtu.group17.manager.ManagerAPI;
+import dtu.group17.manager.ManagerReportEntry;
 import dtu.group17.merchant.Merchant;
 import dtu.group17.merchant.MerchantAPI;
 import dtu.group17.merchant.MerchantReportEntry;
@@ -18,6 +19,7 @@ public class ReportHelper {
 
     private List<CustomerReportEntry> currentCustomerReport;
     private List<MerchantReportEntry> currentMerchantReport;
+    private List<ManagerReportEntry> currentManagerReport;
 
     public ReportHelper(CustomerAPI customerAPI, MerchantAPI merchantAPI, ManagerAPI managerAPI) {
         this.customerAPI = customerAPI;
@@ -28,6 +30,7 @@ public class ReportHelper {
     public void clear() {
         currentCustomerReport = null;
         currentMerchantReport = null;
+        currentManagerReport = null;
     }
 
     public List<CustomerReportEntry> requestCustomerReport(Customer customer) {
@@ -46,6 +49,15 @@ public class ReportHelper {
 
     public List<MerchantReportEntry> getCurrentMerchantReport() {
         return currentMerchantReport;
+    }
+
+    public List<ManagerReportEntry> requestManagerReport() {
+        currentManagerReport = managerAPI.requestManagerReport();
+        return currentManagerReport;
+    }
+
+    public List<ManagerReportEntry> getCurrentManagerReport() {
+        return currentManagerReport;
     }
 
 }

@@ -1,5 +1,9 @@
 package dtu.group17;
 
+import dtu.group17.exceptions.BankException;
+import dtu.group17.exceptions.MerchantNotFoundException;
+import dtu.group17.exceptions.TokenNotFoundException;
+import dtu.group17.records.Payment;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
@@ -48,7 +52,7 @@ public class PaymentManagerFacade {
         submitPaymentRequests.put(id, future);
         Event event = new Event("PaymentRequested", Map.of("id", id, "payment", payment));
         queue.publish(event);
-        future.orTimeout(3, TimeUnit.SECONDS).join();
+        future.join();
         return true;
     }
 

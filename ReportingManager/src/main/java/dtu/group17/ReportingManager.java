@@ -27,6 +27,8 @@ public class ReportingManager {
         queue.subscribe("CustomerReportRequested", this::onCustomerReportRequested);
         queue.subscribe("MerchantReportRequested", this::onMerchantReportRequested);
         queue.subscribe("ManagerReportRequested", this::onManagerReportRequested);
+
+        queue.subscribe("ClearRequested", this::onClearRequested);
     }
 
     public void onPaymentCompleted(Event e) {
@@ -58,6 +60,14 @@ public class ReportingManager {
 
         UUID eventId = e.getArgument("id", UUID.class);
         Event event = new Event("ManagerReportGenerated", Map.of("id", eventId, "report", managerReport));
+        queue.publish(event);
+    }
+
+    public void onClearRequested(Event e) {
+        reportingRepository.clearReports();
+
+        UUID eventId = e.getArgument("id", UUID.class);
+        Event event = new Event("ReportingCleared", Map.of("id", eventId));
         queue.publish(event);
     }
 
