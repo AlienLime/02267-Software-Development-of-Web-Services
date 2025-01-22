@@ -5,11 +5,11 @@ import java.util.UUID;
 
 public interface ReportRepository {
 
-    void savePayment(UUID customerID, Payment payment);
+    void savePayment(UUID customerId, UUID merchantId, int amount, Token token);
 
-    List<CustomerReportEntry> getCustomerReport(UUID customerID);
+    List<CustomerReportEntry> getCustomerReport(UUID customerId);
 
-    List<MerchantReportEntry> getMerchantReport(UUID merchantID);
+    List<MerchantReportEntry> getMerchantReport(UUID merchantId);
 
     List<ManagerReportEntry> getManagerReport();
 

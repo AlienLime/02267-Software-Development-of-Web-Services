@@ -23,17 +23,17 @@ public class TokenManagerFacade {
     private Map<UUID, CompletableFuture<List<Token>>> tokenRequests = new HashMap<>();
     private Map<UUID, CompletableFuture<Void>> consumeTokenRequests = new HashMap<>();
 
-    private Runnable unsubscribeTokensGenerated, unsubscribeTokensRequestedError,
-            unsubscribeTokenConsumed, unsubscribeConsumeTokenErrored;
+    private Runnable unsubscribeTokensGenerated, unsubscribeTokensRequestedFailed,
+            unsubscribeTokenConsumed, unsubscribeTokenConsumptionFailed;
 
     public TokenManagerFacade() {
         queue = new RabbitMQQueue();
         unsubscribeTokensGenerated = queue.subscribe("TokensGenerated", this::handleTokensRegistered);
-        unsubscribeTokensRequestedError = queue.subscribe("TokensRequestedError", e ->
+        unsubscribeTokensRequestedFailed = queue.subscribe("TokensRequestedFailed", e ->
                 onErrorHandler(tokenRequests, InvalidTokenRequestException::new, e)
-        ); //TODO: Change event to past tense (also method?)
+        );
         unsubscribeTokenConsumed = queue.subscribe("TokenConsumed", this::handleTokenConsumed);
-        unsubscribeConsumeTokenErrored = queue.subscribe("ConsumeTokenErrored", e ->
+        unsubscribeTokenConsumptionFailed = queue.subscribe("TokenConsumptionFailed", e ->
                 onErrorHandler(consumeTokenRequests, TokenNotFoundException::new, e)
         );
     }
@@ -41,9 +41,9 @@ public class TokenManagerFacade {
     @PreDestroy // For testing, on hot reload we the remove previous subscription
     public void cleanup() {
         unsubscribeTokensGenerated.run();
-        unsubscribeTokensRequestedError.run();
+        unsubscribeTokensRequestedFailed.run();
         unsubscribeTokenConsumed.run();
-        unsubscribeConsumeTokenErrored.run();
+        unsubscribeTokenConsumptionFailed.run();
     }
 
     public List<Token> requestTokens(UUID customerId, int amount) {

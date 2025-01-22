@@ -7,7 +7,7 @@ import org.jboss.logging.Logger;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static dtu.group17.HandlerUtil.onErrorHandler;
 
@@ -17,9 +17,7 @@ public class PaymentManager {
     MessageQueue queue = new RabbitMQQueue();
     BankService bankService = new BankServiceService().getBankServicePort();
 
-    private Map<UUID, CompletableFuture<UUID>> customerIdRequests = new HashMap<>();
-    private Map<UUID, CompletableFuture<String>> customerAccountIdRequests = new HashMap<>();
-    private Map<UUID, CompletableFuture<String>> merchantAccountIdRequests = new HashMap<>();
+    private ConcurrentHashMap<UUID, PaymentData> paymentDatas = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
         new PaymentManager();
@@ -29,99 +27,103 @@ public class PaymentManager {
         LOG.info("Starting Payment Manager...");
 
         queue.subscribe("PaymentRequested", this::onPaymentRequested);
+        queue.subscribe("CustomerBankAccountRetrieved", this::onCustomerAccountIdRetrieved);
+        queue.subscribe("MerchantBankAccountRetrieved", this::onMerchantAccountIdRetrieved);
 
-        queue.subscribe("CustomerIdFromTokenAnswer", this::onCustomerIdFromTokenAnswer); //TODO: Event to past tense
-
-        queue.subscribe("AccountIdFromCustomerIdAnswer", e -> //TODO: Event to past tense
-                onAccountIdFromUserIdAnswer(customerAccountIdRequests, e)
+        queue.subscribe("TokenValidationFailed", e ->
+            paymentDatas.remove(e.getArgument("id", UUID.class))
         );
-        queue.subscribe("AccountIdFromMerchantIdAnswer", e -> //TODO: Event to past tense
-                onAccountIdFromUserIdAnswer(merchantAccountIdRequests, e)
-        );
-
-        queue.subscribe("AccountIdFromMerchantIdError", e -> //TODO: Event to past tense
-                onErrorHandler(merchantAccountIdRequests, Exception::new, e)
-        );
-        queue.subscribe("CustomerIdFromTokenError", e -> //TODO: Event to past tense
-                onErrorHandler(customerIdRequests, Exception::new, e)
+        queue.subscribe("RetrieveMerchantBankAccountFailed", e ->
+            paymentDatas.remove(e.getArgument("id", UUID.class))
         );
     }
 
-    public void onPaymentRequested(Event e) {
-        Payment payment = e.getArgument("payment", Payment.class);
+    private void onPaymentRequested(Event e) {
+        UUID eventId = e.getArgument("id", UUID.class);
+        Token token = e.getArgument("token", Token.class);
+        int amount = e.getArgument("amount", Integer.class);
+        UUID merchantId = e.getArgument("merchantId", UUID.class);
 
-        // Retrieve customer id from token manager
-        // TODO: Refactor to maybe use rpc?
-        // TODO: Reorder to minimize blocking
-        CompletableFuture<UUID> customerIdRequest = new CompletableFuture<>();
-        UUID customerIdCorrelationId = UUID.randomUUID();
-        customerIdRequests.put(customerIdCorrelationId, customerIdRequest);
-        Event customerIdRequestEvent = new Event("CustomerIdFromTokenRequest", Map.of("id", customerIdCorrelationId, "token", payment.token()));
-        queue.publish(customerIdRequestEvent);
-        UUID customerId = customerIdRequest.exceptionally(ex -> {
-            String errorMessage = ex.getMessage();
-            LOG.error(errorMessage);
-            Event event = new Event("PaymentTokenNotFoundError", Map.of("id", e.getArgument("id", UUID.class), "message", errorMessage));
-            queue.publish(event);
-            return null;
-        }).join();
-        if (customerId == null) {
-            return;
-        }
+        paymentDatas.compute(eventId, (id, data) -> {
+            if (data == null) {
+                data = new PaymentData(eventId);
+            }
 
-        // Retrieve account ids from account manager
-        CompletableFuture<String> customerAccountIdRequest = new CompletableFuture<>();
-        UUID customerAccountIdCorrelationId = UUID.randomUUID();
-        customerAccountIdRequests.put(customerAccountIdCorrelationId, customerAccountIdRequest);
-        Event customerAccountIdRequestEvent = new Event("AccountIdFromCustomerIdRequest", Map.of("id", customerAccountIdCorrelationId, "customerId", customerId));
-        queue.publish(customerAccountIdRequestEvent);
+            data.setToken(Optional.of(token));
+            data.setAmount(Optional.of(amount));
+            data.setMerchantId(Optional.of(merchantId));
 
-        CompletableFuture<String> merchantAccountIdRequest = new CompletableFuture<>();
-        UUID merchantAccountIdCorrelationId = UUID.randomUUID();
-        merchantAccountIdRequests.put(merchantAccountIdCorrelationId, merchantAccountIdRequest);
-        Event merchantAccountIdRequestEvent = new Event("AccountIdFromMerchantIdRequest", Map.of("id", merchantAccountIdCorrelationId, "merchantId", payment.merchantId()));
-        queue.publish(merchantAccountIdRequestEvent);
+            if (data.isComplete()) {
+                processPayment(data);
+                data = null;
+            }
 
-        String customerAccountId = customerAccountIdRequest.join();
-        String merchantAccountId = merchantAccountIdRequest.exceptionally(ex -> {
-            String errorMessage = ex.getMessage();
-            LOG.error(errorMessage);
-            Event event = new Event("PaymentMerchantNotFoundError", Map.of("id", e.getArgument("id", UUID.class), "message", errorMessage));
-            queue.publish(event);
-            return null;
-        }).join();
-        if (merchantAccountId == null) {
-            return;
-        }
+            return data;
+        });
+    }
 
+    public void onCustomerAccountIdRetrieved(Event e) {
+        UUID eventId = e.getArgument("id", UUID.class);
+        UUID customerId = e.getArgument("customerId", UUID.class);
+        String accountId = e.getArgument("accountId", String.class);
+
+        paymentDatas.compute(eventId, (id, data) -> {
+            if (data == null) {
+                data = new PaymentData(eventId);
+            }
+
+            data.setCustomerId(Optional.of(customerId));
+            data.setCustomerAccountId(Optional.of(accountId));
+
+            if (data.isComplete()) {
+                processPayment(data);
+                data = null;
+            }
+
+            return data;
+        });
+    }
+
+    public void onMerchantAccountIdRetrieved(Event e) {
+        UUID eventId = e.getArgument("id", UUID.class);
+        String accountId = e.getArgument("accountId", String.class);
+        paymentDatas.compute(eventId, (id, data) -> {
+            if (data == null) {
+                data = new PaymentData(eventId);
+            }
+
+            data.setMerchantAccountId(Optional.of(accountId));
+
+            if (data.isComplete()) {
+                processPayment(data);
+                data = null;
+            }
+
+            return data;
+        });
+    }
+
+    public void processPayment(PaymentData data) {
         try {
-            String description = "Group 17 - transfer of " + payment.amount() + " kr. from " + customerId + " to " + payment.merchantId();
-            bankService.transferMoneyFromTo(customerAccountId, merchantAccountId, BigDecimal.valueOf(payment.amount()), description);
+            String description = "Group 17 - transfer of " + data.getAmount().get() + " kr. from " + data.getCustomerId().get() + " to " + data.getMerchantId().get();
+            bankService.transferMoneyFromTo(data.getCustomerAccountId().get(), data.getMerchantAccountId().get(), BigDecimal.valueOf(data.getAmount().get()), description);
         } catch (Exception ex) {
             String errorMessage = ex.getMessage();
             LOG.error(errorMessage);
-            Event event = new Event("PaymentBankError", Map.of("id", e.getArgument("id", UUID.class), "message", errorMessage));
+            Event event = new Event("PaymentFailed", Map.of("id", data.getId(), "message", errorMessage));
             queue.publish(event);
             return;
         }
 
-        Event event = new Event("PaymentCompleted", Map.of(
-                "id", e.getArgument("id", UUID.class),
-                "payment", payment,
-                "customerId", customerId));
+        Map<String, Object> eventData = new HashMap<>();
+        eventData.put("id", data.getId());
+        eventData.put("amount", data.getAmount().get());
+        eventData.put("token", data.getToken().get());
+        eventData.put("customerId", data.getCustomerId().get());
+        eventData.put("merchantId", data.getMerchantId().get());
+        eventData.put("customerAccountId", data.getCustomerAccountId().get());
+        eventData.put("merchantAccountId", data.getMerchantAccountId().get());
+        Event event = new Event("PaymentCompleted", eventData);
         queue.publish(event);
     }
-
-    public void onCustomerIdFromTokenAnswer(Event e) {
-        UUID eventId = e.getArgument("id", UUID.class);
-        UUID customerId = e.getArgument("customerId", UUID.class);
-        customerIdRequests.remove(eventId).complete(customerId);
-    }
-
-    public void onAccountIdFromUserIdAnswer(Map<UUID, CompletableFuture<String>> accountIdRequests, Event e) {
-        UUID eventId = e.getArgument("id", UUID.class);
-        String accountId = e.getArgument("accountId", String.class);
-        accountIdRequests.remove(eventId).complete(accountId);
-    }
-
 }

@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ *  This class is responsible for managing the accounts of customers and merchants.
+ *  It listens for events from the message queue and register, deregister and retrieves accounts.
+ */
+
 package dtu.group17;
 
 
@@ -18,6 +25,12 @@ public class AccountManager {
         new AccountManager(repo, repo);
     }
 
+    /**
+     * Constructor for AccountManager.
+     * 
+     * @param customerRepository
+     * @param merchantRepository
+     */
     public AccountManager(CustomerRepository customerRepository, MerchantRepository merchantRepository) {
         LOG.info("Starting Account Manager...");
 
@@ -27,8 +40,8 @@ public class AccountManager {
         queue.subscribe("CustomerRegistrationRequested", this::onCustomerRegistrationRequested);
         queue.subscribe("MerchantRegistrationRequested", this::onMerchantRegistrationRequested);
 
-        queue.subscribe("AccountIdFromCustomerIdRequest", this::onAccountIdFromCustomerIdRequest); //TODO: Rename to past tense
-        queue.subscribe("AccountIdFromMerchantIdRequest", this::onAccountIdFromMerchantIdRequest);
+        queue.subscribe("TokenValidated", this::retrieveCustomerBankAccount);
+        queue.subscribe("PaymentRequested", this::retrieveMerchantBankAccount);
 
         queue.subscribe("CustomerDeregistrationRequested", this::onCustomerDeregistrationRequested);
         queue.subscribe("MerchantDeregistrationRequested", this::onMerchantDeregistrationRequested);
@@ -58,29 +71,29 @@ public class AccountManager {
         queue.publish(event);
     }
 
-    public void onAccountIdFromCustomerIdRequest(Event e) {
+    public void retrieveCustomerBankAccount(Event e) {
         UUID customerId = e.getArgument("customerId", UUID.class);
         String accountId = customerRepository.getCustomerById(customerId).accountId();
 
         UUID eventId = e.getArgument("id", UUID.class);
-        Event event = new Event("AccountIdFromCustomerIdAnswer", Map.of("id", eventId, "accountId", accountId));
+        Event event = new Event("CustomerBankAccountRetrieved", Map.of("id", eventId, "customerId", customerId, "accountId", accountId));
         queue.publish(event);
     }
 
-    public void onAccountIdFromMerchantIdRequest(Event e) {
+    public void retrieveMerchantBankAccount(Event e) {
         UUID merchantId = e.getArgument("merchantId", UUID.class);
         UUID eventId = e.getArgument("id", UUID.class);
 
         if (merchantRepository.getMerchantById(merchantId) == null) {
             String errorMessage = "Merchant with id '" + merchantId + "' does not exist";
             LOG.error(errorMessage);
-            Event event = new Event("AccountIdFromMerchantIdError", Map.of("id", eventId, "message", errorMessage));
+            Event event = new Event("RetrieveMerchantBankAccountFailed", Map.of("id", eventId, "merchantId", merchantId, "message", errorMessage));
             queue.publish(event);
             return;
         }
         String accountId = merchantRepository.getMerchantById(merchantId).accountId();
 
-        Event event = new Event("AccountIdFromMerchantIdAnswer", Map.of("id", eventId, "accountId", accountId));
+        Event event = new Event("MerchantBankAccountRetrieved", Map.of("id", eventId, "accountId", accountId));
         queue.publish(event);
     }
 

@@ -33,8 +33,10 @@ public class ReportingManager {
 
     public void onPaymentCompleted(Event e) {
         UUID customerId = e.getArgument("customerId", UUID.class);
-        Payment payment = e.getArgument("payment", Payment.class);
-        reportingRepository.savePayment(customerId, payment);
+        UUID merchantId = e.getArgument("merchantId", UUID.class);
+        int amount = e.getArgument("amount", Integer.class);
+        Token token = e.getArgument("token", Token.class);
+        reportingRepository.savePayment(customerId, merchantId, amount, token);
     }
 
     public void onCustomerReportRequested(Event e) {
