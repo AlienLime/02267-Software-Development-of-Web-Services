@@ -5,7 +5,6 @@ import dtu.group17.helpers.ErrorMessageHelper;
 import dtu.group17.helpers.AccountHelper;
 import dtu.group17.helpers.TokenHelper;
 import dtu.group17.helpers.PaymentHelper;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 

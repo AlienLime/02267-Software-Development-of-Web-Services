@@ -5,6 +5,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
+import org.jboss.logging.Logger;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 public class RabbitMQQueue implements MessageQueue {
+    private static final Logger LOG = Logger.getLogger(RabbitMQQueue.class);
     private static final String DEFAULT_HOSTNAME = "localhost";
     private static final String EXCHANGE_NAME = "eventsExchange";
     private static final String EXCHANGE_TYPE = "topic";
@@ -43,7 +45,8 @@ public class RabbitMQQueue implements MessageQueue {
 
     @Override
     public void publish(Event event) {
-        System.out.format("[x] publish(%s)\n", event);
+        LOG.info(String.format("Sent %s event", event.getTopic()));
+        LOG.debug(String.format("publish(%s)", event));
         String message = new Gson().toJson(event);
         try {
             channel.basicPublish(EXCHANGE_NAME, event.getTopic(), null, message.getBytes(StandardCharsets.UTF_8));
@@ -54,7 +57,7 @@ public class RabbitMQQueue implements MessageQueue {
 
     @Override
     public Runnable subscribe(String topic, Consumer<Event> handler) {
-        System.out.format("[x] subscribe(%s)\n", topic);
+        LOG.debug(String.format("subscribe(%s)", topic));
         Channel channel = createChannel();
         try {
             String queueName = channel.queueDeclare().getQueue();
@@ -63,7 +66,8 @@ public class RabbitMQQueue implements MessageQueue {
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
                 Event event = new Gson().fromJson(message, Event.class);
-                System.out.format("[x] executingHandler(%s)\n", event);
+                LOG.info(String.format("Received %s event", event.getTopic()));
+                LOG.debug(String.format("executingHandler(%s)", event));
                 handler.accept(event);
             };
 
@@ -81,5 +85,4 @@ public class RabbitMQQueue implements MessageQueue {
             throw new Error(e);
         }
     }
-
 }
