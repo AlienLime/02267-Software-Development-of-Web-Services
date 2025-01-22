@@ -31,17 +31,16 @@ Feature: Reporting
     Given a registered merchant with a bank account
     When the merchant request to receive their report
     Then the merchant receives an empty report
-  
-  @Ignore
+
   Scenario: Manager requests report
     Given the following payments have been made
       | amount | customer name      | merchant name       |
       | 10     | Group17-Katja Kaj  | Group17-Kantine 101 |
-      | 22     | Group17-Bente Bent | Group17-Hegnet      |
+      | 22     | Group17-Bente Bent | Group17-Hegnet 358  |
     When the manager request to receive their report
     Then the manager receives a report containing information of all the payments
 #    And the report includes a summary of all money transferred
-  @Ignore
+
   Scenario: Manager with no payments requests report
     When the manager request to receive their report
     Then the manager receives an empty report

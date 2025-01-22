@@ -2,8 +2,6 @@ package dtu.group17.helpers;
 
 import dtu.group17.customer.Customer;
 import dtu.group17.merchant.Merchant;
-import dtu.group17.customer.CustomerAPI;
-import dtu.group17.merchant.MerchantAPI;
 import dtu.ws.fastmoney.Account;
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
@@ -36,12 +34,12 @@ public class BankHelper {
         return accountId;
     }
 
-    public Account getBalance(Customer customer) throws BankServiceException_Exception {
+    public Account getAccount(Customer customer) throws BankServiceException_Exception {
         String accountId = accounts.get(customer.cpr());
         return bankService.getAccount(accountId);
     }
 
-    public Account getBalance(Merchant merchant) throws BankServiceException_Exception {
+    public Account getAccount(Merchant merchant) throws BankServiceException_Exception {
         String accountId = accounts.get(merchant.cpr());
         return bankService.getAccount(accountId);
     }

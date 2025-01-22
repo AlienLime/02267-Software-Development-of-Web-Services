@@ -21,13 +21,14 @@ public class TokenManager {
 
         this.tokenRepository = tokenRepository;
 
-        queue.subscribe("TokensRequested", this::onTokensRequested);
-        queue.subscribe("CustomerRegistered", this::onCustomerRegistered);
-        queue.subscribe("CustomerIdFromTokenRequest", this::onCustomerIdFromTokenRequest); //TODO: Event to past tense
-        queue.subscribe("ConsumeToken", this::onConsumeToken); //TODO: Event to past tense
+        queue.subscribe("RequestTokens", this::RequestTokens);
+        queue.subscribe("CustomerRegistered", this::initializeCustomer);
+        queue.subscribe("PaymentRequested", this::validateToken);
+        queue.subscribe("TokenConsumptionRequested", this::consumeToken);
+        queue.subscribe("ClearRequested", this::clearTokens);
     }
 
-    public void onTokensRequested(Event e) {
+    public void RequestTokens(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
         int amount = e.getArgument("amount", Integer.class);
         UUID customerId = e.getArgument("customerId", UUID.class);
@@ -36,7 +37,7 @@ public class TokenManager {
         if (tokenRepository.getNumberOfTokens(customerId) > 1) {
             String errorMessage = "Cannot request new tokens when you have 2 or more tokens";
             LOG.error(errorMessage);
-            Event event = new Event("TokensRequestedError", Map.of("id", eventId, "message", errorMessage));
+            Event event = new Event("RequestTokensFailed", Map.of("id", eventId, "message", errorMessage));
             queue.publish(event);
             return;
         }
@@ -45,7 +46,7 @@ public class TokenManager {
         if (amount < 1 || amount > 5) {
             String errorMessage = "Only 1-5 tokens can be requested";
             LOG.error(errorMessage);
-            Event event = new Event("TokensRequestedError", Map.of("id", eventId, "message", errorMessage));
+            Event event = new Event("RequestTokensFailed", Map.of("id", eventId, "message", errorMessage));
             queue.publish(event);
             return;
         }
@@ -61,28 +62,28 @@ public class TokenManager {
         queue.publish(event);
     }
 
-    public void onCustomerRegistered(Event e) {
+    public void initializeCustomer(Event e) {
         UUID customerId = e.getArgument("customer", Customer.class).id();
         tokenRepository.addCustomer(customerId);
     }
 
-    public void onCustomerIdFromTokenRequest(Event e) {
+    public void validateToken(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
         Token token = e.getArgument("token", Token.class);
 
         try {
             UUID customerId = tokenRepository.getCustomerIdFromToken(token);
-            Event event = new Event("CustomerIdFromTokenAnswer", Map.of("id", eventId, "customerId", customerId));
+            Event event = new Event("TokenValidated", Map.of("id", eventId, "customerId", customerId));
             queue.publish(event);
         } catch (TokenNotFoundException ex) {
             String errorMessage = ex.getMessage();
             LOG.error(errorMessage);
-            Event event = new Event("CustomerIdFromTokenError", Map.of("id", eventId, "message", errorMessage));
+            Event event = new Event("TokenValidationFailed", Map.of("id", eventId, "message", errorMessage));
             queue.publish(event);
         }
     }
 
-    private void onConsumeToken(Event e) {
+    private void consumeToken(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
         UUID customerId = e.getArgument("customerId", UUID.class);
         Token token = e.getArgument("token", Token.class);
@@ -94,9 +95,16 @@ public class TokenManager {
         } catch (TokenNotFoundException ex) {
             String errorMessage = ex.getMessage();
             LOG.error(errorMessage);
-            Event event = new Event("ConsumeTokenErrored", Map.of("id", eventId, "message", errorMessage));
+            Event event = new Event("TokenConsumptionFailed", Map.of("id", eventId, "message", errorMessage));
             queue.publish(event);
         }
     }
 
+    private void clearTokens(Event e) {
+        tokenRepository.clear();
+
+        UUID eventId = e.getArgument("id", UUID.class);
+        Event event = new Event("TokensCleared", Map.of("id", eventId));
+        queue.publish(event);
+    }
 }

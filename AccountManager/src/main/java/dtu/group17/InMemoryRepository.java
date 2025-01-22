@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * A simple in-memory implementation of the CustomerRepository and MerchantRepository interfaces.
+ * This is useful for testing the DTUPay system without needing to set up a database.
+ */
+
 package dtu.group17;
 
 import java.util.HashMap;
@@ -38,6 +45,16 @@ public class InMemoryRepository implements CustomerRepository, MerchantRepositor
     @Override
     public void removeMerchant(UUID id) {
         merchants.remove(id);
+    }
+
+    @Override
+    public void clearCustomers() {
+        customers.clear();
+    }
+
+    @Override
+    public void clearMerchants() {
+        merchants.clear();
     }
 
 }

@@ -1,4 +1,4 @@
-Feature: Accounts
+Feature: Account
   Scenario: Customer is successfully registered
     Given a customer with name "Group17-Susan", last name "Group17-Baldwin", and CPR "170154-2344"
     And the customer is registered with the bank

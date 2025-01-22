@@ -1,5 +1,7 @@
 package dtu.group17;
 
+import dtu.group17.records.Customer;
+import dtu.group17.records.Merchant;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
@@ -7,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class AccountManagerFacade {
@@ -24,14 +25,14 @@ public class AccountManagerFacade {
 
     public AccountManagerFacade() {
         queue = new RabbitMQQueue();
-        unsubscribeCustomerRegistered = queue.subscribe("CustomerRegistered", this::handleCustomerRegistered);
-        unsubscribeMerchantRegistered = queue.subscribe("MerchantRegistered", this::handleMerchantRegistered);
+        unsubscribeCustomerRegistered = queue.subscribe("CustomerRegistered", this::confirmCustomerRegistration);
+        unsubscribeMerchantRegistered = queue.subscribe("MerchantRegistered", this::confirmMerchantRegistration);
 
         unsubscribeCustomerDeregistered = queue.subscribe("CustomerDeregistered", e ->
-                handleDeregistered(deregisteredCustomers, e)
+                confirmDeregistration(deregisteredCustomers, e)
         );
         unsubscribeMerchantDeregistered = queue.subscribe("MerchantDeregistered", e ->
-                handleDeregistered(deregisteredMerchants, e)
+                confirmDeregistration(deregisteredMerchants, e)
         );
     }
 
@@ -49,7 +50,7 @@ public class AccountManagerFacade {
         registeredCustomers.put(id, future);
         Event event = new Event("CustomerRegistrationRequested", Map.of("id", id, "customer", customer, "bankAccountId", bankAccountId));
         queue.publish(event);
-        return future.orTimeout(3, TimeUnit.SECONDS).join();
+        return future.join();
     }
 
     public boolean deregisterCustomer(UUID customerId) {
@@ -58,7 +59,7 @@ public class AccountManagerFacade {
         deregisteredCustomers.put(id, future);
         Event event = new Event("CustomerDeregistrationRequested", Map.of("id", id, "customerId", customerId));
         queue.publish(event);
-        future.orTimeout(3, TimeUnit.SECONDS).join();
+        future.join();
         return true;
     }
 
@@ -68,7 +69,7 @@ public class AccountManagerFacade {
         registeredMerchants.put(id, future);
         Event event = new Event("MerchantRegistrationRequested", Map.of("id", id, "merchant", merchant, "bankAccountId", bankAccountId));
         queue.publish(event);
-        return future.orTimeout(3, TimeUnit.SECONDS).join();
+        return future.join();
     }
 
     public boolean deregisterMerchant(UUID merchantId) {
@@ -77,23 +78,23 @@ public class AccountManagerFacade {
         deregisteredMerchants.put(id, future);
         Event event = new Event("MerchantDeregistrationRequested", Map.of("id", id, "merchantId", merchantId));
         queue.publish(event);
-        future.orTimeout(3, TimeUnit.SECONDS).join();
+        future.join();
         return true;
     }
 
-    public void handleCustomerRegistered(Event e) {
+    public void confirmCustomerRegistration(Event e) {
         Customer customer = e.getArgument("customer", Customer.class);
         UUID eventId = e.getArgument("id", UUID.class);
         registeredCustomers.remove(eventId).complete(customer);
     }
 
-    public void handleMerchantRegistered(Event e) {
+    public void confirmMerchantRegistration(Event e) {
         Merchant merchant = e.getArgument("merchant", Merchant.class);
         UUID eventId = e.getArgument("id", UUID.class);
         registeredMerchants.remove(eventId).complete(merchant);
     }
 
-    public void handleDeregistered(Map<UUID, CompletableFuture<Void>> deregistered, Event e) {
+    public void confirmDeregistration(Map<UUID, CompletableFuture<Void>> deregistered, Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
         deregistered.remove(eventId).complete(null);
     }

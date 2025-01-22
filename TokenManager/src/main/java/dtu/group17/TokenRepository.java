@@ -15,4 +15,6 @@ public interface TokenRepository {
 
     int getNumberOfTokens(UUID id);
 
+    void clear();
+
 }

@@ -70,6 +70,34 @@ public class PaymentSteps {
         }
     }
 
+    @Given("the following payments have been made")
+    public void theFollowingPaymentsHaveBeenMade(io.cucumber.datatable.DataTable paymentDataTable) throws Exception {
+        List<Map<String, String>> rows = paymentDataTable.asMaps(String.class, String.class);
+
+        for (Map<String, String> columns : rows) {
+            int amount = Integer.parseInt(columns.get("amount"));
+            String[] merchantName = columns.get("merchant name").trim().split(" ");
+            String[] customerName = columns.get("customer name").trim().split(" ");
+
+            // Create merchant
+            Merchant merchant = accountHelper.createMerchant(merchantName[0], merchantName[1]);
+            String merchantAccountId = bankHelper.createBankAccount(merchant, 0);
+            merchant = accountHelper.registerMerchantWithDTUPay(merchant, merchantAccountId);
+
+            // Create customer
+            Customer customer = accountHelper.createCustomer(customerName[0], customerName[1]);
+            String customerAccountId = bankHelper.createBankAccount(customer, amount);
+            customer = accountHelper.registerCustomerWithDTUPay(customer, customerAccountId);
+
+            tokenHelper.requestTokens(customer, 1);
+            Token token = tokenHelper.consumeFirstToken(customer);
+
+            paymentHelper.createPayment(amount, merchant);
+            paymentHelper.addToken(token);
+            paymentHelper.submitPayment(customer.id());
+        }
+    }
+
     @When("the merchant creates a payment for {int} kr")
     public void theMerchantCreatesAPaymentForKr(Integer amount) {
         paymentHelper.createPayment(amount, accountHelper.getCurrentMerchant());

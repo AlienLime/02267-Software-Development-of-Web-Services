@@ -23,13 +23,13 @@ public class BankSteps {
 
     @Then("the balance of the customer at the bank is {int} kr")
     public void theBalanceOfTheCustomerAtTheBankIsKr(Integer balance) throws BankServiceException_Exception {
-        Account account = bankHelper.getBalance(accountHelper.getCurrentCustomer());
+        Account account = bankHelper.getAccount(accountHelper.getCurrentCustomer());
         assertEquals(BigDecimal.valueOf(balance), account.getBalance());
     }
 
     @Then("the balance of the merchant at the bank is {int} kr")
     public void theBalanceOfTheMerchantAtTheBankIsKr(Integer balance) throws BankServiceException_Exception {
-        Account account = bankHelper.getBalance(accountHelper.getCurrentMerchant());
+        Account account = bankHelper.getAccount(accountHelper.getCurrentMerchant());
         assertEquals(BigDecimal.valueOf(balance), account.getBalance());
     }
 

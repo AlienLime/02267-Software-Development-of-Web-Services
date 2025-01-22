@@ -1,5 +1,9 @@
 package dtu.group17;
 
+import dtu.group17.exceptions.BankException;
+import dtu.group17.exceptions.MerchantNotFoundException;
+import dtu.group17.exceptions.TokenNotFoundException;
+import dtu.group17.records.Payment;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
@@ -23,13 +27,13 @@ public class PaymentManagerFacade {
     public PaymentManagerFacade() {
         queue = new RabbitMQQueue();
         unsubscribePaymentCompleted = queue.subscribe("PaymentCompleted", this::handleCompleted);
-        unsubscribePaymentMerchantNotFoundError = queue.subscribe("PaymentMerchantNotFoundError", e ->
+        unsubscribePaymentMerchantNotFoundError = queue.subscribe("RetrieveMerchantBankAccountFailed", e ->
                 onErrorHandler(submitPaymentRequests, MerchantNotFoundException::new, e)
         );
-        unsubscribePaymentBankError = queue.subscribe("PaymentBankError", e ->
+        unsubscribePaymentBankError = queue.subscribe("PaymentFailed", e ->
                 onErrorHandler(submitPaymentRequests, TokenNotFoundException::new, e)
         );
-        unsubscribePaymentTokenNotFoundError = queue.subscribe("PaymentTokenNotFoundError", e ->
+        unsubscribePaymentTokenNotFoundError = queue.subscribe("TokenValidationFailed", e ->
                 onErrorHandler(submitPaymentRequests, BankException::new, e)
         );
     }
@@ -46,9 +50,13 @@ public class PaymentManagerFacade {
         CompletableFuture<Void> future = new CompletableFuture<>();
         UUID id = UUID.randomUUID();
         submitPaymentRequests.put(id, future);
-        Event event = new Event("PaymentRequested", Map.of("id", id, "payment", payment));
+        Event event = new Event("PaymentRequested", Map.of(
+                "id", id,
+                "token", payment.token(),
+                "amount", payment.amount(),
+                "merchantId", payment.merchantId()));
         queue.publish(event);
-        future.orTimeout(3, TimeUnit.SECONDS).join();
+        future.join();
         return true;
     }
 

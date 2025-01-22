@@ -41,6 +41,12 @@ public class AccountHelper {
         return currentCustomer;
     }
 
+    public Customer createCustomer(String firstName, String lastName) {
+        currentCustomer = new Customer(null, firstName, lastName, randomCPR());
+        customers.add(currentCustomer);
+        return currentCustomer;
+    }
+
     public Customer registerCustomerWithDTUPay(Customer customer, String accountId) {
         currentCustomer = customerAPI.register(customer, accountId);
         customers.removeIf(c -> c.cpr().equals(customer.cpr())); // Remove version of customer without id
@@ -91,15 +97,6 @@ public class AccountHelper {
 
     public void setCurrentMerchant(Merchant merchant) {
         currentMerchant = merchant;
-    }
-
-    public void deregisterUsers() {
-        if (currentCustomer != null) customerAPI.deregister(currentCustomer.id());
-        if (currentMerchant != null) merchantAPI.deregister(currentMerchant.id());
-    }
-
-    public Customer getCustomerById(UUID id) {
-        return customers.stream().filter(c -> c.id().equals(id)).findFirst().get();
     }
 
     public List<Customer> getCustomers() {

@@ -9,10 +9,10 @@ public class InMemoryRepository implements ReportRepository {
     private Map<Token, PaymentInfo> tokenPaymentInfo = new HashMap<>();
 
     @Override
-    public void savePayment(UUID customerId, Payment payment) {
-        customerTokens.computeIfAbsent(customerId, id -> new ArrayList<>()).add(payment.token());
-        merchantTokens.computeIfAbsent(payment.merchantId(), id -> new ArrayList<>()).add(payment.token());
-        tokenPaymentInfo.put(payment.token(), new PaymentInfo(payment.amount(), payment.merchantId()));
+    public void savePayment(UUID customerId, UUID merchantId, int amount, Token token) {
+        customerTokens.computeIfAbsent(customerId, id -> new ArrayList<>()).add(token);
+        merchantTokens.computeIfAbsent(merchantId, id -> new ArrayList<>()).add(token);
+        tokenPaymentInfo.put(token, new PaymentInfo(amount, merchantId));
     }
 
     @Override
@@ -52,4 +52,12 @@ public class InMemoryRepository implements ReportRepository {
             })
         ).toList();
     }
+
+    @Override
+    public void clearReports() {
+        customerTokens.clear();
+        merchantTokens.clear();
+        tokenPaymentInfo.clear();
+    }
+
 }

@@ -1,6 +1,8 @@
 package dtu.group17.adapter.rest;
 
 import dtu.group17.*;
+import dtu.group17.records.CustomerReportEntry;
+import dtu.group17.records.Token;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;

@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ *  This class is responsible for managing the accounts of customers and merchants.
+ *  It listens for events from the message queue and register, deregister and retrieves accounts.
+ */
+
 package dtu.group17;
 
 
@@ -18,23 +25,38 @@ public class AccountManager {
         new AccountManager(repo, repo);
     }
 
+    /**
+     * Constructor for AccountManager.
+     * Subscribes to all registration, deregistration and retrieval events.
+     * @param customerRepository: Repository for customers
+     * @param merchantRepository: Repository for merchants
+     * @author Katja Kaj
+     */
     public AccountManager(CustomerRepository customerRepository, MerchantRepository merchantRepository) {
         LOG.info("Starting Account Manager...");
 
         this.customerRepository = customerRepository;
         this.merchantRepository = merchantRepository;
 
-        queue.subscribe("CustomerRegistrationRequested", this::onCustomerRegistrationRequested);
-        queue.subscribe("MerchantRegistrationRequested", this::onMerchantRegistrationRequested);
+        queue.subscribe("CustomerRegistrationRequested", this::registerCustomer);
+        queue.subscribe("MerchantRegistrationRequested", this::registerMerchant);
 
-        queue.subscribe("AccountIdFromCustomerIdRequest", this::onAccountIdFromCustomerIdRequest); //TODO: Rename to past tense
-        queue.subscribe("AccountIdFromMerchantIdRequest", this::onAccountIdFromMerchantIdRequest);
+        queue.subscribe("TokenValidated", this::retrieveCustomerBankAccount);
+        queue.subscribe("PaymentRequested", this::retrieveMerchantBankAccount);
 
-        queue.subscribe("CustomerDeregistrationRequested", this::onCustomerDeregistrationRequested);
-        queue.subscribe("MerchantDeregistrationRequested", this::onMerchantDeregistrationRequested);
+        queue.subscribe("CustomerDeregistrationRequested", this::deregisterCustomer);
+        queue.subscribe("MerchantDeregistrationRequested", this::deregisterMerchant);
+
+        queue.subscribe("ClearRequested", this::clearAccounts);
     }
 
-    public void onCustomerRegistrationRequested(Event e) {
+    /**
+     * Uses the AccountFactory to create a new customer with a unique ID and adds it to the customer repository.
+     * Publishes an event with the customer ID.
+     * @param e: Event containing the customer and bank account ID
+     * @author Katja
+     */
+    public void registerCustomer(Event e) {
         Customer namedCustomer = e.getArgument("customer", Customer.class);
         String accountId = e.getArgument("bankAccountId", String.class);
         Customer customer = accountFactory.createCustomerWithID(namedCustomer, accountId);
@@ -44,8 +66,14 @@ public class AccountManager {
         Event event = new Event("CustomerRegistered", Map.of("id", eventId, "customer", customer));
         queue.publish(event);
     }
-    
-    public void onMerchantRegistrationRequested(Event e) {
+
+    /**
+     * Uses the AccountFactory to create a new merchant with a unique ID and adds it to the merchant repository.
+     * Publishes an event with the merchant ID.
+     * @param e: Event containing the merchant and bank account ID
+     *         @author Katja
+     */
+    public void registerMerchant(Event e) {
         Merchant namedMerchant = e.getArgument("merchant", Merchant.class);
         String accountId = e.getArgument("bankAccountId", String.class);
         Merchant merchant = accountFactory.createMerchantWithID(namedMerchant, accountId);
@@ -56,33 +84,47 @@ public class AccountManager {
         queue.publish(event);
     }
 
-    public void onAccountIdFromCustomerIdRequest(Event e) {
+    /**
+     * Publishes an event with a customer's bank account ID.
+     * @param e Event containing the customer ID
+     *        @Author Katja
+     */
+    public void retrieveCustomerBankAccount(Event e) {
         UUID customerId = e.getArgument("customerId", UUID.class);
         String accountId = customerRepository.getCustomerById(customerId).accountId();
 
         UUID eventId = e.getArgument("id", UUID.class);
-        Event event = new Event("AccountIdFromCustomerIdAnswer", Map.of("id", eventId, "accountId", accountId));
+        Event event = new Event("CustomerBankAccountRetrieved", Map.of("id", eventId, "customerId", customerId, "accountId", accountId));
         queue.publish(event);
     }
 
-    public void onAccountIdFromMerchantIdRequest(Event e) {
+    /**
+     * Publishes an event with a merchant's bank account ID.
+     * @param e Event containing the merchant ID
+     */
+    public void retrieveMerchantBankAccount(Event e) {
         UUID merchantId = e.getArgument("merchantId", UUID.class);
         UUID eventId = e.getArgument("id", UUID.class);
 
         if (merchantRepository.getMerchantById(merchantId) == null) {
             String errorMessage = "Merchant with id '" + merchantId + "' does not exist";
             LOG.error(errorMessage);
-            Event event = new Event("AccountIdFromMerchantIdError", Map.of("id", eventId, "message", errorMessage));
+            Event event = new Event("RetrieveMerchantBankAccountFailed", Map.of("id", eventId, "merchantId", merchantId, "message", errorMessage));
             queue.publish(event);
             return;
         }
         String accountId = merchantRepository.getMerchantById(merchantId).accountId();
 
-        Event event = new Event("AccountIdFromMerchantIdAnswer", Map.of("id", eventId, "accountId", accountId));
+        Event event = new Event("MerchantBankAccountRetrieved", Map.of("id", eventId, "accountId", accountId));
         queue.publish(event);
     }
 
-    public void onCustomerDeregistrationRequested(Event e) {
+    /**
+     * Removes a customer from the customer repository and publishes an event with the customer ID.
+     * @param e Event containing the customer ID
+     *       @Author Katja
+     */
+    public void deregisterCustomer(Event e) {
         UUID customerId = e.getArgument("customerId", UUID.class);
         customerRepository.removeCustomer(customerId);
 
@@ -91,12 +133,31 @@ public class AccountManager {
         queue.publish(event);
     }
 
-    public void onMerchantDeregistrationRequested(Event e) {
+    /**
+     * Removes a merchant from the merchant repository and publishes an event with the merchant ID.
+     * @param e Event containing the merchant ID
+     *        @Author Katja
+     */
+    public void deregisterMerchant(Event e) {
         UUID merchantId = e.getArgument("merchantId", UUID.class);
         merchantRepository.removeMerchant(merchantId);
 
         UUID eventId = e.getArgument("id", UUID.class);
         Event event = new Event("MerchantDeregistered", Map.of("id", eventId));
+        queue.publish(event);
+    }
+
+    /**
+     * Clears all customers and merchants from the repositories and publishes an event.
+     * @param e Event containing the event ID
+     *        @Author Katja
+     */
+    public void clearAccounts(Event e) {
+        customerRepository.clearCustomers();
+        merchantRepository.clearMerchants();
+
+        UUID eventId = e.getArgument("id", UUID.class);
+        Event event = new Event("AccountsCleared", Map.of("id", eventId));
         queue.publish(event);
     }
 
