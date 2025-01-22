@@ -48,4 +48,8 @@ public class TokenHelper {
     public UUID getCustomerFromConsumedToken(Token token) {
         return consumedTokens.get(token);
     }
+
+    public void addCustomerTokens(Customer customer, List<Token> tokens) {
+        this.tokens.computeIfAbsent(customer.id(), id -> new ArrayList<>()).addAll(tokens);
+    }
 }

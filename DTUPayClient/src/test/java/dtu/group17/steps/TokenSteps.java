@@ -35,7 +35,7 @@ public class TokenSteps {
         paymentHelper.addToken(tokenHelper.getPresentedToken());
     }
 
-    @When("the customer requests {int} tokens")
+    @When("the customer requests {int} token\\(s)")
     public void theCustomerRequestsTokens(Integer amount) {
         try {
             tokenHelper.requestTokens(accountHelper.getCurrentCustomer(), amount);
@@ -49,7 +49,7 @@ public class TokenSteps {
         paymentHelper.addToken(new Token(UUID.fromString(tokenId)));
     }
 
-    @Then("the customer received {int} tokens")
+    @Then("the customer received {int} token\\(s)")
     public void theCustomerReceivedTokens(int amount) {
         assertEquals(amount, tokenHelper.getCustomersTokens(accountHelper.getCurrentCustomer()).size());
     }

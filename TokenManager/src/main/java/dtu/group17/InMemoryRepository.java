@@ -19,7 +19,7 @@ public class InMemoryRepository implements TokenRepository {
 
     @Override
     public void consumeToken(UUID id, Token token) throws TokenNotFoundException {
-        List<Token> customerTokens = this.tokens.get(id);
+        List<Token> customerTokens = tokens.get(id);
         if (customerTokens == null) {
             throw new TokenNotFoundException("Token with id '" + token.id() + "' not found");
         }
@@ -40,7 +40,11 @@ public class InMemoryRepository implements TokenRepository {
 
     @Override
     public int getNumberOfTokens(UUID id) {
-        return tokens.containsKey(id) ? tokens.get(id).size() : 0;
+        List<Token> customerTokens = tokens.get(id);
+        if (customerTokens == null) {
+            return 0;
+        }
+        return customerTokens.size();
     }
 
     @Override

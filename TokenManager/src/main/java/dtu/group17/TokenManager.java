@@ -21,7 +21,7 @@ public class TokenManager {
 
         this.tokenRepository = tokenRepository;
 
-        queue.subscribe("RequestTokens", this::RequestTokens);
+        queue.subscribe("TokensRequested", this::RequestTokens);
         queue.subscribe("CustomerRegistered", this::initializeCustomer);
         queue.subscribe("PaymentRequested", this::validateToken);
         queue.subscribe("TokenConsumptionRequested", this::consumeToken);

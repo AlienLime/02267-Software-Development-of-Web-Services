@@ -7,7 +7,6 @@ import dtu.group17.records.Token;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -21,7 +20,7 @@ import static dtu.group17.HandlerUtil.errorHandler;
 public class TokenManagerFacade {
     private MessageQueue queue;
 
-    private Map<UUID, CompletableFuture<List<Token>>> tokenRequests = new HashMap<>();
+    private Map<UUID, CompletableFuture<List<Token>>> tokenRequests = new ConcurrentHashMap<>();
     private Map<UUID, CompletableFuture<Void>> consumeTokenRequests = new ConcurrentHashMap<>();
 
     private Runnable unsubscribeTokensGenerated, unsubscribeRequestTokensFailed,
@@ -53,7 +52,7 @@ public class TokenManagerFacade {
         CompletableFuture<List<Token>> future = new CompletableFuture<>();
         UUID id = UUID.randomUUID();
         tokenRequests.put(id, future);
-        Event event = new Event("RequestTokens", Map.of("id", id, "customerId", customerId, "amount", amount));
+        Event event = new Event("TokensRequested", Map.of("id", id, "customerId", customerId, "amount", amount));
         queue.publish(event);
         return future.join();
     }

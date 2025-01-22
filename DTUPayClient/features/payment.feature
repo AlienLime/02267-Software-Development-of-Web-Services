@@ -1,4 +1,6 @@
 Feature: Payment
+  Background: Payments can be made from a customer to a merchants registered with DTU Pay
+
   Scenario: Successful Payment
     Given a registered customer with a balance of 1000 kr and 5 token(s)
     And a registered merchant with a bank account and a balance of 1000 kr
@@ -42,16 +44,24 @@ Feature: Payment
     Then the payment is unsuccessful
     And the error message is "Creditor account does not exist"
 
-  Scenario: Concurrent Payments to Merchant
+  Scenario: Concurrent payments to merchant
     Given two registered customers each with a balance of 1000 kr and 1 token(s)
     And a registered merchant with a bank account and a balance of 1000 kr
     When the merchant submits a payment of 50 kr for each customer at the same time
     Then the balance of both customers at the bank is 950 kr
     And the balance of the merchant at the bank is 1100 kr
 
-  Scenario: Concurrent Payments by Customer
+  Scenario: Concurrent payments by a customer
     Given two registered merchants each with a balance of 10 kr
     And a registered customer with a balance of 100 kr and 2 token(s)
     When both merchants submit a payment of 50 kr to the customer
     Then the balance of the customer at the bank is 0 kr
     And the balance of both merchants at the bank is 60 kr
+
+  Scenario: Concurrent payments by a customer with insufficient funds
+    Given two registered merchants each with a balance of 10 kr
+    And a registered customer with a balance of 50 kr and 2 token(s)
+    When both merchants submit a payment of 50 kr to the customer
+    Then the balance of the customer at the bank is 0 kr
+    And one of the two merchants balance at the bank is 60 kr
+    And the error message is "Debtor balance will be negative"

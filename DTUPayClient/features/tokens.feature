@@ -1,10 +1,10 @@
 Feature: Token Handling
-  Background: This feature tests that everything works as intended in regards to the use of customer tokens
+  Background: A customer can request tokens to make future payments with
 
   Scenario: Correct amount of tokens distributed upon request
     Given a registered customer with 0 token(s)
-    When the customer requests 2 tokens
-    Then the customer received 2 tokens
+    When the customer requests 2 token(s)
+    Then the customer received 2 token(s)
 
   Scenario: Payment fails because token does not exist
     Given a registered merchant with a bank account
@@ -16,15 +16,20 @@ Feature: Token Handling
 
   Scenario: Customer requests tokens while having more than one remaining
     Given a registered customer with 2 token(s)
-    When the customer requests 2 tokens
+    When the customer requests 2 token(s)
     Then the error message is "Cannot request new tokens when you have 2 or more tokens"
 
   Scenario: Customer requests 0 tokens
     Given a registered customer with 1 token(s)
-    When the customer requests 0 tokens
+    When the customer requests 0 token(s)
     Then the error message is "Only 1-5 tokens can be requested"
 
   Scenario: Customer requests above 5 tokens
     Given a registered customer with 1 token(s)
-    When the customer requests 6 tokens
+    When the customer requests 6 token(s)
     Then the error message is "Only 1-5 tokens can be requested"
+
+  Scenario: Concurrent token requests by a customer
+    Given a registered customer with 0 token(s)
+    When the customer submits two requests for 1 token
+    Then the customer received 2 token(s)

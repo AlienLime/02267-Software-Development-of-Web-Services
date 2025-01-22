@@ -1,9 +1,10 @@
-package dtu.group17.steps;
+package dtu.group17.steps.concurrency;
 
 import dtu.group17.Token;
 import dtu.group17.customer.Customer;
 import dtu.group17.customer.CustomerAPI;
 import dtu.group17.helpers.AccountHelper;
+import dtu.group17.helpers.ErrorMessageHelper;
 import dtu.group17.helpers.TokenHelper;
 import dtu.group17.merchant.Merchant;
 import dtu.group17.merchant.MerchantAPI;
@@ -20,11 +21,13 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PaymentConcurrencySteps {
 
     private AccountHelper accountHelper;
     private TokenHelper tokenHelper;
+    private ErrorMessageHelper errorMessageHelper;
     private CustomerAPI customerAPI;
     private MerchantAPI merchantAPI;
 
@@ -35,9 +38,10 @@ public class PaymentConcurrencySteps {
 
     private BankService bankService = new BankServiceService().getBankServicePort();
 
-    public PaymentConcurrencySteps(AccountHelper accountHelper, TokenHelper tokenHelper, CustomerAPI customerAPI, MerchantAPI merchantAPI) {
+    public PaymentConcurrencySteps(AccountHelper accountHelper, TokenHelper tokenHelper, ErrorMessageHelper errorMessageHelper, CustomerAPI customerAPI, MerchantAPI merchantAPI) {
         this.accountHelper = accountHelper;
         this.tokenHelper = tokenHelper;
+        this.errorMessageHelper = errorMessageHelper;
         this.customerAPI = customerAPI;
         this.merchantAPI = merchantAPI;
     }
@@ -81,7 +85,9 @@ public class PaymentConcurrencySteps {
                 customerAPI.consumeToken(customerId1, token1);
                 merchantAPI.submitPayment(new Payment(token1, amount, merchantId1));
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                synchronized (errorMessageHelper) {
+                    errorMessageHelper.setErrorMessage(e.getMessage());
+                }
             }
         });
         var t2 = new Thread(() -> {
@@ -89,7 +95,9 @@ public class PaymentConcurrencySteps {
                 customerAPI.consumeToken(customerId2, token2);
                 merchantAPI.submitPayment(new Payment(token2, amount, merchantId2));
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                synchronized (errorMessageHelper) {
+                    errorMessageHelper.setErrorMessage(e.getMessage());
+                }
             }
         });
         t1.start();
@@ -143,6 +151,18 @@ public class PaymentConcurrencySteps {
     @Then("the balance of both merchants at the bank is {int} kr")
     public void theBalanceOfBothMerchantsAtTheBankIsKr(Integer newBalance) throws BankServiceException_Exception {
         checkBalanceOfActors(merchants.keySet().stream().toList(), newBalance);
+    }
+
+    @Then("one of the two merchants balance at the bank is {int} kr")
+    public void oneOfTheMerchantsBalanceAtTheBankIsKr(Integer newBalance) throws BankServiceException_Exception {
+        List<UUID> ids = merchants.keySet().stream().toList();
+        assertEquals(2, ids.size());
+
+        Account account1 = bankService.getAccount(actorAccounts.get(ids.get(0)));
+        Account account2 = bankService.getAccount(actorAccounts.get(ids.get(1)));
+
+        assertTrue(BigDecimal.valueOf(newBalance).equals(account1.getBalance())
+                || BigDecimal.valueOf(newBalance).equals(account2.getBalance()));
     }
 
 }
