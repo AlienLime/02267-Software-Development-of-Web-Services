@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -185,6 +186,38 @@ public class PaymentConcurrencySteps {
         Token token2 = customerTokens.get(1);
 
         submitTwoPayments(amount, customer.id(), customer.id(), token1, token2, merchants.get(0).id(), merchants.get(1).id());
+    }
+
+    @When("the merchant submits a payment of {int} kr to the customer, and the customer simultaneously deregisters")
+    public void theMerchantSubmitsAPaymentOfKrToTheCustomerAndTheCustomerSimultaneouslyDeregisters(Integer amount) throws InterruptedException {
+        Merchant merchant = accountHelper.getCurrentMerchant();
+        Customer customer = accountHelper.getCurrentCustomer();
+
+        Token token = tokenHelper.getCustomersTokens(customer).getFirst();
+
+        var t1 = new Thread(() -> {
+            try {
+                customerAPI.consumeToken(customer.id(), token);
+                merchantAPI.submitPayment(new Payment(token, amount, merchant.id()));
+            } catch (Exception e) {
+                synchronized (errorMessageHelper) {
+                    errorMessageHelper.setErrorMessage(e.getMessage());
+                }
+            }
+        });
+        var t2 = new Thread(() -> {
+            try {
+                customerAPI.deregister(customer.id());
+            } catch (Exception e) {
+                synchronized (errorMessageHelper) {
+                    errorMessageHelper.setErrorMessage(e.getMessage());
+                }
+            }
+        });
+        t1.start();
+        t2.start();
+        t1.join();
+        t2.join();
     }
 
     @Then("the balance of both customers at the bank is {int} kr")

@@ -7,6 +7,7 @@
 
 package dtu.group17.dtu_pay_facade;
 
+import dtu.group17.dtu_pay_facade.exceptions.CustomerNotFoundException;
 import dtu.group17.messaging_utilities.Event;
 import dtu.group17.messaging_utilities.MessageQueue;
 import dtu.group17.messaging_utilities.RabbitMQQueue;
@@ -31,22 +32,26 @@ public class PaymentManagerFacade {
 
     private Map<UUID, CompletableFuture<Void>> submitPaymentRequests = new ConcurrentHashMap<>();
 
-    private Runnable unsubscribePaymentCompleted, unsubscribePaymentMerchantNotFoundError,
-            unsubscribePaymentBankError, unsubscribePaymentTokenNotFoundError; //TODO: Rename events to past tense (also methods?)
+    private Runnable unsubscribePaymentCompleted, unsubscribePaymentCustomerNotFoundError,
+            unsubscribePaymentMerchantNotFoundError, unsubscribePaymentBankError,
+            unsubscribePaymentTokenNotFoundError;
 
     public PaymentManagerFacade() {
         queue = new RabbitMQQueue();
         unsubscribePaymentCompleted = queue.subscribe("PaymentCompleted", e ->
                 completedHandler(submitPaymentRequests, e)
         );
+        unsubscribePaymentCustomerNotFoundError = queue.subscribe("RetrieveCustomerBankAccountFailed", e ->
+                errorHandler(submitPaymentRequests, CustomerNotFoundException::new, e)
+        );
         unsubscribePaymentMerchantNotFoundError = queue.subscribe("RetrieveMerchantBankAccountFailed", e ->
                 errorHandler(submitPaymentRequests, MerchantNotFoundException::new, e)
         );
         unsubscribePaymentBankError = queue.subscribe("PaymentFailed", e ->
-                errorHandler(submitPaymentRequests, TokenNotFoundException::new, e)
+                errorHandler(submitPaymentRequests, BankException::new, e)
         );
         unsubscribePaymentTokenNotFoundError = queue.subscribe("TokenValidationFailed", e ->
-                errorHandler(submitPaymentRequests, BankException::new, e)
+                errorHandler(submitPaymentRequests, TokenNotFoundException::new, e)
         );
     }
 
@@ -57,6 +62,7 @@ public class PaymentManagerFacade {
     @PreDestroy
     public void cleanup() {
         unsubscribePaymentCompleted.run();
+        unsubscribePaymentCustomerNotFoundError.run();
         unsubscribePaymentMerchantNotFoundError.run();
         unsubscribePaymentBankError.run();
         unsubscribePaymentTokenNotFoundError.run();

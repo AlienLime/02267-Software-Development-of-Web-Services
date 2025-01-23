@@ -61,7 +61,7 @@ public class AccountManager {
      * @param e: Event containing the customer and bank account ID
      * @author Katja
      */
-    public void registerCustomer(Event e) {
+    public Customer registerCustomer(Event e) {
         Customer namedCustomer = e.getArgument("customer", Customer.class);
         String accountId = e.getArgument("bankAccountId", String.class);
         Customer customer = accountFactory.createCustomerWithID(namedCustomer, accountId);
@@ -70,6 +70,7 @@ public class AccountManager {
         UUID eventId = e.getArgument("id", UUID.class);
         Event event = new Event("CustomerRegistered", Map.of("id", eventId, "customer", customer));
         queue.publish(event);
+        return customer;
     }
 
     /**
@@ -78,7 +79,7 @@ public class AccountManager {
      * @param e: Event containing the merchant and bank account ID
      *         @author Katja
      */
-    public void registerMerchant(Event e) {
+    public Merchant registerMerchant(Event e) {
         Merchant namedMerchant = e.getArgument("merchant", Merchant.class);
         String accountId = e.getArgument("bankAccountId", String.class);
         Merchant merchant = accountFactory.createMerchantWithID(namedMerchant, accountId);
@@ -87,6 +88,7 @@ public class AccountManager {
         UUID eventId = e.getArgument("id", UUID.class);
         Event event = new Event("MerchantRegistered", Map.of("id", eventId, "merchant", merchant));
         queue.publish(event);
+        return merchant;
     }
 
     /**
@@ -96,9 +98,18 @@ public class AccountManager {
      */
     public void retrieveCustomerBankAccount(Event e) {
         UUID customerId = e.getArgument("customerId", UUID.class);
-        String accountId = customerRepository.getCustomerById(customerId).accountId();
-
         UUID eventId = e.getArgument("id", UUID.class);
+
+        Customer customer = customerRepository.getCustomerById(customerId);
+        if (customer == null) {
+            String errorMessage = "Customer with id '" + customerId + "' does not exist";
+            LOG.error(errorMessage);
+            Event event = new Event("RetrieveCustomerBankAccountFailed", Map.of("id", eventId, "message", errorMessage));
+            queue.publish(event);
+            return;
+        }
+
+        String accountId = customer.accountId();
         Event event = new Event("CustomerBankAccountRetrieved", Map.of("id", eventId, "customerId", customerId, "accountId", accountId));
         queue.publish(event);
     }

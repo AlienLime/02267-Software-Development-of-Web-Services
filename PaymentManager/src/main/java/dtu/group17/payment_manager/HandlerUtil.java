@@ -1,5 +1,3 @@
-
-
 package dtu.group17.payment_manager;
 
 import dtu.group17.messaging_utilities.Event;
@@ -9,7 +7,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public class HandlerUtil { //TODO: REMOVE UNUSED CLASS
+public class HandlerUtil {
 
     public static <T, E extends Exception> void onErrorHandler(Map<UUID, CompletableFuture<T>> requests,
                                                                Function<String, E> mkException, Event e) {
