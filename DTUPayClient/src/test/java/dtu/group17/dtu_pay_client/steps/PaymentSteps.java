@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * Contains the steps for payments.
+ * The steps are used to create payments between customers and merchants.
+ */
+
 package dtu.group17.dtu_pay_client.steps;
 
 import dtu.group17.dtu_pay_client.Token;
@@ -30,6 +37,14 @@ public class PaymentSteps {
         this.bankHelper = bankHelper;
     }
 
+    /**
+     * Submits a payment between a customer and a merchant with a given amount.
+     * @param customer The customer
+     * @param merchant The merchant
+     * @param amount The amount of the payment
+     * @throws Exception If the payment fails
+     * @author Katja
+     */
     public void submitPayment(Customer customer, Merchant merchant, int amount) throws Exception {
         paymentHelper.createPayment(amount, merchant);
         Token token = tokenHelper.consumeFirstToken(customer);
@@ -37,6 +52,12 @@ public class PaymentSteps {
         paymentHelper.submitPayment(customer.id());
     }
 
+    /**
+     * Creates payments between a customer and a merchant based on a data table.
+     * @param paymentDataTable The data table containing the payments
+     * @throws Exception If the payment fails
+     * @author Katja
+     */
     @Given("the customer has made the following payments")
     public void theCustomerHasMadeTheFollowingPayments(io.cucumber.datatable.DataTable paymentDataTable) throws Exception {
         List<Map<String, String>> rows = paymentDataTable.asMaps(String.class, String.class);

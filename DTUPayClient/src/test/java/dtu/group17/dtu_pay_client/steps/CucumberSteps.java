@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * Contains the step general Cucumber related operations (After, Before, etc).
+ * Also contains the step definitions for the error message steps.
+ */
+
 package dtu.group17.dtu_pay_client.steps;
 
 import dtu.group17.dtu_pay_client.helpers.ErrorMessageHelper;
@@ -8,9 +15,6 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,6 +39,10 @@ public class CucumberSteps {
         this.managerAPI = managerAPI;
     }
 
+    /**
+     * Clear all the helpers before each scenario
+     * @author Katja
+     */
     @Before
     public void before() {
         errorMessageHelper.clear();
@@ -45,18 +53,32 @@ public class CucumberSteps {
         tokenHelper.clear();
     }
 
+    /**
+     * Clear all accounts and remove all manager report entries.
+     * @author Katja
+     */
     @After
     public void after() throws BankServiceException_Exception {
         bankHelper.retireAccounts();
         managerAPI.clearEverything();
     }
 
+    /**
+     * Asserts that the error message is as expected
+     * @param expectedErrorMessage the expected error message
+     * @author Katja
+     */
     @Then("the error message is {string}")
     public void theErrorMessageIs(String expectedErrorMessage) {
         assertNotNull(errorMessageHelper.getErrorMessage());
         assertEquals(expectedErrorMessage, errorMessageHelper.getErrorMessage());
     }
 
+    /**
+     * Asserts that the error message matches the given pattern
+     * @param expectedPattern the expected pattern of the error message
+     * @author Katja
+     */
     @And("the error message matches the expression {string}")
     public void theErrorMessageMatchesTheExpression(String expectedPattern) {
         assertTrue(errorMessageHelper.getErrorMessage().matches(expectedPattern));

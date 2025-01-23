@@ -12,6 +12,7 @@ import dtu.group17.dtu_pay_client.manager.ManagerReportEntry;
 import dtu.group17.dtu_pay_client.merchant.Merchant;
 import dtu.group17.dtu_pay_client.merchant.MerchantAPI;
 import dtu.group17.dtu_pay_client.merchant.MerchantReportEntry;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -42,6 +43,13 @@ public class ReportConcurrencySteps {
         this.customerAPI = customerAPI;
         this.merchantAPI = merchantAPI;
         this.managerAPI = managerAPI;
+    }
+
+    @Before
+    public void before() {
+        customerReports.clear();
+        merchantReports.clear();
+        managerReports.clear();
     }
 
     @When("the customer submits two requests to receive their report")

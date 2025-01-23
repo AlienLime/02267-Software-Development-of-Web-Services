@@ -6,6 +6,7 @@ import dtu.group17.dtu_pay_client.helpers.AccountHelper;
 import dtu.group17.dtu_pay_client.helpers.BankHelper;
 import dtu.group17.dtu_pay_client.merchant.Merchant;
 import dtu.group17.dtu_pay_client.merchant.MerchantAPI;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -32,6 +33,12 @@ public class AccountConcurrencySteps {
         this.bankHelper = bankHelper;
         this.customerAPI = customerAPI;
         this.merchantAPI = merchantAPI;
+    }
+
+    @Before
+    public void before() {
+        customers.clear();
+        merchants.clear();
     }
 
     private Customer newCustomer(String cpr) throws Exception {

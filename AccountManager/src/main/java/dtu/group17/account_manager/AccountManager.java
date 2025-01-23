@@ -18,26 +18,28 @@ import java.util.Map;
 public class AccountManager {
     private static final Logger LOG = Logger.getLogger(AccountManager.class);
 
-    MessageQueue queue = new RabbitMQQueue();
+    MessageQueue queue;
     AccountFactory accountFactory = new AccountFactory();
     CustomerRepository customerRepository;
     MerchantRepository merchantRepository;
 
     public static void main(String[] args) {
         InMemoryRepository repo = new InMemoryRepository();
-        new AccountManager(repo, repo);
+        new AccountManager(new RabbitMQQueue(), repo, repo);
     }
 
     /**
      * Constructor for AccountManager.
      * Subscribes to all registration, deregistration and retrieval events.
+     * @param queue: RabbitMQ message queue
      * @param customerRepository: Repository for customers
      * @param merchantRepository: Repository for merchants
      * @author Katja Kaj
      */
-    public AccountManager(CustomerRepository customerRepository, MerchantRepository merchantRepository) {
+    public AccountManager(MessageQueue queue, CustomerRepository customerRepository, MerchantRepository merchantRepository) {
         LOG.info("Starting Account Manager...");
 
+        this.queue = queue;
         this.customerRepository = customerRepository;
         this.merchantRepository = merchantRepository;
 

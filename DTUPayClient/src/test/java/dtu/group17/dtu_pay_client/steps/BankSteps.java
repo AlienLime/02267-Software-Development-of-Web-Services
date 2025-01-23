@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * The steps are used to check the balance of the customer and merchant at the bank.
+ */
+
+
 package dtu.group17.dtu_pay_client.steps;
 
 import dtu.group17.dtu_pay_client.helpers.AccountHelper;
@@ -20,12 +27,24 @@ public class BankSteps {
         this.bankHelper = bankHelper;
     }
 
+    /**
+     * Asserts that the bank balance of the customer the expected balance.
+     * @param balance The expected balance of the customer.
+     * @throws BankServiceException_Exception
+     * @author Katja
+     */
     @Then("the balance of the customer at the bank is {int} kr")
     public void theBalanceOfTheCustomerAtTheBankIsKr(Integer balance) throws BankServiceException_Exception {
         Account account = bankHelper.getAccount(accountHelper.getCurrentCustomer());
         assertEquals(BigDecimal.valueOf(balance), account.getBalance());
     }
 
+    /**
+     * Asserts that the bank balance of the merchant the expected balance.
+     * @param balance The expected balance of the merchant.
+     * @throws BankServiceException_Exception
+     * @author Katja
+     */
     @Then("the balance of the merchant at the bank is {int} kr")
     public void theBalanceOfTheMerchantAtTheBankIsKr(Integer balance) throws BankServiceException_Exception {
         Account account = bankHelper.getAccount(accountHelper.getCurrentMerchant());
