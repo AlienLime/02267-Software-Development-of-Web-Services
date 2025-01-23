@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * This class is used to store the data of a payment.
+ * Can return all relevant data of a payment depending on how far it has been processed.
+ */
+
 package dtu.group17.payment_manager;
 
 import java.util.Optional;
