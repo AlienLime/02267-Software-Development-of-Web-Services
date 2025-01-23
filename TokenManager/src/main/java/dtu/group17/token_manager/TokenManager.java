@@ -11,17 +11,18 @@ import java.util.*;
 public class TokenManager {
     private static final Logger LOG = Logger.getLogger(TokenManager.class);
 
-    MessageQueue queue = new RabbitMQQueue();
+    MessageQueue queue;
     TokenRepository tokenRepository;
 
     public static void main(String[] args) {
         InMemoryRepository repo = new InMemoryRepository();
-        new TokenManager(repo);
+        new TokenManager(new RabbitMQQueue(), repo);
     }
 
-    public TokenManager(TokenRepository tokenRepository) {
+    public TokenManager(MessageQueue queue, TokenRepository tokenRepository) {
         LOG.info("Starting Token Manager...");
 
+        this.queue = queue;
         this.tokenRepository = tokenRepository;
 
         queue.subscribe("TokensRequested", this::RequestTokens);
@@ -86,7 +87,7 @@ public class TokenManager {
         }
     }
 
-    private void consumeToken(Event e) {
+    public void consumeToken(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
         UUID customerId = e.getArgument("customerId", UUID.class);
         Token token = e.getArgument("token", Token.class);
@@ -103,7 +104,7 @@ public class TokenManager {
         }
     }
 
-    private void clearTokens(Event e) {
+    public void clearTokens(Event e) {
         tokenRepository.clear();
 
         UUID eventId = e.getArgument("id", UUID.class);
