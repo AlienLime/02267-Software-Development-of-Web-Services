@@ -6,7 +6,6 @@ import dtu.group17.messaging_utilities.RabbitMQQueue;
 import dtu.group17.dtu_pay_facade.exceptions.MerchantNotFoundException;
 import dtu.group17.dtu_pay_facade.records.Customer;
 import dtu.group17.dtu_pay_facade.records.Merchant;
-import dtu.group17.CorrelationId;
 import dtu.group17.dtu_pay_facade.exceptions.CustomerNotFoundException;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;

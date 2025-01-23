@@ -1,12 +1,12 @@
-package dtu.group17.steps.concurrency;
+package dtu.group17.dtu_pay_client.steps.concurrency;
 
-import dtu.group17.Token;
-import dtu.group17.customer.Customer;
-import dtu.group17.customer.CustomerAPI;
-import dtu.group17.helpers.*;
-import dtu.group17.merchant.Merchant;
-import dtu.group17.merchant.MerchantAPI;
-import dtu.group17.merchant.Payment;
+import dtu.group17.dtu_pay_client.Token;
+import dtu.group17.dtu_pay_client.customer.Customer;
+import dtu.group17.dtu_pay_client.customer.CustomerAPI;
+import dtu.group17.dtu_pay_client.helpers.*;
+import dtu.group17.dtu_pay_client.merchant.Merchant;
+import dtu.group17.dtu_pay_client.merchant.MerchantAPI;
+import dtu.group17.dtu_pay_client.merchant.Payment;
 import dtu.ws.fastmoney.Account;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import io.cucumber.java.en.Given;

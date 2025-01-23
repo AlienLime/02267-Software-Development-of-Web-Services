@@ -1,4 +1,4 @@
-package dtu.group17;
+package dtu.group17.dtu_pay_facade;
 
 import java.util.UUID;
 

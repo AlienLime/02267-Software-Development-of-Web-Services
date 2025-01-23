@@ -2,7 +2,7 @@ package dtu.group17.dtu_pay_facade.rest;
 
 import dtu.group17.dtu_pay_facade.Clear;
 import dtu.group17.dtu_pay_facade.records.ManagerReportEntry;
-import dtu.group17.dtu_pay_facade.ReportingManagerFacade;
+import dtu.group17.dtu_pay_facade.ReportManagerFacade;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -16,7 +16,7 @@ import java.util.List;
 public class ManagerResource {
 
     @Inject
-    ReportingManagerFacade reportingManagerFacade;
+    ReportManagerFacade reportManagerFacade;
 
     @Inject
     Clear clear;
@@ -25,7 +25,7 @@ public class ManagerResource {
     @Path("/report")
     @Produces(MediaType.APPLICATION_JSON)
     public List<ManagerReportEntry> getManagerReport() {
-        return reportingManagerFacade.getManagerReport();
+        return reportManagerFacade.getManagerReport();
     }
 
     @POST

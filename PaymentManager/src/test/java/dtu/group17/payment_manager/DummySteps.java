@@ -1,4 +1,4 @@
-package dtu.group17;
+package dtu.group17.payment_manager;
 
 import io.cucumber.java.en.Then;
 

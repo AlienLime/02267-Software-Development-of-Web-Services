@@ -1,4 +1,4 @@
-package dtu.group17;
+package dtu.group17.account_manager;
 
 import io.cucumber.java.en.Then;
 

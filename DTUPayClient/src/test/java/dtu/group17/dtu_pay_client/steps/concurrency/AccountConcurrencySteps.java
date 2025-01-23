@@ -1,11 +1,11 @@
-package dtu.group17.steps.concurrency;
+package dtu.group17.dtu_pay_client.steps.concurrency;
 
-import dtu.group17.customer.Customer;
-import dtu.group17.customer.CustomerAPI;
-import dtu.group17.helpers.AccountHelper;
-import dtu.group17.helpers.BankHelper;
-import dtu.group17.merchant.Merchant;
-import dtu.group17.merchant.MerchantAPI;
+import dtu.group17.dtu_pay_client.customer.Customer;
+import dtu.group17.dtu_pay_client.customer.CustomerAPI;
+import dtu.group17.dtu_pay_client.helpers.AccountHelper;
+import dtu.group17.dtu_pay_client.helpers.BankHelper;
+import dtu.group17.dtu_pay_client.merchant.Merchant;
+import dtu.group17.dtu_pay_client.merchant.MerchantAPI;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

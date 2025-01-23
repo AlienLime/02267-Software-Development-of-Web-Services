@@ -9,21 +9,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class ReportingManager {
-    private static final Logger LOG = Logger.getLogger(ReportingManager.class);
+public class ReportManager {
+    private static final Logger LOG = Logger.getLogger(ReportManager.class);
 
     MessageQueue queue = new RabbitMQQueue();
-    InMemoryRepository reportingRepository;
+    InMemoryRepository reportRepository;
 
     public static void main(String[] args) {
         InMemoryRepository repo = new InMemoryRepository();
-        new ReportingManager(repo);
+        new ReportManager(repo);
     }
 
-    public ReportingManager(InMemoryRepository repository) {
-        LOG.info("Starting Reporting Manager...");
+    public ReportManager(InMemoryRepository repository) {
+        LOG.info("Starting Report Manager...");
 
-        this.reportingRepository = repository;
+        this.reportRepository = repository;
 
         queue.subscribe("PaymentCompleted", this::onPaymentCompleted);
 
@@ -39,12 +39,12 @@ public class ReportingManager {
         UUID merchantId = e.getArgument("merchantId", UUID.class);
         int amount = e.getArgument("amount", Integer.class);
         Token token = e.getArgument("token", Token.class);
-        reportingRepository.savePayment(customerId, merchantId, amount, token);
+        reportRepository.savePayment(customerId, merchantId, amount, token);
     }
 
     public void generateCustomerReport(Event e) {
         UUID customerId = e.getArgument("customerId", UUID.class);
-        List<CustomerReportEntry> customerReport = reportingRepository.getCustomerReport(customerId);
+        List<CustomerReportEntry> customerReport = reportRepository.getCustomerReport(customerId);
 
         UUID eventId = e.getArgument("id", UUID.class);
         Event event = new Event("CustomerReportGenerated", Map.of("id", eventId, "report", customerReport));
@@ -53,7 +53,7 @@ public class ReportingManager {
 
     public void generateMerchantReport(Event e) {
         UUID merchantId = e.getArgument("merchantId", UUID.class);
-        List<MerchantReportEntry> merchantReport = reportingRepository.getMerchantReport(merchantId);
+        List<MerchantReportEntry> merchantReport = reportRepository.getMerchantReport(merchantId);
 
         UUID eventId = e.getArgument("id", UUID.class);
         Event event = new Event("MerchantReportGenerated", Map.of("id", eventId, "report", merchantReport));
@@ -61,7 +61,7 @@ public class ReportingManager {
     }
 
     public void generateManagerReport(Event e) {
-        List<ManagerReportEntry> managerReport = reportingRepository.getManagerReport();
+        List<ManagerReportEntry> managerReport = reportRepository.getManagerReport();
 
         UUID eventId = e.getArgument("id", UUID.class);
         Event event = new Event("ManagerReportGenerated", Map.of("id", eventId, "report", managerReport));
@@ -69,7 +69,7 @@ public class ReportingManager {
     }
 
     public void clearReports(Event e) {
-        reportingRepository.clearReports();
+        reportRepository.clearReports();
 
         UUID eventId = e.getArgument("id", UUID.class);
         Event event = new Event("ReportsCleared", Map.of("id", eventId));

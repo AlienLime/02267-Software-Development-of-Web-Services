@@ -1,7 +1,7 @@
 package dtu.group17.dtu_pay_facade.rest;
 
 import dtu.group17.dtu_pay_facade.AccountManagerFacade;
-import dtu.group17.dtu_pay_facade.ReportingManagerFacade;
+import dtu.group17.dtu_pay_facade.ReportManagerFacade;
 import dtu.group17.dtu_pay_facade.TokenManagerFacade;
 import dtu.group17.dtu_pay_facade.records.CustomerReportEntry;
 import dtu.group17.dtu_pay_facade.records.Token;
@@ -21,13 +21,13 @@ public class CustomerResource {
     @Inject
     TokenManagerFacade tokenManagerFacade;
     @Inject
-    ReportingManagerFacade reportingManagerFacade;
+    ReportManagerFacade reportManagerFacade;
 
     @GET
     @Path("/report")
     @Produces(MediaType.APPLICATION_JSON)
     public List<CustomerReportEntry> getCustomerReport(@PathParam("id") UUID id) {
-        return reportingManagerFacade.getCustomerReport(id);
+        return reportManagerFacade.getCustomerReport(id);
     }
 
     @POST

@@ -24,6 +24,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="ReportManager" target="21" />
       <module name="SimpleDTUPayClient" target="21" />
       <module name="SimpleDTUPayServer" target="21" />
       <module name="TransactionManager" target="21" />

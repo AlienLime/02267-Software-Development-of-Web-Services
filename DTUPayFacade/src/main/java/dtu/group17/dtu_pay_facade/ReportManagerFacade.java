@@ -10,7 +10,6 @@ import dtu.group17.dtu_pay_facade.records.MerchantReportEntry;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -18,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
-public class ReportingManagerFacade {
+public class ReportManagerFacade {
     private MessageQueue queue;
 
     private Map<UUID, CompletableFuture<List<CustomerReportEntry>>> customerReportRequests = new ConcurrentHashMap<>();
@@ -28,7 +27,7 @@ public class ReportingManagerFacade {
     private Runnable unsubscribeCustomerReportGenerated, unsubscribeMerchantReportGenerated,
             unsubscribeManagerReportGenerated;
 
-    public ReportingManagerFacade() {
+    public ReportManagerFacade() {
         queue = new RabbitMQQueue();
         unsubscribeCustomerReportGenerated = queue.subscribe("CustomerReportGenerated", e ->
                 handleReportGenerated(customerReportRequests, new TypeToken<>() {}, e)

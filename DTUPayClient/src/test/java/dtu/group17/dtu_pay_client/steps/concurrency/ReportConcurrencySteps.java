@@ -1,17 +1,17 @@
-package dtu.group17.steps.concurrency;
+package dtu.group17.dtu_pay_client.steps.concurrency;
 
-import dtu.group17.FullPayment;
-import dtu.group17.customer.Customer;
-import dtu.group17.customer.CustomerAPI;
-import dtu.group17.customer.CustomerReportEntry;
-import dtu.group17.helpers.AccountHelper;
-import dtu.group17.helpers.PaymentHelper;
-import dtu.group17.helpers.ReportHelper;
-import dtu.group17.manager.ManagerAPI;
-import dtu.group17.manager.ManagerReportEntry;
-import dtu.group17.merchant.Merchant;
-import dtu.group17.merchant.MerchantAPI;
-import dtu.group17.merchant.MerchantReportEntry;
+import dtu.group17.dtu_pay_client.FullPayment;
+import dtu.group17.dtu_pay_client.customer.Customer;
+import dtu.group17.dtu_pay_client.customer.CustomerAPI;
+import dtu.group17.dtu_pay_client.customer.CustomerReportEntry;
+import dtu.group17.dtu_pay_client.helpers.AccountHelper;
+import dtu.group17.dtu_pay_client.helpers.PaymentHelper;
+import dtu.group17.dtu_pay_client.helpers.ReportHelper;
+import dtu.group17.dtu_pay_client.manager.ManagerAPI;
+import dtu.group17.dtu_pay_client.manager.ManagerReportEntry;
+import dtu.group17.dtu_pay_client.merchant.Merchant;
+import dtu.group17.dtu_pay_client.merchant.MerchantAPI;
+import dtu.group17.dtu_pay_client.merchant.MerchantReportEntry;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 

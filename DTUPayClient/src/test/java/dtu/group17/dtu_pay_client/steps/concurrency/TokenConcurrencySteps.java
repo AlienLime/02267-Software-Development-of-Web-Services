@@ -1,10 +1,10 @@
-package dtu.group17.steps.concurrency;
+package dtu.group17.dtu_pay_client.steps.concurrency;
 
-import dtu.group17.Token;
-import dtu.group17.customer.Customer;
-import dtu.group17.customer.CustomerAPI;
-import dtu.group17.helpers.AccountHelper;
-import dtu.group17.helpers.TokenHelper;
+import dtu.group17.dtu_pay_client.Token;
+import dtu.group17.dtu_pay_client.customer.Customer;
+import dtu.group17.dtu_pay_client.customer.CustomerAPI;
+import dtu.group17.dtu_pay_client.helpers.AccountHelper;
+import dtu.group17.dtu_pay_client.helpers.TokenHelper;
 import io.cucumber.java.en.When;
 
 import java.util.List;

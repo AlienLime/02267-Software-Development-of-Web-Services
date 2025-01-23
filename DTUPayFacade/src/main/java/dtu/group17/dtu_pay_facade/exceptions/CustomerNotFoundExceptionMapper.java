@@ -1,4 +1,4 @@
-package dtu.group17.exceptions;
+package dtu.group17.dtu_pay_facade.exceptions;
 
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;

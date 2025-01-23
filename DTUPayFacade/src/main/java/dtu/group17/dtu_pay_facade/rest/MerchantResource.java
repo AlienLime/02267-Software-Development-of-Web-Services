@@ -2,7 +2,7 @@ package dtu.group17.dtu_pay_facade.rest;
 
 import dtu.group17.dtu_pay_facade.AccountManagerFacade;
 import dtu.group17.dtu_pay_facade.PaymentManagerFacade;
-import dtu.group17.dtu_pay_facade.ReportingManagerFacade;
+import dtu.group17.dtu_pay_facade.ReportManagerFacade;
 import dtu.group17.dtu_pay_facade.records.MerchantReportEntry;
 import dtu.group17.dtu_pay_facade.records.Payment;
 import jakarta.inject.Inject;
@@ -21,7 +21,7 @@ public class MerchantResource {
     @Inject
     PaymentManagerFacade paymentManagerFacade;
     @Inject
-    ReportingManagerFacade reportingManagerFacade;
+    ReportManagerFacade reportManagerFacade;
 
     @POST
     @Path("/payment")
@@ -39,7 +39,7 @@ public class MerchantResource {
     @Path("/report")
     @Produces(MediaType.APPLICATION_JSON)
     public List<MerchantReportEntry> getMerchantReport(@PathParam("id") UUID id) {
-        return reportingManagerFacade.getMerchantReport(id);
+        return reportManagerFacade.getMerchantReport(id);
     }
 
     @DELETE

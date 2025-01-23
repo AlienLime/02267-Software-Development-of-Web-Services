@@ -15,7 +15,7 @@ services:
         condition: service_started
       payment-manager:
         condition: service_started
-      reporting-manager:
+      report-manager:
         condition: service_started
       rabbitmq:
         condition: service_healthy
@@ -40,10 +40,10 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  reporting-manager:
-    build: ../ReportingManager
-    image: reporting-manager
-    container_name: reporting-manager
+  report-manager:
+    build: ../ReportManager
+    image: report-manager
+    container_name: report-manager
     environment:
       RABBITMQ_HOSTNAME: "rabbitmq"
     depends_on:

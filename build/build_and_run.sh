@@ -10,7 +10,7 @@ services=(
     "AccountManager" 
     "TokenManager" 
     "PaymentManager"
-    "ReportingManager"
+    "ReportManager"
     "DTUPayFacade"
 )
 

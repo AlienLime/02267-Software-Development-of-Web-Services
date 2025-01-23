@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ReportManager" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="dtu.group17.report_manager.ReportingManager" />
+    <option name="MAIN_CLASS_NAME" value="dtu.group17.report_manager.ReportManager" />
     <module name="ReportManager" />
     <option name="VM_PARAMETERS" value="-ea -Djava.util.logging.manager=org.jboss.logmanager.LogManager" />
     <extension name="coverage">
