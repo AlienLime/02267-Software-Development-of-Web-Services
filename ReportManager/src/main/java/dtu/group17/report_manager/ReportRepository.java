@@ -1,4 +1,4 @@
-package dtu.group17.reporting_manager;
+package dtu.group17.report_manager;
 
 import java.util.List;
 import java.util.UUID;

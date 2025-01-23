@@ -9,11 +9,11 @@
     <file url="file://$PROJECT_DIR$/DTUPayFacade/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/MessagingUtilities/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/MessagingUtilities/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/ReportingManager/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/ReportingManager/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/TokenManager/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/TokenManager/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/PaymentManager/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/PaymentManager/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ReportManager/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ReportManager/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TokenManager/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TokenManager/src/main/resources" charset="UTF-8" />
   </component>
 </project>

@@ -4,7 +4,7 @@
     <excludeFromCompile>
       <directory url="file://$PROJECT_DIR$/AccountManager/src/main/resources/archetype-resources" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/DTUPayFacade/src/main/resources/archetype-resources" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/ReportingManager/src/main/resources/archetype-resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/ReportManager/src/main/resources/archetype-resources" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/TokenManager/src/main/resources/archetype-resources" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/PaymentManager/src/main/resources/archetype-resources" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/MessagingUtilities/src/main/resources/archetype-resources" includeSubdirectories="true" />
@@ -20,7 +20,7 @@
         <module name="DTUPayClient" />
         <module name="AccountManager" />
         <module name="TokenManager" />
-        <module name="ReportingManager" />
+        <module name="ReportManager" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -34,7 +34,7 @@
       <module name="AccountManager" options="" />
       <module name="DTUPayFacade" options="-parameters" />
       <module name="PaymentManager" options="" />
-      <module name="ReportingManager" options="" />
+      <module name="ReportManager" options="" />
       <module name="SimpleDTUPayServer" options="-parameters" />
       <module name="TokenManager" options="" />
     </option>

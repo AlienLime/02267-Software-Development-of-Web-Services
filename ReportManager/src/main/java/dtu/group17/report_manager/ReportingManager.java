@@ -1,4 +1,4 @@
-package dtu.group17.reporting_manager;
+package dtu.group17.report_manager;
 
 import dtu.group17.messaging_utilities.Event;
 import dtu.group17.messaging_utilities.MessageQueue;

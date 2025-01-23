@@ -1,4 +1,4 @@
-package dtu.group17.reporting_manager;
+package dtu.group17.report_manager;
 
 /* Important:
 For Cucumber tests to be recognized by Maven, the class name has to have
