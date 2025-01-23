@@ -6,10 +6,13 @@ import dtu.group17.dtu_pay_client.manager.ManagerAPI;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CucumberSteps {
     private ErrorMessageHelper errorMessageHelper;
@@ -52,5 +55,10 @@ public class CucumberSteps {
     public void theErrorMessageIs(String expectedErrorMessage) {
         assertNotNull(errorMessageHelper.getErrorMessage());
         assertEquals(expectedErrorMessage, errorMessageHelper.getErrorMessage());
+    }
+
+    @And("the error message matches the expression {string}")
+    public void theErrorMessageMatchesTheExpression(String expectedPattern) {
+        assertTrue(errorMessageHelper.getErrorMessage().matches(expectedPattern));
     }
 }

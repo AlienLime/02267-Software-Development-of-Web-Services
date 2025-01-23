@@ -28,3 +28,16 @@ Feature: Token Handling
     Given a registered customer with 1 token(s)
     When the customer requests 6 tokens
     Then the error message is "Only 1-5 tokens can be requested"
+
+  Scenario: Customer attempts to use the same token twice
+    Given a registered customer with 1 token(s)
+    And a registered merchant with a bank account
+    When the merchant creates a payment
+    And the customer presents a valid token to the merchant
+    And the merchant receives the token
+    And the merchant submits the payment
+    And the merchant creates a payment
+    And the merchant receives the token
+    And the merchant submits the payment
+    Then the payment is unsuccessful
+    And the error message matches the expression "^Token with id '.*' not found$"
