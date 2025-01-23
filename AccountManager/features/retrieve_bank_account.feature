@@ -1,4 +1,5 @@
 Feature: Retrieve Bank Account
+
   Background: During the payment process we need to resolve the bank account ids of the customer and merchant involved in a payment
 
   Scenario: Request a customers bank account id

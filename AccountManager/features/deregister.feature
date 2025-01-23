@@ -1,4 +1,5 @@
 Feature: Deregister
+
   Background: Once a customer or merchant is registered with DTU Pay they can also deregister
 
   Scenario: Customer is successfully deregistered

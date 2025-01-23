@@ -37,7 +37,6 @@ Feature: Payment
     When the MerchantBankAccountRetrieved event is processed
     Then the merchant account data is correctly updated in the paymentDatas map
 
-
   Scenario: Successful processing of events
     Given PaymentRequested, CustomerBankAccountRetrieved, and MerchantBankAccountRetrieved are received with valid data
     When all events are processed
