@@ -13,6 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <surefire-plugin.version>3.5.0</surefire-plugin.version>
         <cucumber-plugin.version>7.15.0</cucumber-plugin.version>
+        <mockito-plugin.version>5.14.0</mockito-plugin.version>
     </properties>
 
     <build>
@@ -25,6 +26,7 @@
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                     </systemPropertyVariables>
+                    <argLine>-javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito-plugin.version}/mockito-core-${mockito-plugin.version}.jar</argLine>
                 </configuration>
             </plugin>
             <!-- Package into one uber jar -->
@@ -95,7 +97,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.5.0</version>
+            <version>${mockito-plugin.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- Logging -->
