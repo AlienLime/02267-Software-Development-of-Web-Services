@@ -6,6 +6,7 @@
 
 package dtu.group17.account_manager;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface MerchantRepository {
@@ -15,6 +16,8 @@ public interface MerchantRepository {
     Merchant getMerchantById(UUID id);
 
     Merchant removeMerchant(UUID id);
+
+    List<Merchant> getMerchants();
 
     void clearMerchants();
 

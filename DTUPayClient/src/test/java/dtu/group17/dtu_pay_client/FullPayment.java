@@ -1,5 +1,11 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * A full payment is a payment with every field assigned. Only the manager has a use for full payments.
+ */
+
 package dtu.group17.dtu_pay_client;
 
 import java.util.UUID;
 
-public record FullPayment(UUID customerId, Token token, int amount, UUID merchantId) {}
+public record FullPayment(UUID customerId, Token token, int amount, UUID merchantId) {} //TODO: Make parameters @notnull

@@ -9,7 +9,6 @@ Feature: Reporting
       | 48     | Group17-Kantine 101   |
     When the customer request to receive their report
     Then the customer receives a report containing information of all the customer's payments
-#    And the report includes the amount of money transferred, the merchants' names
 
   Scenario: Customer with no payments requests report
     Given a registered customer
@@ -25,7 +24,6 @@ Feature: Reporting
       | 250    |
     When the merchant request to receive their report
     Then the merchant receives a report containing information of all their received payments
-#    And the report includes the amount of money transferred
 
   Scenario: Merchant with no payments requests report
     Given a registered merchant with a bank account
@@ -39,7 +37,6 @@ Feature: Reporting
       | 22     | Group17-Bente Bent | Group17-Hegnet 358  |
     When the manager request to receive their report
     Then the manager receives a report containing information of all the payments
-#    And the report includes a summary of all money transferred
 
   Scenario: Manager with no payments requests report
     When the manager request to receive their report

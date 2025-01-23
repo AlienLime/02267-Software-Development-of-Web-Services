@@ -1,4 +1,11 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * This class is responsible for clearing all data in the system.
+ * It sends a ClearRequested event that clears all reports, tokens and accounts.
+ */
 package dtu.group17.dtu_pay_facade;
+
 
 import dtu.group17.messaging_utilities.Event;
 import dtu.group17.messaging_utilities.MessageQueue;
@@ -36,13 +43,22 @@ public class Clear {
         );
     }
 
-    @PreDestroy // For testing, on hot reload we remove the previous subscription
+    /**
+     * For testing, on hot reload we remove the previous subscriptions
+     * @author Katja
+     */
+    @PreDestroy
     public void close() {
         unsubscribeClearAccounts.run();
         unsubscribeClearReports.run();
         unsubscribeClearTokens.run();
     }
 
+    /**
+     * Clears all data in the system
+     * @return true if successful
+     * @author Katja
+     */
     public boolean clearEverything() {
         UUID id = CorrelationId.randomCorrelationId();
         CompletableFuture<Void> accountFuture = new CompletableFuture<>();

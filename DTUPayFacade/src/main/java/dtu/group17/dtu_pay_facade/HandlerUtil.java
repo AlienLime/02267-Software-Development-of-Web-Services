@@ -1,3 +1,11 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * This file contains utility functions for handling events.
+ * The errorHandler function is used to handle errors in the event handling.
+ * The completedHandler function is used to handle events that have been completed.
+ */
+
 package dtu.group17.dtu_pay_facade;
 
 import dtu.group17.messaging_utilities.Event;

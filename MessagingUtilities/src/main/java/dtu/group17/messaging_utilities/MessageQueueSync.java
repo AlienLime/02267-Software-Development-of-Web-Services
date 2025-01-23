@@ -1,3 +1,9 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * The MessageQueueSync class implements the MessageQueue interface and provides a separate synchronous implementation of the message queue.
+ */
+
 package dtu.group17.messaging_utilities;
 
 import java.util.ArrayList;
@@ -22,10 +28,8 @@ public class MessageQueueSync implements MessageQueue {
 
 	@Override
 	public Runnable subscribe(String topic, Consumer<Event> handler) {
-		if (!handlersByTopic.containsKey(topic)) {
-			handlersByTopic.put(topic, new ArrayList<Consumer<Event>>());
-		}
-		handlersByTopic.get(topic).add(handler);
+		handlersByTopic.computeIfAbsent(topic, t -> new ArrayList<>()).add(handler);
 		return () -> handlersByTopic.get(topic).remove(handler);
 	}
+
 }

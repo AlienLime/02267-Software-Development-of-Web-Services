@@ -1,4 +1,11 @@
-package dtu.group17.dtu_pay_facade.rest;
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * MerchantsResource is a REST resource that handles requests to the /merchants endpoint.
+ * This is where merchants can be registered with DTUPay.
+ */
+
+package dtu.group17.dtu_pay_facade.adapter.rest;
 
 import dtu.group17.dtu_pay_facade.AccountManagerFacade;
 import dtu.group17.dtu_pay_facade.records.Merchant;
@@ -17,6 +24,12 @@ public class MerchantsResource {
 
 	public record RegisterMerchantBody(Merchant merchant, String accountId) {}
 
+	/**
+	 * Registers a merchant with DTUPay.
+	 * @param body The merchant to register and the bank account ID of the merchant.
+	 * @return The registered merchant.
+	 * @author Katja
+	 */
     @POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

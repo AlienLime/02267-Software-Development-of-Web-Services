@@ -1,3 +1,9 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * Event class for messaging utilities
+ */
+
 package dtu.group17.messaging_utilities;
 
 import com.google.gson.Gson;
@@ -31,19 +37,31 @@ public class Event implements Serializable {
         return arguments;
     }
 
-    public <T> T getArgument(String key, Class<T> cls) { // To keep type after serialization
+    /**
+     * Get argument by key and keeps type after serialization
+     * @author Katja
+     */
+    public <T> T getArgument(String key, Class<T> cls) {
         Gson gson = new Gson();
         String jsonString = gson.toJson(arguments.get(key));
         return gson.fromJson(jsonString, cls);
     }
 
-    public <T> T getArgument(String key, TypeToken<T> typeToken) { // To keep type after serialization
+    /**
+     * Get argument by key and keeps type after serialization with TypeToken
+     * @author Katja
+     */
+    public <T> T getArgument(String key, TypeToken<T> typeToken) {
         Gson gson = new Gson();
         String jsonString = gson.toJson(arguments.get(key));
         return gson.fromJson(jsonString, typeToken);
     }
 
 
+    /*
+        * Overriden equals method to check if two events are equal
+        * @author Katja
+     */
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -51,11 +69,21 @@ public class Event implements Serializable {
         return Objects.equals(topic, event.topic) && Objects.equals(arguments, event.arguments);
     }
 
+    /*
+        * Overriden hashCode method to generate hash code for event object
+        * @return hash code for event object based on topic and arguments
+        * @author Katja
+     */
     @Override
     public int hashCode() {
         return Objects.hash(topic, arguments);
     }
 
+    /*
+        * Overriden toString method to generate string representation of event object
+        * @return string representation of event object with topic and arguments
+        * @author Katja
+     */
     @Override
     public String toString() {
         return "Event{" +

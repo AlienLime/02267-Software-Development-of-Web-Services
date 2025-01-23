@@ -1,3 +1,9 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * A correlation id is a unique identifier that is used to correlate messages between different services.
+ */
+
 package dtu.group17.dtu_pay_facade;
 
 import java.util.UUID;

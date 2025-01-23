@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * The MessageQueueAsync class is an implementation of the MessageQueue interface that provides asynchronous message handling.
+ * It uses a separate thread to handle the messages, which allows the main thread to continue executing without waiting for the message handlers to finish.
+ */
+
 package dtu.group17.messaging_utilities;
 
 import java.util.ArrayList;

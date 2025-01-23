@@ -53,4 +53,9 @@ public class InMemoryRepository implements TokenRepository {
         consumedTokens.clear();
     }
 
+    //Method for testing purposes
+    @Override
+    public boolean doesCustomerExist (UUID id) {
+        return tokens.containsKey(id);
+    }
 }

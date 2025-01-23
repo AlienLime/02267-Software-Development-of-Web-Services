@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * Contains step definitions for testing the concurrency of account operations.
+ * This includes creating, registering and deregistering customers and merchants.
+ */
+
 package dtu.group17.dtu_pay_client.steps.concurrency;
 
 import dtu.group17.dtu_pay_client.customer.Customer;
@@ -89,6 +96,10 @@ public class AccountConcurrencySteps {
         merchants.add(newRegisteredMerchant(cpr2));
     }
 
+    /**
+     * Concurrently registers two customers with DTU Pay.
+     * @author Katja
+     */
     @When("both customers register with DTU Pay")
     public void bothCustomersRegisterWithDTUPay() {
         assertEquals(2, customers.size());
@@ -125,6 +136,10 @@ public class AccountConcurrencySteps {
         customers.add(customer2);
     }
 
+    /**
+     * Concurrently deregisters two customers from DTU Pay.
+     * @author Katja
+     */
     @When("both customers deregister from DTU Pay")
     public void bothCustomersDeregisterFromDTUPay() {
         assertEquals(2, customers.size());
@@ -163,6 +178,10 @@ public class AccountConcurrencySteps {
         }
     }
 
+    /**
+     * Concurrent registration of two merchants with DTU Pay
+     * @author Katja
+     */
     @When("both merchants register with DTU Pay")
     public void bothMerchantsRegisterWithDTUPay() {
         assertEquals(2, merchants.size());
@@ -199,6 +218,10 @@ public class AccountConcurrencySteps {
         merchants.add(merchant2);
     }
 
+    /**
+     * Concurrent deregistration of two merchants from DTU Pay
+     * @author Katja
+     */
     @When("both merchants deregister from DTU Pay")
     public void bothMerchantsDeregisterFromDTUPay() {
         assertEquals(2, merchants.size());

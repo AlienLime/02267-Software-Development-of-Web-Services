@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * This class is responsible for handling payment requests and processing them.
+ * It listens for events on the message queue and processes them accordingly.
+ */
+
 package dtu.group17.payment_manager;
 
 import dtu.group17.messaging_utilities.Event;
@@ -40,12 +47,25 @@ public class PaymentManager {
         queue.subscribe("TokenValidationFailed", e ->
             paymentDatas.remove(e.getArgument("id", UUID.class))
         );
+        queue.subscribe("RetrieveCustomerBankAccountFailed", e ->
+                paymentDatas.remove(e.getArgument("id", UUID.class))
+        );
         queue.subscribe("RetrieveMerchantBankAccountFailed", e ->
             paymentDatas.remove(e.getArgument("id", UUID.class))
         );
     }
 
-    public void onPaymentRequested(Event e) {
+
+    /**
+     * Triggers on the PaymentRequested event.
+     * If all required data is present, the payment is processed.
+     * Otherwise, the data is stored until all required data is present.
+     * Part of the three asynchronous steps of processing a payment.
+     * @param e The event that triggered this method ("PaymentRequested")
+     * @see PaymentData
+     * @author Katja
+     */
+    private void onPaymentRequested(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
         Token token = e.getArgument("token", Token.class);
         int amount = e.getArgument("amount", Integer.class);
@@ -69,6 +89,13 @@ public class PaymentManager {
         });
     }
 
+    /**
+     * Triggers when the CustomerBankAccountRetrieved event is received.
+     * If all required data is present, the payment is processed.
+     * Otherwise, the data is stored until all required data is present.
+     * Part of the three asynchronous steps of processing a payment.
+     * @param e The event that triggered this method ("CustomerBankAccountRetrieved")
+     */
     public void onCustomerAccountIdRetrieved(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
         UUID customerId = e.getArgument("customerId", UUID.class);
@@ -91,6 +118,15 @@ public class PaymentManager {
         });
     }
 
+    /**
+     * Triggers when the MerchantBankAccountRetrieved event is received.
+     * If all required data is present, the payment is processed.
+     * Otherwise, the data is stored until all required data is present.
+     * Part of the three asynchronous steps of processing a payment.
+     * @param e The event that triggered this method ("MerchantBankAccountRetrieved")
+     * @author Katja
+     */
+
     public void onMerchantAccountIdRetrieved(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
         String accountId = e.getArgument("accountId", String.class);
@@ -110,6 +146,13 @@ public class PaymentManager {
         });
     }
 
+    /**
+     * Processes a fully completed payment.
+     * If the payment is successful, a PaymentCompleted event is published.
+     * If the payment fails, a PaymentFailed event is published.
+     * @param data The payment data to process
+     * @author Katja
+     */
     public void processPayment(PaymentData data) {
         try {
             String description = "Group 17 - transfer of " + data.getAmount().get() + " kr. from " + data.getCustomerId().get() + " to " + data.getMerchantId().get();

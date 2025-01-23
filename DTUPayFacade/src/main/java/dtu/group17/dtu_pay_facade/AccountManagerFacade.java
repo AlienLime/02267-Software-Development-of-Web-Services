@@ -1,3 +1,9 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * The AccountManagerFacade is a facade for the AccountManager service. It delegates account registration and deregistration without any business logic.
+ */
+
 package dtu.group17.dtu_pay_facade;
 
 import dtu.group17.messaging_utilities.Event;
@@ -32,6 +38,10 @@ public class AccountManagerFacade {
             unsubscribeCustomerDeregistered, unsubscribeMerchantDeregistered,
             unsubscribeDeregisterCustomerFailed, unsubscribeDeregisterMerchantFailed;
 
+    /**
+     * Subscribes to the relevant events and sets up the message queue.
+     * @author Katja
+     */
     public AccountManagerFacade() {
         queue = new RabbitMQQueue();
         unsubscribeCustomerRegistered = queue.subscribe("CustomerRegistered", this::confirmCustomerRegistration);
@@ -52,7 +62,11 @@ public class AccountManagerFacade {
         );
     }
 
-    @PreDestroy // For testing, on hot reload we the remove previous subscription
+    /**
+     * For testing, on hot reload we the remove previous subscription
+     * @author Katja
+     */
+    @PreDestroy
     public void close() {
         unsubscribeCustomerRegistered.run();
         unsubscribeMerchantRegistered.run();
@@ -62,6 +76,14 @@ public class AccountManagerFacade {
         unsubscribeDeregisterMerchantFailed.run();
     }
 
+    /**
+     * Publishes an event for registering a customer and waits for the response.
+     * @param customer The customer to register
+     * @param bankAccountId The bank account id of the customer
+     * @return The registered customer
+     * @throws CustomerNotFoundException If the customer could not be registered
+     * @author Katja
+     */
     public Customer registerCustomer(Customer customer, String bankAccountId) {
         CompletableFuture<Customer> future = new CompletableFuture<>();
         UUID id = CorrelationId.randomCorrelationId();
@@ -71,6 +93,13 @@ public class AccountManagerFacade {
         return future.join();
     }
 
+    /**
+     * Publishes an event for deregistering a customer and waits for the response.
+     * @param customerId The id of the customer to deregister
+     * @return True if the customer was deregistered
+     * @throws CustomerNotFoundException If the customer could not be deregistered
+     * @author Katja
+     */
     public boolean deregisterCustomer(UUID customerId) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         UUID id = CorrelationId.randomCorrelationId();
@@ -81,6 +110,14 @@ public class AccountManagerFacade {
         return true;
     }
 
+    /**
+     * Publishes an event for registering a merchant and waits for the response.
+     * @param merchant The merchant to register
+     * @param bankAccountId The bank account id of the merchant
+     * @return The registered merchant
+     * @throws MerchantNotFoundException If the merchant could not be registered
+     * @author Katja
+     */
     public Merchant registerMerchant(Merchant merchant, String bankAccountId) {
         CompletableFuture<Merchant> future = new CompletableFuture<>();
         UUID id = CorrelationId.randomCorrelationId();
@@ -90,6 +127,13 @@ public class AccountManagerFacade {
         return future.join();
     }
 
+    /**
+     * Publishes an event for deregistering a merchant and waits for the response.
+     * @param merchantId The id of the merchant to deregister
+     * @return True if the merchant was deregistered
+     * @throws MerchantNotFoundException If the merchant could not be deregistered
+     * @author Katja
+     */
     public boolean deregisterMerchant(UUID merchantId) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         UUID id = CorrelationId.randomCorrelationId();
@@ -100,12 +144,23 @@ public class AccountManagerFacade {
         return true;
     }
 
+    /**
+     * Confirms the registration of a customer by completing the future with the customer.
+     * @param e The event containing the customer and the correlation id
+     * @author Katja
+     */
     public void confirmCustomerRegistration(Event e) {
         Customer customer = e.getArgument("customer", Customer.class);
         UUID eventId = e.getArgument("id", UUID.class);
         registeredCustomers.remove(eventId).complete(customer);
     }
 
+    /**
+     * Confirms the registration of a merchant by completing the future with the merchant.
+     * @param e The event containing the merchant and the correlation id
+     * @throws MerchantNotFoundException If the merchant could not be registered
+     * @author Katja
+     */
     public void confirmMerchantRegistration(Event e) {
         Merchant merchant = e.getArgument("merchant", Merchant.class);
         UUID eventId = e.getArgument("id", UUID.class);

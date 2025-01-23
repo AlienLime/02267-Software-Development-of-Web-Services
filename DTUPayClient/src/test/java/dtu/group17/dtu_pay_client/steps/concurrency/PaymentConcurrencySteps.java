@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * Contains step definitions for testing the concurrency of payment submission.
+ * The steps are used to test the system's ability to handle multiple payments being submitted at the same time.
+ */
+
 package dtu.group17.dtu_pay_client.steps.concurrency;
 
 import dtu.group17.dtu_pay_client.Token;
@@ -18,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -71,6 +79,12 @@ public class PaymentConcurrencySteps {
         return registerMerchant(accountHelper.createMerchant(firstName, lastName), balance);
     }
 
+    /**
+     * Submits payments for the customers and merchants as presented in the paymentDataTable.
+     * @param paymentDataTable The payment data table containing the payment information.
+     * @throws Exception If an error occurs during the payment submission.
+     * @author Katja
+     */
     @Given("the following payments have been submitted concurrently")
     public void theFollowingPaymentsHaveBeenSubmittedConcurrently(io.cucumber.datatable.DataTable paymentDataTable) throws Exception {
         List<Map<String, String>> rows = paymentDataTable.asMaps(String.class, String.class);
@@ -102,6 +116,18 @@ public class PaymentConcurrencySteps {
         newRegisteredMerchant(balance);
     }
 
+    /**
+     * Helper method to concurrently submit two payments between two pairs of customer and merchant.
+     * @param amount The amount of the payment.
+     * @param customerId1 The ID of the first customer.
+     * @param customerId2 The ID of the second customer.
+     * @param token1 The token of the first customer.
+     * @param token2    The token of the second customer.
+     * @param merchantId1 The ID of the first merchant.
+     * @param merchantId2 The ID of the second merchant.
+     * @throws InterruptedException If an error occurs during the payment submission.
+     * @author Katja
+     */
     private void submitTwoPayments(int amount, UUID customerId1, UUID customerId2,
                                    Token token1, Token token2,
                                    UUID merchantId1, UUID merchantId2) throws InterruptedException {
@@ -160,6 +186,38 @@ public class PaymentConcurrencySteps {
         Token token2 = customerTokens.get(1);
 
         submitTwoPayments(amount, customer.id(), customer.id(), token1, token2, merchants.get(0).id(), merchants.get(1).id());
+    }
+
+    @When("the merchant submits a payment of {int} kr to the customer, and the customer simultaneously deregisters")
+    public void theMerchantSubmitsAPaymentOfKrToTheCustomerAndTheCustomerSimultaneouslyDeregisters(Integer amount) throws InterruptedException {
+        Merchant merchant = accountHelper.getCurrentMerchant();
+        Customer customer = accountHelper.getCurrentCustomer();
+
+        Token token = tokenHelper.getCustomersTokens(customer).getFirst();
+
+        var t1 = new Thread(() -> {
+            try {
+                customerAPI.consumeToken(customer.id(), token);
+                merchantAPI.submitPayment(new Payment(token, amount, merchant.id()));
+            } catch (Exception e) {
+                synchronized (errorMessageHelper) {
+                    errorMessageHelper.setErrorMessage(e.getMessage());
+                }
+            }
+        });
+        var t2 = new Thread(() -> {
+            try {
+                customerAPI.deregister(customer.id());
+            } catch (Exception e) {
+                synchronized (errorMessageHelper) {
+                    errorMessageHelper.setErrorMessage(e.getMessage());
+                }
+            }
+        });
+        t1.start();
+        t2.start();
+        t1.join();
+        t2.join();
     }
 
     @Then("the balance of both customers at the bank is {int} kr")
