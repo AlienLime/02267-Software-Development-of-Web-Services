@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * This file contains the PaymentManagerFacade class, which is a facade for the payment manager and thus contains no business logic.
+ * It is responsible for handling the communication with the payment manager and the messaging system.
+ */
+
 package dtu.group17.dtu_pay_facade;
 
 import dtu.group17.messaging_utilities.Event;
@@ -43,7 +50,11 @@ public class PaymentManagerFacade {
         );
     }
 
-    @PreDestroy // For testing, on hot reload we remove the previous subscription
+    /**
+     * For testing, on hot reload we remove the previous subscription
+     * @author Katja
+     */
+    @PreDestroy
     public void cleanup() {
         unsubscribePaymentCompleted.run();
         unsubscribePaymentMerchantNotFoundError.run();
@@ -51,6 +62,14 @@ public class PaymentManagerFacade {
         unsubscribePaymentTokenNotFoundError.run();
     }
 
+    /**
+     * Publishes a PaymentRequested event to the message queue
+     * @param payment The payment to be submitted
+     * @return true if the payment was successfully submitted
+     * @throws MerchantNotFoundException if the merchant was not found
+     * @throws TokenNotFoundException if the token was not found
+     * @author Katja
+     */
     public boolean submitPayment(Payment payment) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         UUID id = CorrelationId.randomCorrelationId();

@@ -3,8 +3,6 @@
  * Description:
  *  This class is responsible for creating new customers and merchants in the DTUPay app given they have a bank account.
  *
- * Notes:
- *   Example: Most of these functionalities were taken from the example project xxx.
  */
 
 package dtu.group17.account_manager;

@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * Contains the steps for the Cucumber tests related to the report feature.
+ * Reports are requested by the customer, merchant, or manager.
+ */
+
 package dtu.group17.dtu_pay_client.steps;
 
 import dtu.group17.dtu_pay_client.FullPayment;
@@ -21,7 +28,7 @@ public class ReportSteps {
         this.reportHelper = reportHelper;
         this.paymentHelper = paymentHelper;
     }
-
+    
     @When("the customer request to receive their report")
     public void theCustomerRequestToReceiveAReport() {
         reportHelper.requestCustomerReport(accountHelper.getCurrentCustomer());

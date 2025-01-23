@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * Contains step definitions for testing the concurrency of report generation.
+ * Reports can be requested by customers, merchants, and managers.
+ */
+
 package dtu.group17.dtu_pay_client.steps.concurrency;
 
 import dtu.group17.dtu_pay_client.FullPayment;
@@ -45,6 +52,10 @@ public class ReportConcurrencySteps {
         this.managerAPI = managerAPI;
     }
 
+    /**
+     * For testing, clear the lists of received reports before each scenario.
+     * @author Katja
+     */
     @Before
     public void before() {
         customerReports.clear();

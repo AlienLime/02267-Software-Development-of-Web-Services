@@ -1,3 +1,9 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * The MessageQueueSync class implements the MessageQueue interface and provides a separate synchronous implementation of the message queue.
+ */
+
 package dtu.group17.messaging_utilities;
 
 import java.util.ArrayList;

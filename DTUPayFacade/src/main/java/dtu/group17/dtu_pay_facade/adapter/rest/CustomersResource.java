@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * CustomersResource is a REST resource that handles requests to the /customers endpoint.
+ * This is where customers can be registered with DTUPay.
+ */
+
 package dtu.group17.dtu_pay_facade.adapter.rest;
 
 import dtu.group17.dtu_pay_facade.AccountManagerFacade;
@@ -18,6 +25,13 @@ public class CustomersResource {
 
 	public record RegisterCustomerBody(Customer customer, String accountId) {}
 
+	/**
+	 * Registers a new customer with DTUPay using customer information and a bank account ID.
+	 * @param body The customer information and bank account ID.
+	 * @return The newly registered customer.
+	 * @see Customer
+	 * @author Katja
+	 */
     @POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

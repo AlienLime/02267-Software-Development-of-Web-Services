@@ -187,8 +187,8 @@ public class PaymentSteps {
     }
 
     /**
-     * Submits a payment of a default value 1.
-     * @throws Exception If the payment fails
+     * Creates a payment of a default value 1.
+     * @author Katja
      */
     @When("the merchant creates a payment")
     public void theMerchantCreatesAPayment() {
