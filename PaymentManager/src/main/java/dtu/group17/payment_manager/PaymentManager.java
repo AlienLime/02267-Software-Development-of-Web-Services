@@ -65,7 +65,7 @@ public class PaymentManager {
      * @see PaymentData
      * @author Katja
      */
-    private void onPaymentRequested(Event e) {
+    public void onPaymentRequested(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
         Token token = e.getArgument("token", Token.class);
         int amount = e.getArgument("amount", Integer.class);
