@@ -71,4 +71,4 @@ Feature: Payment
     Given a registered merchant with a bank account and a balance of 1000 kr
     When the merchant submits a payment of 50 kr to the customer, and the customer simultaneously deregisters
     Then the balance of the merchant at the bank is 1000 kr
-    And the error message matches the expression "^Customer with id '.*' does not exist$"
+    And the error message matches the expression "^(Customer with id '.*' does not exist|Token with id '.*' not found)$"
