@@ -143,6 +143,12 @@ public class AccountManagerSteps {
         accountManager.deregisterMerchant(event);
     }
 
+    @Then("the CustomerDeregistered event is sent")
+    public void theCustomerDeregisteredEventIsSent() {
+        Event event = new Event("CustomerDeregistered", Map.of("id", currentEventId, "customerId", currentCustomer.id()));
+        verify(queue).publish(event);
+    }
+
     @Then("the {string} confirmation event is sent")
     public void theConfirmationEventIsSent(String type) {
         Event event = new Event(type, Map.of("id", currentEventId));

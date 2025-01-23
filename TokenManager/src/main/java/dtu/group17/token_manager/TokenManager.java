@@ -12,6 +12,7 @@ public class TokenManager {
     private static final Logger LOG = Logger.getLogger(TokenManager.class);
 
     MessageQueue queue;
+    TokenFactory tokenFactory = new TokenFactory();
     TokenRepository tokenRepository;
 
     public static void main(String[] args) {
@@ -25,14 +26,15 @@ public class TokenManager {
         this.queue = queue;
         this.tokenRepository = tokenRepository;
 
-        queue.subscribe("TokensRequested", this::RequestTokens);
+        queue.subscribe("TokensRequested", this::requestTokens);
         queue.subscribe("CustomerRegistered", this::initializeCustomer);
         queue.subscribe("PaymentRequested", this::validateToken);
         queue.subscribe("TokenConsumptionRequested", this::consumeToken);
+        queue.subscribe("CustomerDeregistered", this::removeCustomer);
         queue.subscribe("ClearRequested", this::clearTokens);
     }
 
-    public void RequestTokens(Event e) {
+    public void requestTokens(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
         int amount = e.getArgument("amount", Integer.class);
         UUID customerId = e.getArgument("customerId", UUID.class);
@@ -55,13 +57,8 @@ public class TokenManager {
             return;
         }
 
-        // TODO: Move into factory?
-        List<Token> tokens = new ArrayList<>(amount);
-        for (int i = 0; i < amount; i++) {
-            tokens.add(Token.randomToken());
-        }
+        List<Token> tokens = tokenFactory.generateTokens(amount);
         tokenRepository.addTokens(customerId, tokens);
-
         Event event = new Event("TokensGenerated", Map.of("id", eventId, "tokens", tokens));
         queue.publish(event);
     }
@@ -104,6 +101,11 @@ public class TokenManager {
         }
     }
 
+    public void removeCustomer(Event e) {
+        UUID customerId = e.getArgument("customerId", UUID.class);
+        tokenRepository.removeCustomer(customerId);
+    }
+
     public void clearTokens(Event e) {
         tokenRepository.clear();
 
@@ -111,4 +113,5 @@ public class TokenManager {
         Event event = new Event("TokensCleared", Map.of("id", eventId));
         queue.publish(event);
     }
+
 }
