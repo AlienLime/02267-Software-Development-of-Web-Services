@@ -18,11 +18,8 @@ public class InMemoryRepository implements ReportRepository {
 
     @Override
     public List<CustomerReportEntry> getCustomerReport(UUID customerId) {
-        if (!customerTokens.containsKey(customerId)) {
-            return new ArrayList<>();
-        }
-
         List<Token> tokens = customerTokens.get(customerId);
+        if (tokens == null) return new ArrayList<>();
 
         return tokens.stream().map(token -> {
             PaymentInfo info = tokenPaymentInfo.get(token);
@@ -32,11 +29,8 @@ public class InMemoryRepository implements ReportRepository {
 
     @Override
     public List<MerchantReportEntry> getMerchantReport(UUID merchantId) {
-        if (!merchantTokens.containsKey(merchantId)) {
-            return new ArrayList<>();
-        }
-
         List<Token> tokens = merchantTokens.get(merchantId);
+        if (tokens == null) return new ArrayList<>();
 
         return tokens.stream().map(token -> {
             PaymentInfo info = tokenPaymentInfo.get(token);

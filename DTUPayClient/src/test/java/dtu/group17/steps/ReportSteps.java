@@ -12,13 +12,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 
 public class ReportSteps {
-    private ErrorMessageHelper errorMessageHelper;
     private AccountHelper accountHelper;
     private ReportHelper reportHelper;
     private PaymentHelper paymentHelper;
 
-    public ReportSteps(ErrorMessageHelper errorMessageHolder, AccountHelper accountHelper, ReportHelper reportHelper, PaymentHelper paymentHelper) {
-        this.errorMessageHelper = errorMessageHolder;
+    public ReportSteps(AccountHelper accountHelper, ReportHelper reportHelper, PaymentHelper paymentHelper) {
         this.accountHelper = accountHelper;
         this.reportHelper = reportHelper;
         this.paymentHelper = paymentHelper;
@@ -44,14 +42,7 @@ public class ReportSteps {
         List<CustomerReportEntry> receivedReport = reportHelper.getCurrentCustomerReport();
         List<FullPayment> payments = paymentHelper.getCustomerPayments(accountHelper.getCurrentCustomer());
 
-        assertEquals(payments.size(), receivedReport.size());
-        for (FullPayment payment : payments) {
-            assertTrue(receivedReport.stream().anyMatch(reportEntry ->
-                    reportEntry.merchantId().equals(payment.merchantId())
-                    && reportEntry.amount() == payment.amount()
-                    && reportEntry.token().equals(payment.token()))
-            );
-        }
+        assertTrue(reportHelper.checkCustomerReport(payments, receivedReport));
     }
 
     @Then("the customer receives an empty report")
@@ -65,13 +56,7 @@ public class ReportSteps {
         List<MerchantReportEntry> receivedReport = reportHelper.getCurrentMerchantReport();
         List<FullPayment> payments = paymentHelper.getMerchantPayments(accountHelper.getCurrentMerchant());
 
-        assertEquals(payments.size(), receivedReport.size());
-        for (FullPayment payment : payments) {
-            assertTrue(receivedReport.stream().anyMatch(reportEntry ->
-                    reportEntry.amount() == payment.amount()
-                    && reportEntry.token().equals(payment.token()))
-            );
-        }
+        assertTrue(reportHelper.checkMerchantReport(payments, receivedReport));
     }
 
     @Then("the merchant receives an empty report")
@@ -85,15 +70,7 @@ public class ReportSteps {
         List<ManagerReportEntry> receivedReport = reportHelper.getCurrentManagerReport();
         List<FullPayment> payments = paymentHelper.getPayments();
 
-        assertEquals(payments.size(), receivedReport.size());
-        for (FullPayment payment : payments) {
-            assertTrue(receivedReport.stream().anyMatch(reportEntry ->
-                    reportEntry.merchantId().equals(payment.merchantId())
-                    && reportEntry.amount() == payment.amount()
-                    && reportEntry.token().equals(payment.token())
-                    && reportEntry.customerId().equals(payment.customerId()))
-            );
-        }
+        assertTrue(reportHelper.checkManagerReport(payments, receivedReport));
     }
 
     @Then("the manager receives an empty report")

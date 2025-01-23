@@ -3,10 +3,7 @@ package dtu.group17.steps.concurrency;
 import dtu.group17.Token;
 import dtu.group17.customer.Customer;
 import dtu.group17.customer.CustomerAPI;
-import dtu.group17.helpers.AccountHelper;
-import dtu.group17.helpers.BankHelper;
-import dtu.group17.helpers.ErrorMessageHelper;
-import dtu.group17.helpers.TokenHelper;
+import dtu.group17.helpers.*;
 import dtu.group17.merchant.Merchant;
 import dtu.group17.merchant.MerchantAPI;
 import dtu.group17.merchant.Payment;
@@ -17,8 +14,8 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,37 +26,68 @@ public class PaymentConcurrencySteps {
     private AccountHelper accountHelper;
     private BankHelper bankHelper;
     private TokenHelper tokenHelper;
+    private PaymentHelper paymentHelper;
     private ErrorMessageHelper errorMessageHelper;
     private CustomerAPI customerAPI;
     private MerchantAPI merchantAPI;
 
-    private List<Customer> customers = new ArrayList<>();
-    private List<Merchant> merchants = new ArrayList<>();
-
     public PaymentConcurrencySteps(AccountHelper accountHelper, BankHelper bankHelper, TokenHelper tokenHelper,
-                                   ErrorMessageHelper errorMessageHelper, CustomerAPI customerAPI, MerchantAPI merchantAPI) {
+                                   PaymentHelper paymentHelper, ErrorMessageHelper errorMessageHelper,
+                                   CustomerAPI customerAPI, MerchantAPI merchantAPI) {
         this.accountHelper = accountHelper;
         this.bankHelper = bankHelper;
         this.tokenHelper = tokenHelper;
+        this.paymentHelper = paymentHelper;
         this.errorMessageHelper = errorMessageHelper;
         this.customerAPI = customerAPI;
         this.merchantAPI = merchantAPI;
     }
 
-    private void newRegisteredCustomer(int balance, int tokenAmount) throws Exception {
-        Customer customer = accountHelper.createCustomer();
+    private Customer registerCustomer(Customer customer, int balance, int tokenAmount) throws Exception {
         String accountId = bankHelper.createBankAccount(customer, balance);
         customer = accountHelper.registerCustomerWithDTUPay(customer, accountId);
-
-        customers.add(customer);
         tokenHelper.requestTokens(customer, tokenAmount);
+        return customer;
     }
 
-    private void newRegisteredMerchant(int balance) throws Exception {
-        Merchant merchant = accountHelper.createMerchant();
+    private Customer newRegisteredCustomer(int balance, int tokenAmount) throws Exception {
+        return registerCustomer(accountHelper.createCustomer(), balance, tokenAmount);
+    }
+
+    private Customer newNamedRegisteredCustomer(String firstName, String lastName, int balance, int tokenAmount) throws Exception {
+        return registerCustomer(accountHelper.createCustomer(firstName, lastName), balance, tokenAmount);
+    }
+
+    private Merchant registerMerchant(Merchant merchant, int balance) throws Exception {
         String accountId = bankHelper.createBankAccount(merchant, balance);
-        merchant = accountHelper.registerMerchantWithDTUPay(merchant, accountId);
-        merchants.add(merchant);
+        return accountHelper.registerMerchantWithDTUPay(merchant, accountId);
+    }
+
+    private Merchant newRegisteredMerchant(int balance) throws Exception {
+        return registerMerchant(accountHelper.createMerchant(), balance);
+    }
+
+    private Merchant newNamedRegisteredMerchant(String firstName, String lastName, int balance) throws Exception {
+        return registerMerchant(accountHelper.createMerchant(firstName, lastName), balance);
+    }
+
+    @Given("the following payments have been submitted concurrently")
+    public void theFollowingPaymentsHaveBeenSubmittedConcurrently(io.cucumber.datatable.DataTable paymentDataTable) throws Exception {
+        List<Map<String, String>> rows = paymentDataTable.asMaps(String.class, String.class);
+
+        for (Map<String, String> columns : rows) {
+            int amount = Integer.parseInt(columns.get("amount"));
+            String[] merchantName = columns.get("merchant name").trim().split(" ");
+            String[] customerName = columns.get("customer name").trim().split(" ");
+
+            Merchant merchant = newNamedRegisteredMerchant(merchantName[0], merchantName[1], 0);
+            Customer customer = newNamedRegisteredCustomer(customerName[0], customerName[1], amount, 1);
+
+            Token token = tokenHelper.consumeFirstToken(customer);
+            paymentHelper.createPayment(amount, merchant);
+            paymentHelper.addToken(token);
+            paymentHelper.submitPayment(customer.id());
+        }
     }
 
     @Given("two registered customers each with a balance of {int} kr and {int} token\\(s)")
@@ -106,6 +134,7 @@ public class PaymentConcurrencySteps {
 
     @When("the merchant submits a payment of {int} kr for each customer at the same time")
     public void theMerchantSubmitsAPaymentOfKrForEachCustomerAtTheSameTime(Integer amount) throws Exception {
+        List<Customer> customers = accountHelper.getCustomers();
         assertEquals(2, customers.size());
 
         Merchant merchant = accountHelper.getCurrentMerchant();
@@ -120,6 +149,7 @@ public class PaymentConcurrencySteps {
 
     @When("both merchants submit a payment of {int} kr to the customer")
     public void bothMerchantsSubmitAPaymentOfKrToTheCustomer(Integer amount) throws InterruptedException {
+        List<Merchant> merchants = accountHelper.getMerchants();
         assertEquals(2, merchants.size());
 
         Customer customer = accountHelper.getCurrentCustomer();
@@ -134,7 +164,9 @@ public class PaymentConcurrencySteps {
 
     @Then("the balance of both customers at the bank is {int} kr")
     public void theBalanceOfBothCustomersAtTheBankIsKr(Integer newBalance) throws BankServiceException_Exception {
+        List<Customer> customers = accountHelper.getCustomers();
         assertEquals(2, customers.size());
+
         Account account1 = bankHelper.getAccount(customers.get(0));
         Account account2 = bankHelper.getAccount(customers.get(1));
 
@@ -144,7 +176,9 @@ public class PaymentConcurrencySteps {
 
     @Then("the balance of both merchants at the bank is {int} kr")
     public void theBalanceOfBothMerchantsAtTheBankIsKr(Integer newBalance) throws BankServiceException_Exception {
+        List<Merchant> merchants = accountHelper.getMerchants();
         assertEquals(2, merchants.size());
+
         Account account1 = bankHelper.getAccount(merchants.get(0));
         Account account2 = bankHelper.getAccount(merchants.get(1));
 
@@ -154,6 +188,7 @@ public class PaymentConcurrencySteps {
 
     @Then("one of the two merchants balance at the bank is {int} kr")
     public void oneOfTheMerchantsBalanceAtTheBankIsKr(Integer newBalance) throws BankServiceException_Exception {
+        List<Merchant> merchants = accountHelper.getMerchants();
         assertEquals(2, merchants.size());
 
         Account account1 = bankHelper.getAccount(merchants.get(0));

@@ -40,9 +40,7 @@ public class AccountHelper {
     }
 
     public Customer createCustomer() {
-        currentCustomer = new Customer(null, "DummyCustomerFirstName", "DummyCustomerLastName", randomCPR());
-        customers.add(currentCustomer);
-        return currentCustomer;
+        return createCustomer("DummyCustomerFirstName", "DummyCustomerLastName");
     }
 
     public Customer createCustomer(String firstName, String lastName) {
@@ -77,20 +75,20 @@ public class AccountHelper {
         currentCustomer = customer;
     }
 
+    public Merchant createMerchant() {
+        return createMerchant("DummyMerchantFirstName", "DummyMerchantLastName");
+    }
+
     public Merchant createMerchant(String firstName, String lastName) {
         currentMerchant = new Merchant(null, firstName, lastName, randomCPR());
         merchants.add(currentMerchant);
         return currentMerchant;
     }
 
-    public Merchant createMerchant() {
-        return createMerchant("DummyMerchantFirstName", "DummyMerchantLastName");
-    }
-
     public Merchant registerMerchantWithDTUPay(Merchant merchant, String accountId) {
         currentMerchant = merchantAPI.register(merchant, accountId);
         merchants.removeIf(m -> m.cpr().equals(merchant.cpr())); // Remove version of merchant without id
-        merchants.add(merchant);
+        merchants.add(currentMerchant);
         return currentMerchant;
     }
 

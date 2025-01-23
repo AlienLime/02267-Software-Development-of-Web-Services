@@ -25,7 +25,6 @@ public class AccountConcurrencySteps {
 
     private List<Customer> customers = new ArrayList<>();
     private List<Merchant> merchants = new ArrayList<>();
-    private List<String> bankAccounts = new ArrayList<>();
 
     public AccountConcurrencySteps(AccountHelper accountHelper, BankHelper bankHelper,
                                    CustomerAPI customerAPI, MerchantAPI merchantAPI) {
@@ -35,60 +34,67 @@ public class AccountConcurrencySteps {
         this.merchantAPI = merchantAPI;
     }
 
-    private record CustomerInfo(Customer customer, String accountId) {}
-
-    private CustomerInfo newCustomer(String cpr) throws Exception {
+    private Customer newCustomer(String cpr) throws Exception {
         Customer customer = new Customer(null, "DummyFirstName", "DummyLastName", cpr);
-        String accountId = bankHelper.createBankAccount(customer, 100000);
-        return new CustomerInfo(customer, accountId);
+        bankHelper.createBankAccount(customer, 100000);
+        return customer;
     }
 
-    private void newRegisteredCustomer(String cpr) throws Exception {
-        CustomerInfo info = newCustomer(cpr);
-        Customer customer = accountHelper.registerCustomerWithDTUPay(info.customer, info.accountId);
-        bankAccounts.add(info.accountId);
-        customers.add(customer);
+    private Customer newRegisteredCustomer(String cpr) throws Exception {
+        Customer customer = newCustomer(cpr);
+        String accountId = bankHelper.getAccountId(customer);
+        return accountHelper.registerCustomerWithDTUPay(customer, accountId);
     }
 
-    private void newMerchant(String cpr) throws Exception {
+    private Merchant newMerchant(String cpr) throws Exception {
         Merchant merchant = new Merchant(null, "DummyFirstName", "DummyLastName", cpr);
-        merchants.add(merchant);
-        String accountId = bankHelper.createBankAccount(merchant, 100000);
-        bankAccounts.add(accountId);
+        bankHelper.createBankAccount(merchant, 100000);
+        return merchant;
+    }
+
+    private Merchant newRegisteredMerchant(String cpr) throws Exception {
+        Merchant merchant = newMerchant(cpr);
+        String accountId = bankHelper.getAccountId(merchant);
+        return accountHelper.registerMerchantWithDTUPay(merchant, accountId);
     }
 
     @Given("two customers with a bank account and cpr numbers {string} {string}")
     public void twoCustomersWithABankAccountAndCprNumbers(String cpr1, String cpr2) throws Exception {
-        for (String cpr : List.of(cpr1, cpr2)) {
-            CustomerInfo info = newCustomer(cpr);
-            customers.add(info.customer);
-            bankAccounts.add(info.accountId);
-        }
+        customers.add(newCustomer(cpr1));
+        customers.add(newCustomer(cpr2));
     }
 
     @Given("two registered customers with cpr numbers {string} {string}")
     public void twoRegisteredCustomersWithCprNumbers(String cpr1, String cpr2) throws Exception {
-        newRegisteredCustomer(cpr1);
-        newRegisteredCustomer(cpr2);
+        customers.add(newRegisteredCustomer(cpr1));
+        customers.add(newRegisteredCustomer(cpr2));
     }
 
     @Given("two merchants with a bank account and cpr numbers {string} {string}")
     public void twoMerchantsWithABankAccountAndCprNumbers(String cpr1, String cpr2) throws Exception {
-        newMerchant(cpr1);
-        newMerchant(cpr2);
+        merchants.add(newMerchant(cpr1));
+        merchants.add(newMerchant(cpr2));
+    }
+
+    @Given("two registered merchants with cpr numbers {string} {string}")
+    public void twoRegisteredMerchantsWithCprNumbers(String cpr1, String cpr2) throws Exception {
+        merchants.add(newRegisteredMerchant(cpr1));
+        merchants.add(newRegisteredMerchant(cpr2));
     }
 
     @When("both customers register with DTU Pay")
     public void bothCustomersRegisterWithDTUPay() {
         assertEquals(2, customers.size());
-        assertEquals(2, bankAccounts.size());
+
+        String accountId1 = bankHelper.getAccountId(customers.get(0));
+        String accountId2 = bankHelper.getAccountId(customers.get(1));
 
         CompletableFuture<Customer> request1 = new CompletableFuture<>();
         CompletableFuture<Customer> request2 = new CompletableFuture<>();
 
         var t1 = new Thread(() -> {
             try {
-                var customer = customerAPI.register(customers.get(0), bankAccounts.get(0));
+                var customer = customerAPI.register(customers.get(0), accountId1);
                 request1.complete(customer);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -96,7 +102,7 @@ public class AccountConcurrencySteps {
         });
         var t2 = new Thread(() -> {
             try {
-                var customer = customerAPI.register(customers.get(1), bankAccounts.get(1));
+                var customer = customerAPI.register(customers.get(1), accountId2);
                 request2.complete(customer);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -153,14 +159,16 @@ public class AccountConcurrencySteps {
     @When("both merchants register with DTU Pay")
     public void bothMerchantsRegisterWithDTUPay() {
         assertEquals(2, merchants.size());
-        assertEquals(2, bankAccounts.size());
+
+        String accountId1 = bankHelper.getAccountId(merchants.get(0));
+        String accountId2 = bankHelper.getAccountId(merchants.get(1));
 
         CompletableFuture<Merchant> request1 = new CompletableFuture<>();
         CompletableFuture<Merchant> request2 = new CompletableFuture<>();
 
         var t1 = new Thread(() -> {
             try {
-                var merchant = merchantAPI.register(merchants.get(0), bankAccounts.get(0));
+                var merchant = merchantAPI.register(merchants.get(0), accountId1);
                 request1.complete(merchant);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -168,7 +176,7 @@ public class AccountConcurrencySteps {
         });
         var t2 = new Thread(() -> {
             try {
-                var merchant = merchantAPI.register(merchants.get(1), bankAccounts.get(1));
+                var merchant = merchantAPI.register(merchants.get(1), accountId2);
                 request2.complete(merchant);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -182,6 +190,44 @@ public class AccountConcurrencySteps {
         merchants.clear();
         merchants.add(merchant1);
         merchants.add(merchant2);
+    }
+
+    @When("both merchants deregister from DTU Pay")
+    public void bothMerchantsDeregisterFromDTUPay() {
+        assertEquals(2, merchants.size());
+
+        CompletableFuture<Boolean> request1 = new CompletableFuture<>();
+        CompletableFuture<Boolean> request2 = new CompletableFuture<>();
+
+        var t1 = new Thread(() -> {
+            try {
+                var success = merchantAPI.deregister(merchants.get(0).id());
+                request1.complete(success);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        var t2 = new Thread(() -> {
+            try {
+                var success = merchantAPI.deregister(merchants.get(1).id());
+                request2.complete(success);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        t1.start();
+        t2.start();
+        boolean success1 = request1.join();
+        boolean success2 = request2.join();
+        if (success1) {
+            merchants.remove(0);
+            if (success2) {
+                merchants.remove(0);
+            }
+        } else if (success2) {
+            merchants.remove(1);
+        }
     }
 
     @Then("the customers with cpr numbers {string} and {string} are successfully registered")
@@ -205,6 +251,13 @@ public class AccountConcurrencySteps {
 
         Set<String> registeredCPRs = merchants.stream().map(Merchant::cpr).collect(Collectors.toSet());
         assertTrue(registeredCPRs.containsAll(new HashSet<>(Arrays.asList(cpr1, cpr2))));
+    }
+
+    @Then("the merchants with cpr numbers {string} and {string} are successfully deregistered")
+    public void theMerchantsWithCprNumbersAndAreSuccessfullyDeregistered(String cpr1, String cpr2) {
+        Set<String> registeredCPRs = merchants.stream().map(Merchant::cpr).collect(Collectors.toSet());
+        Set<String> givenCPRs = Set.of(cpr1, cpr2);
+        assertFalse(registeredCPRs.stream().anyMatch(givenCPRs::contains));
     }
 
 }

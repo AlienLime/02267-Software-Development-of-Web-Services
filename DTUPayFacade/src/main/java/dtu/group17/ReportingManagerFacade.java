@@ -12,14 +12,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
 public class ReportingManagerFacade {
     private MessageQueue queue;
 
-    private Map<UUID, CompletableFuture<List<CustomerReportEntry>>> customerReportRequests = new HashMap<>();
-    private Map<UUID, CompletableFuture<List<MerchantReportEntry>>> merchantReportRequests = new HashMap<>();
-    private Map<UUID, CompletableFuture<List<ManagerReportEntry>>> managerReportRequests = new HashMap<>();
+    private Map<UUID, CompletableFuture<List<CustomerReportEntry>>> customerReportRequests = new ConcurrentHashMap<>();
+    private Map<UUID, CompletableFuture<List<MerchantReportEntry>>> merchantReportRequests = new ConcurrentHashMap<>();
+    private Map<UUID, CompletableFuture<List<ManagerReportEntry>>> managerReportRequests = new ConcurrentHashMap<>();
 
     private Runnable unsubscribeCustomerReportGenerated, unsubscribeMerchantReportGenerated,
             unsubscribeManagerReportGenerated;

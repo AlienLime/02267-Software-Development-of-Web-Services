@@ -21,7 +21,8 @@ public class PaymentSteps {
     private TokenHelper tokenHelper;
     private BankHelper bankHelper;
 
-    public PaymentSteps(ErrorMessageHelper errorMessageHolder, AccountHelper accountHelper, PaymentHelper paymentHelper, TokenHelper tokenHelper, BankHelper bankHelper) {
+    public PaymentSteps(ErrorMessageHelper errorMessageHolder, AccountHelper accountHelper,
+                        PaymentHelper paymentHelper, TokenHelper tokenHelper, BankHelper bankHelper) {
         this.errorMessageHelper = errorMessageHolder;
         this.accountHelper = accountHelper;
         this.paymentHelper = paymentHelper;

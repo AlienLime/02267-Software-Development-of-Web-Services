@@ -45,7 +45,6 @@ Feature: Reporting
     When the manager request to receive their report
     Then the manager receives an empty report
 
-  @Ignore
   Scenario: Customer requests their report concurrently
     Given a registered customer with 2 token(s)
     And the customer has made the following payments
@@ -55,7 +54,6 @@ Feature: Reporting
     When the customer submits two requests to receive their report
     Then the customer receives two reports containing information of all the customer's payments
 
-  @Ignore
   Scenario: Merchant requests their report concurrently
     Given a registered merchant with a bank account
     And the following payments have been made to the merchant
@@ -66,7 +64,6 @@ Feature: Reporting
     When the merchant submits two requests to receive their report
     Then the merchant receives two reports containing information of all the payments
 
-  @Ignore
   Scenario: Manager requests their report concurrently
     Given the following payments have been made
       | amount | customer name      | merchant name       |
@@ -75,7 +72,6 @@ Feature: Reporting
     When the manager submits two requests to receive their report
     Then the manager receives two reports containing information of all the payments
 
-  @Ignore
   Scenario: Payments make concurrently are reported
     Given the following payments have been submitted concurrently
       | amount | customer name      | merchant name       |

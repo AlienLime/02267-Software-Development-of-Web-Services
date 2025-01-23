@@ -1,5 +1,6 @@
 package dtu.group17.helpers;
 
+import dtu.group17.FullPayment;
 import dtu.group17.customer.Customer;
 import dtu.group17.customer.CustomerAPI;
 import dtu.group17.customer.CustomerReportEntry;
@@ -42,6 +43,19 @@ public class ReportHelper {
         return currentCustomerReport;
     }
 
+    public boolean checkCustomerReport(List<FullPayment> payments, List<CustomerReportEntry> receivedReport) {
+        if (payments.size() != receivedReport.size()) {
+            return false;
+        }
+        return payments.stream().allMatch(payment ->
+                receivedReport.stream().anyMatch(reportEntry ->
+                        reportEntry.merchantId().equals(payment.merchantId()) &&
+                        reportEntry.amount() == payment.amount() &&
+                        reportEntry.token().equals(payment.token())
+                )
+        );
+    }
+
     public List<MerchantReportEntry> requestMerchantReport(Merchant merchant) {
         currentMerchantReport = merchantAPI.requestMerchantReport(merchant.id());
         return currentMerchantReport;
@@ -49,6 +63,17 @@ public class ReportHelper {
 
     public List<MerchantReportEntry> getCurrentMerchantReport() {
         return currentMerchantReport;
+    }
+
+    public boolean checkMerchantReport(List<FullPayment> payments, List<MerchantReportEntry> receivedReport) {
+        if (payments.size() != receivedReport.size()) {
+            return false;
+        }
+        return payments.stream().allMatch(payment ->
+                receivedReport.stream().anyMatch(reportEntry ->
+                        reportEntry.amount() == payment.amount() &&
+                        reportEntry.token().equals(payment.token()))
+        );
     }
 
     public List<ManagerReportEntry> requestManagerReport() {
@@ -60,4 +85,16 @@ public class ReportHelper {
         return currentManagerReport;
     }
 
+    public boolean checkManagerReport(List<FullPayment> payments, List<ManagerReportEntry> receivedReport) {
+        if (payments.size() != receivedReport.size()) {
+            return false;
+        }
+        return payments.stream().anyMatch(payment ->
+                receivedReport.stream().anyMatch(reportEntry ->
+                        reportEntry.merchantId().equals(payment.merchantId()) &&
+                        reportEntry.amount() == payment.amount() &&
+                        reportEntry.token().equals(payment.token()) &&
+                        reportEntry.customerId().equals(payment.customerId()))
+        );
+    }
 }
