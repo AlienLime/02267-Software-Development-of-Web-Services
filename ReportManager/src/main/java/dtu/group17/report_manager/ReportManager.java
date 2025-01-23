@@ -12,18 +12,19 @@ import java.util.UUID;
 public class ReportManager {
     private static final Logger LOG = Logger.getLogger(ReportManager.class);
 
-    MessageQueue queue = new RabbitMQQueue();
-    InMemoryRepository reportRepository;
+    private MessageQueue queue;
+    private ReportRepository reportRepository;
 
     public static void main(String[] args) {
         InMemoryRepository repo = new InMemoryRepository();
-        new ReportManager(repo);
+        new ReportManager(new RabbitMQQueue(), repo);
     }
 
-    public ReportManager(InMemoryRepository repository) {
+    public ReportManager(MessageQueue queue, ReportRepository repository) {
         LOG.info("Starting Report Manager...");
 
-        this.reportRepository = repository;
+        this.queue = queue;
+        reportRepository = repository;
 
         queue.subscribe("PaymentCompleted", this::onPaymentCompleted);
 

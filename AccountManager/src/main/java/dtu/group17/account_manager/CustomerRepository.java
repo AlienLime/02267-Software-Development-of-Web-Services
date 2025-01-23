@@ -6,6 +6,7 @@
 
 package dtu.group17.account_manager;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface CustomerRepository {
@@ -15,6 +16,8 @@ public interface CustomerRepository {
     Customer getCustomerById(UUID id);
 
     Customer removeCustomer(UUID id);
+
+    List<Customer> getCustomers();
 
     void clearCustomers();
 

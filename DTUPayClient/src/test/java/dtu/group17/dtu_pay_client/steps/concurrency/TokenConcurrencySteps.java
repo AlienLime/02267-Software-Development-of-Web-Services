@@ -1,3 +1,9 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * Contains step definitions for testing the concurrency of token requests.
+ */
+
 package dtu.group17.dtu_pay_client.steps.concurrency;
 
 import dtu.group17.dtu_pay_client.Token;

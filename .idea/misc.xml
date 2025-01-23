@@ -7,7 +7,7 @@
         <option value="$PROJECT_DIR$/DTUPayClient/pom.xml" />
         <option value="$PROJECT_DIR$/AccountManager/pom.xml" />
         <option value="$PROJECT_DIR$/DTUPayFacade/pom.xml" />
-        <option value="$PROJECT_DIR$/ReportManager/pom.xml" />
+        <option value="$PROJECT_DIR$/ReportingManager/pom.xml" />
         <option value="$PROJECT_DIR$/TokenManager/pom.xml" />
         <option value="$PROJECT_DIR$/PaymentManager/pom.xml" />
         <option value="$PROJECT_DIR$/MessagingUtilities/pom.xml" />

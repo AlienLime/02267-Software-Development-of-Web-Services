@@ -65,3 +65,10 @@ Feature: Payment
     Then the balance of the customer at the bank is 0 kr
     And one of the two merchants balance at the bank is 60 kr
     And the error message is "Debtor balance will be negative"
+    
+  Scenario: Concurrent payment and deregistration
+    Given a registered customer with a balance of 100 kr and 2 token(s)
+    Given a registered merchant with a bank account and a balance of 1000 kr
+    When the merchant submits a payment of 50 kr to the customer, and the customer simultaneously deregisters
+    Then the balance of the merchant at the bank is 1000 kr
+    And the error message matches the expression "^Customer with id '.*' does not exist$"

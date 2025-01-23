@@ -1,4 +1,9 @@
-package dtu.group17.dtu_pay_facade.rest;
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * MerchantResource is a REST resource that provides endpoints for merchants to submit payments and view reports.
+ */
+package dtu.group17.dtu_pay_facade.adapter.rest;
 
 import dtu.group17.dtu_pay_facade.AccountManagerFacade;
 import dtu.group17.dtu_pay_facade.PaymentManagerFacade;
@@ -23,6 +28,14 @@ public class MerchantResource {
     @Inject
     ReportManagerFacade reportManagerFacade;
 
+    /**
+     * Submit a merchant payment (token, amount, description) //TODO: Description?
+     * @param payment The payment to submit
+     * @return true if the payment was successful
+     * @throws CompletionException if the payment was not successful
+     * @throws java.util.concurrent.CancellationException if the payment was not successful
+     * @author Katja
+     */
     @POST
     @Path("/payment")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -35,6 +48,11 @@ public class MerchantResource {
         }
     }
 
+    /**
+     * Get a report of all payments made involving this merchant
+     * @return A list of MerchantReportEntry objects
+     * @author Katja
+     */
     @GET
     @Path("/report")
     @Produces(MediaType.APPLICATION_JSON)
@@ -42,6 +60,14 @@ public class MerchantResource {
         return reportManagerFacade.getMerchantReport(id);
     }
 
+    /**
+     * Deregister a merchant
+     * @param id The id of the merchant to deregister
+     * @return true if the merchant was deregistered successfully
+     * @throws CompletionException if the merchant was not deregistered successfully
+     * @throws java.util.concurrent.CancellationException if the merchant was not deregistered successfully
+     * @author Katja
+     */
     @DELETE
     public boolean deregisterMerchant(@PathParam("id") UUID id) throws Throwable {
         try {

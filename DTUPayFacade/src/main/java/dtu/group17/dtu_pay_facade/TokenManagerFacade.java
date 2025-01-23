@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * This file contains the ReportManagerFacade class, which is a facade for the report manager and thus contains no business logic.
+ * It is responsible for handling the communication with the report manager and the messaging system.
+ */
+
 package dtu.group17.dtu_pay_facade;
 
 import com.google.gson.reflect.TypeToken;
@@ -43,7 +50,11 @@ public class TokenManagerFacade {
         );
     }
 
-    @PreDestroy // For testing, on hot reload we the remove previous subscription
+    /**
+     * For testing, on hot reload we the remove previous subscription
+     * @author Katja
+     */
+    @PreDestroy
     public void cleanup() {
         unsubscribeTokensGenerated.run();
         unsubscribeRequestTokensFailed.run();
@@ -51,6 +62,13 @@ public class TokenManagerFacade {
         unsubscribeTokenConsumptionFailed.run();
     }
 
+    /**
+     * Request tokens from the token manager by publishing a TokensRequested event
+     * @param customerId The customer id
+     * @param amount The amount of tokens to request
+     * @return A list of tokens
+     * @author Katja
+     */
     public List<Token> requestTokens(UUID customerId, int amount) {
         CompletableFuture<List<Token>> future = new CompletableFuture<>();
         UUID id = CorrelationId.randomCorrelationId();
@@ -60,6 +78,13 @@ public class TokenManagerFacade {
         return future.join();
     }
 
+    /**
+     * Consume a token by publishing a TokenConsumptionRequested event
+     * @param customerId The customer id
+     * @param token The token to consume
+     * @return True if the token was consumed successfully
+     * @author Katja
+     */
     public boolean consumeToken(UUID customerId, Token token) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         UUID id = CorrelationId.randomCorrelationId();
@@ -70,6 +95,11 @@ public class TokenManagerFacade {
         return true;
     }
 
+    /**
+     * Handle the TokensRegistered event by completing the future with the tokens
+     * @param e The event containing the tokens
+     * @author Katja
+     */
     public void handleTokensRegistered(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
         List<Token> tokens = e.getArgument("tokens", new TypeToken<>() {});

@@ -7,6 +7,8 @@
 
 package dtu.group17.account_manager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,6 +45,16 @@ public class InMemoryRepository implements CustomerRepository, MerchantRepositor
     @Override
     public Merchant removeMerchant(UUID id) {
         return merchants.remove(id);
+    }
+
+    @Override
+    public List<Customer> getCustomers() {
+        return new ArrayList<>(customers.values());
+    }
+
+    @Override
+    public List<Merchant> getMerchants() {
+        return new ArrayList<>(merchants.values());
     }
 
     @Override

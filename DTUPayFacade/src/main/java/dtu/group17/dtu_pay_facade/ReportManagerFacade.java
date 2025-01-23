@@ -1,3 +1,10 @@
+/*
+ * Author: Katja Kaj (s123456)
+ * Description:
+ * This file contains the ReportManagerFacade class, which is a facade for the report manager and thus contains no business logic.
+ * It is responsible for handling the communication with the report manager and the messaging system.
+ */
+
 package dtu.group17.dtu_pay_facade;
 
 import com.google.gson.reflect.TypeToken;
@@ -40,13 +47,24 @@ public class ReportManagerFacade {
         );
     }
 
-    @PreDestroy // For testing, on hot reload we the remove previous subscription
+    /**
+     * For testing, on hot reload we remove the previous subscription
+     * @author Katja
+     */
+    @PreDestroy
     public void cleanup() {
         unsubscribeCustomerReportGenerated.run();
         unsubscribeMerchantReportGenerated.run();
         unsubscribeManagerReportGenerated.run();
     }
 
+    /**
+     * Publishes an event to request a customer report
+     * @param customerId The id of the customer whose report is requested
+     * @return A list of customer report entries
+     * @see CustomerReportEntry
+     * @author Katja
+     */
     public List<CustomerReportEntry> getCustomerReport(UUID customerId) {
         CompletableFuture<List<CustomerReportEntry>> future = new CompletableFuture<>();
         UUID id = CorrelationId.randomCorrelationId();
@@ -56,6 +74,13 @@ public class ReportManagerFacade {
         return future.join();
     }
 
+    /**
+     * Publishes an event to request a merchant report
+     * @param merchantId The id of the merchant whose report is requested
+     * @return A list of merchant report entries
+     * @see MerchantReportEntry
+     * @author Katja
+     */
     public List<MerchantReportEntry> getMerchantReport(UUID merchantId) {
         CompletableFuture<List<MerchantReportEntry>> future = new CompletableFuture<>();
         UUID id = CorrelationId.randomCorrelationId();
@@ -65,6 +90,12 @@ public class ReportManagerFacade {
         return future.join();
     }
 
+    /**
+     * Publishes an event to request a manager report
+     * @return A list of manager report entries
+     * @see ManagerReportEntry
+     * @author Katja
+     */
     public List<ManagerReportEntry> getManagerReport() {
         CompletableFuture<List<ManagerReportEntry>> future = new CompletableFuture<>();
         UUID id = CorrelationId.randomCorrelationId();
@@ -74,6 +105,14 @@ public class ReportManagerFacade {
         return future.join();
     }
 
+    /**
+     * Completes the future of a report request
+     * @param reportRequests The map of report requests
+     * @param typeToken The TypeToken of the report
+     * @param e The event containing the report
+     * @param <T> The type of the report
+     * @author Katja
+     */
     private <T> void handleReportGenerated(Map<UUID, CompletableFuture<T>> reportRequests,
                                            TypeToken<T> typeToken, Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
