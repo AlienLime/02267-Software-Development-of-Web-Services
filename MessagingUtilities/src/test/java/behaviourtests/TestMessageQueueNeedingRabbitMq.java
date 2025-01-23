@@ -1,7 +1,7 @@
 package behaviourtests;
 
-import dtu.group17.Event;
-import dtu.group17.RabbitMQQueue;
+import dtu.group17.messaging_utilities.Event;
+import dtu.group17.messaging_utilities.RabbitMQQueue;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

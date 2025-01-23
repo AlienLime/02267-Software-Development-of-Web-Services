@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ReportManager" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="dtu.group17.report_manager.ReportingManager" />
+    <module name="ReportManager" />
+    <option name="VM_PARAMETERS" value="-ea -Djava.util.logging.manager=org.jboss.logmanager.LogManager" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="dtu.group17.dtu_pay_client.helpers.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -33,3 +33,16 @@ Feature: Token Handling
     Given a registered customer with 0 token(s)
     When the customer submits two requests for 1 token
     Then the customer received 2 token(s)
+
+  Scenario: Customer attempts to use the same token twice
+    Given a registered customer with 1 token(s)
+    And a registered merchant with a bank account
+    When the merchant creates a payment
+    And the customer presents a valid token to the merchant
+    And the merchant receives the token
+    And the merchant submits the payment
+    And the merchant creates a payment
+    And the merchant receives the token
+    And the merchant submits the payment
+    Then the payment is unsuccessful
+    And the error message matches the expression "^Token with id '.*' not found$"
