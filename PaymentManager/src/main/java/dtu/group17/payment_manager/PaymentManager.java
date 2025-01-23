@@ -37,6 +37,9 @@ public class PaymentManager {
         queue.subscribe("TokenValidationFailed", e ->
             paymentDatas.remove(e.getArgument("id", UUID.class))
         );
+        queue.subscribe("RetrieveCustomerBankAccountFailed", e ->
+                paymentDatas.remove(e.getArgument("id", UUID.class))
+        );
         queue.subscribe("RetrieveMerchantBankAccountFailed", e ->
             paymentDatas.remove(e.getArgument("id", UUID.class))
         );
