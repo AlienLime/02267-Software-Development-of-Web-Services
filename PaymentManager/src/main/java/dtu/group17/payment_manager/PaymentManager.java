@@ -18,17 +18,20 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PaymentManager {
     private static final Logger LOG = Logger.getLogger(PaymentManager.class);
 
-    MessageQueue queue = new RabbitMQQueue();
-    BankService bankService = new BankServiceService().getBankServicePort();
+    MessageQueue queue;
+    BankService bankService;
 
     private Map<UUID, PaymentData> paymentDatas = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
-        new PaymentManager();
+        new PaymentManager(new RabbitMQQueue(), new BankServiceService().getBankServicePort());
     }
 
-    public PaymentManager() {
+    public PaymentManager(MessageQueue queue, BankService bankService) {
         LOG.info("Starting Payment Manager...");
+
+        this.bankService = bankService;
+        this.queue = queue;
 
         queue.subscribe("PaymentRequested", this::onPaymentRequested);
         queue.subscribe("CustomerBankAccountRetrieved", this::onCustomerAccountIdRetrieved);
@@ -42,7 +45,7 @@ public class PaymentManager {
         );
     }
 
-    private void onPaymentRequested(Event e) {
+    public void onPaymentRequested(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
         Token token = e.getArgument("token", Token.class);
         int amount = e.getArgument("amount", Integer.class);
@@ -130,6 +133,11 @@ public class PaymentManager {
 
         Event event = new Event("PaymentCompleted", eventData);
         queue.publish(event);
+    }
+
+    //Used for testing
+    public PaymentData getSpecificPaymentData(UUID eventId) {
+        return paymentDatas.get(eventId);
     }
 
 }
