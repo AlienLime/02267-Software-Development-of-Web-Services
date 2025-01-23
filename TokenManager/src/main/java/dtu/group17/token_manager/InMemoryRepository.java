@@ -1,0 +1,52 @@
+package dtu.group17.token_manager;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class InMemoryRepository implements TokenRepository {
+    private Map<UUID, List<Token>> tokens = new ConcurrentHashMap<>(); // Customer ID -> List of Tokens
+    private Map<Token, UUID> consumedTokens = new ConcurrentHashMap<>(); // Token -> Customer ID
+
+    @Override
+    public void addCustomer(UUID id) {
+        tokens.put(id, new ArrayList<>());
+    }
+
+    @Override
+    public void addTokens(UUID id, List<Token> tokens) {
+        this.tokens.get(id).addAll(tokens);
+    }
+
+    @Override
+    public void consumeToken(UUID id, Token token) throws TokenNotFoundException {
+        List<Token> customerTokens = this.tokens.get(id);
+        if (customerTokens == null) {
+            throw new TokenNotFoundException("Token with id '" + token.id() + "' not found");
+        }
+        synchronized (consumedTokens) {
+            customerTokens.removeIf(t -> t.equals(token));
+            consumedTokens.put(token, id);
+        }
+    }
+
+    @Override
+    public UUID getCustomerIdFromToken(Token token) {
+        UUID id = consumedTokens.remove(token);
+        if (id == null) {
+            throw new TokenNotFoundException("Token with id '" + token.id() + "' not found");
+        }
+        return id;
+    }
+
+    @Override
+    public int getNumberOfTokens(UUID id) {
+        return tokens.containsKey(id) ? tokens.get(id).size() : 0;
+    }
+
+    @Override
+    public void clear() {
+        tokens.clear();
+        consumedTokens.clear();
+    }
+
+}

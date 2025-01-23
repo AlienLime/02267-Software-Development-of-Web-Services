@@ -11,9 +11,9 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import dtu.group17.Event;
-import dtu.group17.MessageQueue;
-import dtu.group17.RabbitMQQueue;
+import dtu.group17.messaging_utilities.Event;
+import dtu.group17.messaging_utilities.MessageQueue;
+import dtu.group17.messaging_utilities.RabbitMQQueue;
 
 @Disabled("Only works when using RabbitMq")
 public class TestMessageQueue extends TestUtilities {

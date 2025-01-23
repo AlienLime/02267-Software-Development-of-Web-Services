@@ -10,8 +10,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.reflect.TypeToken;
-import dtu.group17.Event;
-import dtu.group17.MessageQueue;
+import dtu.group17.messaging_utilities.Event;
+import dtu.group17.messaging_utilities.MessageQueue;
 
 public class TestUtilities {
 
