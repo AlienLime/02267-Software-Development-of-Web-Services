@@ -1,4 +1,4 @@
-package dtu.group17.dtu_pay_facade.rest;
+package dtu.group17.dtu_pay_facade.adapter.rest;
 
 import dtu.group17.dtu_pay_facade.Clear;
 import dtu.group17.dtu_pay_facade.records.ManagerReportEntry;

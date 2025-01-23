@@ -22,10 +22,8 @@ public class MessageQueueSync implements MessageQueue {
 
 	@Override
 	public Runnable subscribe(String topic, Consumer<Event> handler) {
-		if (!handlersByTopic.containsKey(topic)) {
-			handlersByTopic.put(topic, new ArrayList<Consumer<Event>>());
-		}
-		handlersByTopic.get(topic).add(handler);
+		handlersByTopic.computeIfAbsent(topic, t -> new ArrayList<>()).add(handler);
 		return () -> handlersByTopic.get(topic).remove(handler);
 	}
+
 }

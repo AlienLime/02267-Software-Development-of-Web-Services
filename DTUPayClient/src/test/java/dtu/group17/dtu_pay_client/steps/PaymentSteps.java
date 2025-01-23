@@ -53,7 +53,7 @@ public class PaymentSteps {
     }
 
     /**
-     * Creates payments between a customer and a merchant based on a data table.
+     * Creates customer payments for the current customer based on a data table.
      * @param paymentDataTable The data table containing the payments
      * @throws Exception If the payment fails
      * @author Katja
@@ -74,6 +74,12 @@ public class PaymentSteps {
         }
     }
 
+    /**
+     * Creates merchant payments for the current merchant based on a data table.
+     * @param paymentDataTable The data table containing the payments
+     * @throws Exception If the payment fails
+     * @author Katja
+     */
     @Given("the following payments have been made to the merchant")
     public void theFollowingPaymentsHaveBeenMadeToTheMerchant(io.cucumber.datatable.DataTable paymentDataTable) throws Exception {
         List<Map<String, String>> rows = paymentDataTable.asMaps(String.class, String.class);
@@ -92,6 +98,12 @@ public class PaymentSteps {
         }
     }
 
+    /**
+     * Creates payments between customers and merchants based on a data table.
+     * @param paymentDataTable The data table containing the payments
+     * @throws Exception If the payment fails
+     * @author Katja
+     */
     @Given("the following payments have been made")
     public void theFollowingPaymentsHaveBeenMade(io.cucumber.datatable.DataTable paymentDataTable) throws Exception {
         List<Map<String, String>> rows = paymentDataTable.asMaps(String.class, String.class);
@@ -120,11 +132,20 @@ public class PaymentSteps {
         }
     }
 
+    /**
+     * Creates a payment of a given amount for the current merchant.
+     * @param amount The amount of the payment
+     * @author Katja
+     */
     @When("the merchant creates a payment for {int} kr")
     public void theMerchantCreatesAPaymentForKr(Integer amount) {
         paymentHelper.createPayment(amount, accountHelper.getCurrentMerchant());
     }
 
+    /**
+     * Submits a payment between a customer and merchant by getting the customer from the consumed token.
+     * @author Katja
+     */
     @When("the merchant submits the payment")
     public void theMerchantSubmitsThePayment() {
         try {
@@ -135,6 +156,12 @@ public class PaymentSteps {
         }
     }
 
+    /**
+     * Creates a payment between a customer and merchant with a given amount.
+     * @param amount The amount of the payment
+     * @throws Exception If the payment fails
+     * @author Katja
+     */
     @When("a payment of {int} kr between the customer and merchant is submitted")
     public void aPaymentOfKrBetweenTheCustomerAndMerchantIsSubmitted(Integer amount) throws Exception {
         paymentHelper.createPayment(amount, accountHelper.getCurrentMerchant());
@@ -148,12 +175,21 @@ public class PaymentSteps {
         }
     }
 
+    /**
+     * Creates a payment between a customer and merchant with a given amount.
+     * @param merchantId The id of the merchant
+     * @author Katja
+     */
     @When("a payment is created with merchant id {string}")
     public void aPaymentIsCreatedWithMerchantId(String merchantId) {
         Merchant merchant = new Merchant(UUID.fromString(merchantId), "FirstName", "LastName", AccountHelper.randomCPR());
         paymentHelper.createPayment(1, merchant);
     }
 
+    /**
+     * Submits a payment of a default value 1.
+     * @throws Exception If the payment fails
+     */
     @When("the merchant creates a payment")
     public void theMerchantCreatesAPayment() {
         paymentHelper.createPayment(1, accountHelper.getCurrentMerchant());
