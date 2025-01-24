@@ -13,9 +13,9 @@ import java.util.UUID;
 public class TokenManager {
     private static final Logger LOG = Logger.getLogger(TokenManager.class);
 
-    MessageQueue queue;
-    TokenFactory tokenFactory = new TokenFactory();
-    TokenRepository tokenRepository;
+    private MessageQueue queue;
+    private TokenFactory tokenFactory = new TokenFactory();
+    private TokenRepository tokenRepository;
 
     public static void main(String[] args) {
         InMemoryRepository repo = new InMemoryRepository();

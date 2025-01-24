@@ -18,10 +18,10 @@ import java.util.Map;
 public class AccountManager {
     private static final Logger LOG = Logger.getLogger(AccountManager.class);
 
-    MessageQueue queue;
-    AccountFactory accountFactory = new AccountFactory();
-    CustomerRepository customerRepository;
-    MerchantRepository merchantRepository;
+    private MessageQueue queue;
+    private AccountFactory accountFactory = new AccountFactory();
+    private CustomerRepository customerRepository;
+    private MerchantRepository merchantRepository;
 
     public static void main(String[] args) {
         InMemoryRepository repo = new InMemoryRepository();

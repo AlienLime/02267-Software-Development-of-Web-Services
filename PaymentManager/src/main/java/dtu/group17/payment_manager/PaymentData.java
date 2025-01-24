@@ -10,7 +10,7 @@ package dtu.group17.payment_manager;
 import java.util.Optional;
 import java.util.UUID;
 
-class PaymentData {
+public class PaymentData {
     private UUID id;
     private Optional<Token> token = Optional.empty();
     private Optional<Integer> amount = Optional.empty();

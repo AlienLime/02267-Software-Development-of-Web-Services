@@ -25,8 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PaymentManager {
     private static final Logger LOG = Logger.getLogger(PaymentManager.class);
 
-    MessageQueue queue;
-    BankService bankService;
+    private MessageQueue queue;
+    private BankService bankService;
 
     private Map<UUID, PaymentData> paymentDatas = new ConcurrentHashMap<>();
 
