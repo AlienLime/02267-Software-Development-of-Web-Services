@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Stine Lund Madsen (s204425)
  * Description:
  * Represents a single entry in a customer report.
  * An entry is a payment.

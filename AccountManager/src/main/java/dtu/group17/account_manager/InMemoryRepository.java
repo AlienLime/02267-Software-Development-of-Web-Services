@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Emil Wraae Carlsen (s204458)
  * Description:
  * A simple in-memory implementation of the CustomerRepository and MerchantRepository interfaces.
  * This is useful for testing the DTUPay system without needing to set up a database.

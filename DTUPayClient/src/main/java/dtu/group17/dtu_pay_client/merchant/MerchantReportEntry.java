@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Kristoffer Magnus Overgaard (s194110)
  * Description:
  * Represents a single entry in a merchant report.
  * An entry is a payment.

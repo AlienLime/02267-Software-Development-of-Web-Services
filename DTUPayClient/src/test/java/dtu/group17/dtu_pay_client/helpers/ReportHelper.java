@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Stine Lund Madsen (s204425)
  * Description:
  * Helper class for requesting reports.
  * Contains methods for requesting customer, merchant and manager reports.

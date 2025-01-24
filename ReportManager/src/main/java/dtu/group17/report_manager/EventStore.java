@@ -1,3 +1,10 @@
+/*
+ * Author: Emil Wraae Carlsen (s204458)
+ * Description:
+ * Store for events.
+ * Events are stored in a simple list.
+ */
+
 package dtu.group17.report_manager;
 
 import dtu.group17.messaging_utilities.Event;

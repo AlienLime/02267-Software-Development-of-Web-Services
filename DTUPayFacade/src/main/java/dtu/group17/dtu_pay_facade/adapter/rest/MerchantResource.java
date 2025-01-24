@@ -1,5 +1,11 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Authors:
+    *   Victor G. H. Rasmussen (s204475)
+    *   Emil Kim Krarup (s204449)
+    *   Stine Lund Madsen (s204425)
+    *   Kristoffer Magnus Overgaard (s194110)
+    *   Benjamin Noah Lumbye (s204428)
+    *   Emil Wraae Carlsen (s204458)
  * Description:
  * MerchantResource is a REST resource that provides endpoints for merchants to submit payments and view reports.
  */
@@ -34,7 +40,7 @@ public class MerchantResource {
      * @return true if the payment was successful
      * @throws CompletionException if the payment was not successful
      * @throws java.util.concurrent.CancellationException if the payment was not successful
-     * @author Katja
+     * @author Group 17
      */
     @POST
     @Path("/payment")
@@ -51,7 +57,7 @@ public class MerchantResource {
     /**
      * Get a report of all payments made involving this merchant
      * @return A list of MerchantReportEntry objects
-     * @author Katja
+     * @author Group 17
      */
     @GET
     @Path("/report")
@@ -66,7 +72,7 @@ public class MerchantResource {
      * @return true if the merchant was deregistered successfully
      * @throws CompletionException if the merchant was not deregistered successfully
      * @throws java.util.concurrent.CancellationException if the merchant was not deregistered successfully
-     * @author Katja
+     * @author Group 17
      */
     @DELETE
     @Produces(MediaType.TEXT_PLAIN)

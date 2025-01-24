@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Emil Wraae Carlsen (s204458)
  * Description:
  * Represents a token.
  * A token is a unique identifier (represented as a UUID).

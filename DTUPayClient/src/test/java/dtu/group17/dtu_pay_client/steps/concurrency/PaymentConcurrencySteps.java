@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Victor G. H. Rasmussen (s204475)
  * Description:
  * Contains step definitions for testing the concurrency of payment submission.
  * The steps are used to test the system's ability to handle multiple payments being submitted at the same time.
@@ -82,7 +82,7 @@ public class PaymentConcurrencySteps {
      * Submits payments for the customers and merchants as presented in the paymentDataTable.
      * @param paymentDataTable The payment data table containing the payment information.
      * @throws Exception If an error occurs during the payment submission.
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     @Given("the following payments have been submitted concurrently")
     public void theFollowingPaymentsHaveBeenSubmittedConcurrently(io.cucumber.datatable.DataTable paymentDataTable) throws Exception {
@@ -125,7 +125,7 @@ public class PaymentConcurrencySteps {
      * @param merchantId1 The ID of the first merchant.
      * @param merchantId2 The ID of the second merchant.
      * @throws InterruptedException If an error occurs during the payment submission.
-     * @author Katja
+     * @author Group 17
      */
     private void submitTwoPayments(int amount, UUID customerId1, UUID customerId2,
                                    Token token1, Token token2,

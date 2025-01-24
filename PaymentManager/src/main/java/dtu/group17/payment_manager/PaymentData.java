@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Stine Lund Madsen (s204425)
  * Description:
  * This class is used to store the data of a payment.
  * Can return all relevant data of a payment depending on how far it has been processed.

@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Emil Kim Krarup (s204449)
  * Description:
  * Defines the methods the merchant repository needs (adding, retrieving and removing merchants).
  */

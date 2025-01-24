@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Kristoffer Magnus Overgaard (s194110)
  * Description:
  * Contains the steps for the Cucumber tests related to the report feature.
  * Reports are requested by the customer, merchant, or manager.

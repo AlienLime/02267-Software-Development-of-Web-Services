@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Benjamin Noah Lumbye (s204428)
  * Description:
  * This file contains utility functions for handling events.
  * The errorHandler function is used to handle errors in the event handling.

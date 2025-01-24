@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Victor G. H. Rasmussen (s204475)
  * Description:
  * This class is used to map exceptions when tokens are not found to a HTTP response.
  */
@@ -17,7 +17,7 @@ public class TokenNotFoundExceptionMapper implements ExceptionMapper<TokenNotFou
     /**
      * Maps TokenNotFoundException to a HTTP response.
      * Returns a HTTP 404 Not Found response with the exception message.
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     @Override
     public Response toResponse(TokenNotFoundException exception) {

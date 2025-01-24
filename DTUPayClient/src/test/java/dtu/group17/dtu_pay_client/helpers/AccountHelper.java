@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Victor G. H. Rasmussen (s204475)
  * Description:
  * Helper class for creating and managing customer and merchant accounts.
  */
@@ -35,7 +35,7 @@ public class AccountHelper {
     /**
      * Clear all accounts and reset customer and merchant references.
      * Used to reset the state of the helper between tests.
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     public void clear() {
         currentCustomer = null;
@@ -48,7 +48,7 @@ public class AccountHelper {
 
     /**
      * Generate a random CPR number.
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     public static String randomCPR() {
         return String.format("%06d-%04d", new Random().nextInt(999999), new Random().nextInt(9999)).replace(' ', '0');
@@ -56,7 +56,7 @@ public class AccountHelper {
 
     /**
      * Create a new customer with a random CPR number and dummy first and last name.
-     * @author Katja
+     * @author Kristoffer Magnus Overgaard (s194110)
      */
     public Customer createCustomer() {
         return createCustomer("DummyCustomerFirstName", "DummyCustomerLastName");
@@ -65,7 +65,7 @@ public class AccountHelper {
     /**
      * Create a new customer with the given first and last name and a random CPR number.
      * The costumer will have no ID.
-     * @author Katja
+     * @author Benjamin Noah Lumbye (s204428)
      */
     public Customer createCustomer(String firstName, String lastName) {
         currentCustomer = new Customer(null, firstName, lastName, randomCPR());
@@ -81,7 +81,7 @@ public class AccountHelper {
      * @param accountId The ID of the bank account
      * @return The registered customer with an ID
      * @throws Error if the registration fails
-     * @author Katja
+     * @author Stine Lund Madsen (s204425)
      */
     public Customer registerCustomerWithDTUPay(Customer customer, String accountId) {
         currentCustomer = customerAPI.register(customer, accountId);
@@ -94,7 +94,7 @@ public class AccountHelper {
      * Deregister a customer with DTUPay.
      * The customer will be removed from the list of customers with an ID.
      * @param customer The customer to deregister
-     * @author Katja
+     * @author Stine Lund Madsen (s204425)
      */
     public boolean deregisterCustomerWithDTUPay(Customer customer) throws Exception {
         customerIsDeregistered = customerAPI.deregister(customer.id());
@@ -117,7 +117,7 @@ public class AccountHelper {
 
     /**
      * Create a new merchant with a random CPR number and dummy first and last name.
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     public Merchant createMerchant() {
         return createMerchant("DummyMerchantFirstName", "DummyMerchantLastName");
@@ -125,7 +125,7 @@ public class AccountHelper {
 
     /**
      * Create a new merchant with a random CPR number and dummy first and last name.
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     public Merchant createMerchant(String firstName, String lastName) {
         currentMerchant = new Merchant(null, firstName, lastName, randomCPR());
@@ -137,7 +137,7 @@ public class AccountHelper {
      * Register a merchant with DTUPay and assign an ID.
      * @param merchant The merchant to register
      * @param accountId The ID of the bank account
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     public Merchant registerMerchantWithDTUPay(Merchant merchant, String accountId) {
         currentMerchant = merchantAPI.register(merchant, accountId);
@@ -149,7 +149,7 @@ public class AccountHelper {
     /**
      * Deregister a merchant with DTUPay.
      * @param merchant The merchant to deregister
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     public boolean deregisterMerchantWithDTUPay(Merchant merchant) throws Exception {
         merchantIsDeregistered = merchantAPI.deregister(merchant.id());

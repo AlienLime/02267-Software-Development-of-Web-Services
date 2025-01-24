@@ -1,3 +1,11 @@
+/*
+ * Author: Victor G. H. Rasmussen (s204475)
+ * Description:
+ * Repository for reading reports.
+ * Contains the reports for customers, merchants and managers.
+ * Reports are stored in maps and lists. The manager does not need an ID, as there is only one manager.
+ */
+
 package dtu.group17.report_manager;
 
 import dtu.group17.report_manager.domain.CustomerReportEntry;
@@ -24,6 +32,10 @@ public class ReportReadRepository {
         return managerReports;
     }
 
+    /**
+     * Clears all reports.
+     * @author Victor G. H. Rasmussen (s204475)
+     */
     public void clear() {
         customerReports.clear();
         merchantReports.clear();

@@ -1,5 +1,7 @@
-/*
-*
+/**
+ * Author: Benjamin Noah Lumbye (s204428)
+ * Description:
+ * Helper class for interacting with the bank service.
  */
 
 package dtu.group17.dtu_pay_client.helpers;
@@ -36,7 +38,7 @@ public class PaymentHelper {
      * @param amount The amount of money involved in the payment.
      * @param merchant The merchant receiving the payment.
      * @param description The description of the payment.
-     * @author Katja
+     * @author Benjamin Noah Lumbye (s204428)
      */
     public Payment createPayment(int amount, Merchant merchant, String description) {
         currentPayment = new Payment(null, amount, merchant.id(), description);
@@ -47,7 +49,7 @@ public class PaymentHelper {
      * Submit the current payment to the merchant API.
      * @param customerId The ID of the customer making the payment.
      * @throws Exception
-     * @author Katja
+     * @author Benjamin Noah Lumbye (s204428)
      */
     public void submitPayment(UUID customerId) throws Exception {
         merchantAPI.submitPayment(currentPayment);
@@ -58,7 +60,7 @@ public class PaymentHelper {
      * Add a token to the current payment.
      * @param token The token to add to the payment.
      * @return The updated payment.
-     * @author Katja
+     * @author Stine Lund Madsen (s204425)
      */
     public Payment addToken (Token token) {
         currentPayment = new Payment(token, currentPayment.amount(), currentPayment.merchantId(), currentPayment.description());
@@ -68,7 +70,7 @@ public class PaymentHelper {
     /**
      * Get the payments made by a customer.
      * @param customer The customer for whom the payments should be retrieved.
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     public List<FullPayment> getCustomerPayments(Customer customer) {
         return previousPayments.stream().filter(p -> p.customerId().equals(customer.id())).toList();
@@ -77,7 +79,7 @@ public class PaymentHelper {
     /**
      * Get the payments involving the given merchant.
      * @param merchant The merchant for whom the payments should be retrieved.
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     public List<FullPayment> getMerchantPayments(Merchant merchant) {
         return previousPayments.stream().filter(p -> p.merchantId().equals(merchant.id())).toList();

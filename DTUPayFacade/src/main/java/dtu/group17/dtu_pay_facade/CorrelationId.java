@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Kristoffer Magnus Overgaard (s194110)
  * Description:
  * A correlation id is a unique identifier that is used to correlate messages between different services.
  */

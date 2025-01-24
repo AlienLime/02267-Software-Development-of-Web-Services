@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Emil Kim Krarup (s204449)
  * Description:
  * MerchantsResource is a REST resource that handles requests to the /merchants endpoint.
  * This is where merchants can be registered with DTUPay.
@@ -28,7 +28,7 @@ public class MerchantsResource {
 	 * Registers a merchant with DTUPay.
 	 * @param body The merchant to register and the bank account ID of the merchant.
 	 * @return The registered merchant.
-	 * @author Katja
+	 * @author Emil Kim Krarup (s204449)
 	 */
     @POST
 	@Consumes(MediaType.APPLICATION_JSON)

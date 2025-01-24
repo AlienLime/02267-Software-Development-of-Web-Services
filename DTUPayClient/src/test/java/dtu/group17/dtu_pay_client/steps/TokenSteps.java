@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Stine Lund Madsen (s204425)
  * Description:
  * Contains the steps for testing tokens.
  * Tests that the customer can request tokens, that the customer can present tokens, and that the merchant can receive tokens.

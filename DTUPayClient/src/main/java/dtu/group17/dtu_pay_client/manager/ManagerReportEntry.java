@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Victor G. H. Rasmussen (s204475)
  * Description:
  * Represents a single entry in a manager report.
  * An entry is a payment.

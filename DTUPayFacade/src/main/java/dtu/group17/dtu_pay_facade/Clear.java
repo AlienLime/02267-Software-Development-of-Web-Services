@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Victor G. H. Rasmussen (s204475)
  * Description:
  * This class is responsible for clearing all data in the system.
  * It sends a ClearRequested event that clears all reports, tokens and accounts.
@@ -45,7 +45,7 @@ public class Clear {
 
     /**
      * For testing, on hot reload we remove the previous subscriptions
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     @PreDestroy
     public void close() {
@@ -57,7 +57,7 @@ public class Clear {
     /**
      * Clears all data in the system
      * @return true if successful
-     * @author Katja
+     * @author Benjamin Noah Lumbye (s204428)
      */
     public boolean clearEverything() {
         UUID id = CorrelationId.randomCorrelationId();

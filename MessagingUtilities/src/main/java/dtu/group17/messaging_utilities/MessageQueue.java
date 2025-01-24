@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Benjamin Noah Lumbye (s204428)
  * Description:
  * Implements the MessageQueue interface, which is used to publish and subscribe to events.
  */

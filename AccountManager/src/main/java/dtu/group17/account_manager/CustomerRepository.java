@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Benjamin Noah Lumbye (s204428)
  * Description:
  * Defines the methods the customer repository needs (adding, retrieving and removing customers).
  */

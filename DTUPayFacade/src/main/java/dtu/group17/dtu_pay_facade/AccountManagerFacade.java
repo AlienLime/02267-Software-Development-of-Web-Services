@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Emil Kim Krarup (s204449)
  * Description:
  * The AccountManagerFacade is a facade for the AccountManager service. It delegates account registration and deregistration without any business logic.
  */
@@ -40,7 +40,7 @@ public class AccountManagerFacade {
 
     /**
      * Subscribes to the relevant events and sets up the message queue.
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     public AccountManagerFacade() {
         queue = new RabbitMQQueue();
@@ -64,7 +64,7 @@ public class AccountManagerFacade {
 
     /**
      * For testing, on hot reload we the remove previous subscription
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     @PreDestroy
     public void close() {
@@ -82,7 +82,7 @@ public class AccountManagerFacade {
      * @param bankAccountId The bank account id of the customer
      * @return The registered customer
      * @throws CustomerNotFoundException If the customer could not be registered
-     * @author Katja
+     * @author Stine Lund Madsen (s204425)
      */
     public Customer registerCustomer(Customer customer, String bankAccountId) {
         CompletableFuture<Customer> future = new CompletableFuture<>();
@@ -98,7 +98,7 @@ public class AccountManagerFacade {
      * @param customerId The id of the customer to deregister
      * @return True if the customer was deregistered
      * @throws CustomerNotFoundException If the customer could not be deregistered
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     public boolean deregisterCustomer(UUID customerId) {
         CompletableFuture<Void> future = new CompletableFuture<>();
@@ -116,7 +116,7 @@ public class AccountManagerFacade {
      * @param bankAccountId The bank account id of the merchant
      * @return The registered merchant
      * @throws MerchantNotFoundException If the merchant could not be registered
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     public Merchant registerMerchant(Merchant merchant, String bankAccountId) {
         CompletableFuture<Merchant> future = new CompletableFuture<>();
@@ -132,7 +132,7 @@ public class AccountManagerFacade {
      * @param merchantId The id of the merchant to deregister
      * @return True if the merchant was deregistered
      * @throws MerchantNotFoundException If the merchant could not be deregistered
-     * @author Katja
+     * @author Stine Lund Madsen (s204425)
      */
     public boolean deregisterMerchant(UUID merchantId) {
         CompletableFuture<Void> future = new CompletableFuture<>();
@@ -147,7 +147,7 @@ public class AccountManagerFacade {
     /**
      * Confirms the registration of a customer by completing the future with the customer.
      * @param e The event containing the customer and the correlation id
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     public void confirmCustomerRegistration(Event e) {
         Customer customer = e.getArgument("customer", Customer.class);
@@ -159,7 +159,7 @@ public class AccountManagerFacade {
      * Confirms the registration of a merchant by completing the future with the merchant.
      * @param e The event containing the merchant and the correlation id
      * @throws MerchantNotFoundException If the merchant could not be registered
-     * @author Katja
+     * @author Kristoffer Magnus Overgaard (s194110)
      */
     public void confirmMerchantRegistration(Event e) {
         Merchant merchant = e.getArgument("merchant", Merchant.class);

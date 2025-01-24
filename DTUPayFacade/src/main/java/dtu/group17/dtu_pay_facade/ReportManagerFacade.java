@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Emil Wraae Carlsen (s204458)
  * Description:
  * This file contains the ReportManagerFacade class, which is a facade for the report manager and thus contains no business logic.
  * It is responsible for handling the communication with the report manager and the messaging system.
@@ -49,7 +49,7 @@ public class ReportManagerFacade {
 
     /**
      * For testing, on hot reload we remove the previous subscription
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     @PreDestroy
     public void cleanup() {
@@ -63,7 +63,7 @@ public class ReportManagerFacade {
      * @param customerId The id of the customer whose report is requested
      * @return A list of customer report entries
      * @see CustomerReportEntry
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     public List<CustomerReportEntry> getCustomerReport(UUID customerId) {
         CompletableFuture<List<CustomerReportEntry>> future = new CompletableFuture<>();
@@ -79,7 +79,7 @@ public class ReportManagerFacade {
      * @param merchantId The id of the merchant whose report is requested
      * @return A list of merchant report entries
      * @see MerchantReportEntry
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     public List<MerchantReportEntry> getMerchantReport(UUID merchantId) {
         CompletableFuture<List<MerchantReportEntry>> future = new CompletableFuture<>();
@@ -94,7 +94,7 @@ public class ReportManagerFacade {
      * Publishes an event to request a manager report
      * @return A list of manager report entries
      * @see ManagerReportEntry
-     * @author Katja
+     * @author Kristoffer Magnus Overgaard (s194110)
      */
     public List<ManagerReportEntry> getManagerReport() {
         CompletableFuture<List<ManagerReportEntry>> future = new CompletableFuture<>();
@@ -111,7 +111,7 @@ public class ReportManagerFacade {
      * @param typeToken The TypeToken of the report
      * @param e The event containing the report
      * @param <T> The type of the report
-     * @author Katja
+     * @author Benjamin Noah Lumbye (s204428)
      */
     private <T> void handleReportGenerated(Map<UUID, CompletableFuture<T>> reportRequests,
                                            TypeToken<T> typeToken, Event e) {

@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Emil Kim Krarup (s204449)
  * Description:
  * This class is used to map exceptions when merchants are not found to a HTTP response.
  */
@@ -17,7 +17,7 @@ public class MerchantNotFoundExceptionMapper implements ExceptionMapper<Merchant
     /**
      * Maps MerchantNotFoundException to a HTTP response.
      * Returns a HTTP 404 Not Found response with the exception message.
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     @Override
     public Response toResponse(MerchantNotFoundException exception) {

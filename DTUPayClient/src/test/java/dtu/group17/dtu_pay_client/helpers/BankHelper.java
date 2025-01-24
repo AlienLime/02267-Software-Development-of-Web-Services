@@ -1,5 +1,5 @@
 /**
- * Author: Katja Kaj (s123456)
+ * Author: Emil Kim Krarup (s204449)
  * Description:
  * Helper class for interacting with the bank service.
  */
@@ -33,7 +33,7 @@ public class BankHelper {
      * @param customer The customer for whom the account should be created.
      * @param balance The initial balance of the account.
      * @throws BankServiceException_Exception
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     public String createBankAccount(Customer customer, int balance) throws BankServiceException_Exception {
         String accountId = bankService.createAccountWithBalance(customer.toUser(), BigDecimal.valueOf(balance));
@@ -46,7 +46,7 @@ public class BankHelper {
      * @param merchant The merchant for whom the account should be created.
      * @param balance The initial balance of the account.
      * @throws BankServiceException_Exception
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     public String createBankAccount(Merchant merchant, int balance) throws BankServiceException_Exception {
         String accountId = bankService.createAccountWithBalance(merchant.toUser(), BigDecimal.valueOf(balance));
@@ -58,7 +58,7 @@ public class BankHelper {
      * Get the bank account of a customer.
      * @param customer The customer for whom the account should be retrieved.
      * @throws BankServiceException_Exception
-     * @author Katja
+     * @author Kristoffer Magnus Overgaard (s194110)
      */
     public Account getAccount(Customer customer) throws BankServiceException_Exception {
         String accountId = accounts.get(customer.cpr());
@@ -69,7 +69,7 @@ public class BankHelper {
      * Get the bank account of a merchant.
      * @param merchant The merchant for whom the account should be retrieved.
      * @throws BankServiceException_Exception
-     * @author Katja
+     * @author Stine Lund Madsen (s204425)
      */
     public Account getAccount(Merchant merchant) throws BankServiceException_Exception {
         String accountId = accounts.get(merchant.cpr());

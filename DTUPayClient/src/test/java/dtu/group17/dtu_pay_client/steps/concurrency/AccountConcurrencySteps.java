@@ -1,5 +1,11 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author:
+  * Victor G. H. Rasmussen (s204475)
+  * Emil Kim Krarup (s204449)
+  * Stine Lund Madsen (s204425)
+  * Kristoffer Magnus Overgaard (s194110)
+  * Benjamin Noah Lumbye (s204428)
+  * Emil Wraae Carlsen (s204458)
  * Description:
  * Contains step definitions for testing the concurrency of account operations.
  * This includes creating, registering and deregistering customers and merchants.
@@ -98,7 +104,7 @@ public class AccountConcurrencySteps {
 
     /**
      * Concurrently registers two customers with DTU Pay.
-     * @author Katja
+     * @author Group 17
      */
     @When("both customers register with DTU Pay")
     public void bothCustomersRegisterWithDTUPay() {
@@ -138,7 +144,7 @@ public class AccountConcurrencySteps {
 
     /**
      * Concurrently deregisters two customers from DTU Pay.
-     * @author Katja
+     * @author Group 17
      */
     @When("both customers deregister from DTU Pay")
     public void bothCustomersDeregisterFromDTUPay() {
@@ -180,7 +186,7 @@ public class AccountConcurrencySteps {
 
     /**
      * Concurrent registration of two merchants with DTU Pay
-     * @author Katja
+     * @author Group 17
      */
     @When("both merchants register with DTU Pay")
     public void bothMerchantsRegisterWithDTUPay() {
@@ -220,7 +226,7 @@ public class AccountConcurrencySteps {
 
     /**
      * Concurrent deregistration of two merchants from DTU Pay
-     * @author Katja
+     * @author Group 17
      */
     @When("both merchants deregister from DTU Pay")
     public void bothMerchantsDeregisterFromDTUPay() {

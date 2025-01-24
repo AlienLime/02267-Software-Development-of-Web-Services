@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Benjamin Noah Lumbye (s204428)
  * Description:
  * ManagerResource is an endpoint for the REST API that provides the functionality for the manager to view the report.
  * Managers are not actual users as Merchants and Customers are, so they do not have a separate class.
@@ -34,7 +34,7 @@ public class ManagerResource {
      * Get the manager report containing all transactions with all information
      * @return List of ManagerReportEntry
      * @see ManagerReportEntry
-     * @author Katja
+     * @author Benjamin Noah Lumbye (s204428)
      */
     @GET
     @Path("/report")
@@ -49,7 +49,7 @@ public class ManagerResource {
      * @throws java.util.concurrent.CancellationException if something went wrong
      * @throws java.util.concurrent.CompletionException if something went wrong
      * @see Clear#clearEverything()
-     * @author Katja
+     * @author Stine Lund Madsen (s204425)
      */
     @DELETE
     @Path("/clear")

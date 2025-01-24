@@ -1,3 +1,11 @@
+/*
+ * Author: Emil Wraae Carlsen (s204458)
+ * Description:
+ * Projector for reports.
+ * Listens for events and updates the read model accordingly.
+ * The read model is here a simple in-memory representation of the reports.
+ */
+
 package dtu.group17.report_manager;
 
 import dtu.group17.messaging_utilities.Event;
@@ -22,6 +30,12 @@ public class ReportProjector {
         queue.subscribe("ReportsCleared", this::applyReportsCleared);
     }
 
+    /**
+     * Responds to the PaymentCompleted event.
+     * Updates the read model with the new payment.
+     * @param event The PaymentCompleted event.
+     * @author Emil Wraae Carlsen (s204458)
+     */
     public void applyPaymentCompleted(Event event) {
         UUID customerId = event.getArgument("customerId", UUID.class);
         UUID merchantId = event.getArgument("merchantId", UUID.class);

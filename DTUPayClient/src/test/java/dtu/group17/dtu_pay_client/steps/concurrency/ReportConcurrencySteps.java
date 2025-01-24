@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Victor G. H. Rasmussen (s204475)
  * Description:
  * Contains step definitions for testing the concurrency of report generation.
  * Reports can be requested by customers, merchants, and managers.
@@ -54,7 +54,7 @@ public class ReportConcurrencySteps {
 
     /**
      * For testing, clear the lists of received reports before each scenario.
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     @Before
     public void before() {

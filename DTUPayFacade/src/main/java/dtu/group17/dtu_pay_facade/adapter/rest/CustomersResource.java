@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Stine Lund Madsen (s204425)
  * Description:
  * CustomersResource is a REST resource that handles requests to the /customers endpoint.
  * This is where customers can be registered with DTUPay.
@@ -30,7 +30,7 @@ public class CustomersResource {
 	 * @param body The customer information and bank account ID.
 	 * @return The newly registered customer.
 	 * @see Customer
-	 * @author Katja
+	 * @author Stine Lund Madsen (s204425)
 	 */
     @POST
 	@Consumes(MediaType.APPLICATION_JSON)

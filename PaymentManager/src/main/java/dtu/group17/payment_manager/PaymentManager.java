@@ -1,5 +1,11 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Authors:
+    * Victor G. H. Rasmussen (s204475)
+    * Emil Kim Krarup (s204449)
+    * Stine Lund Madsen (s204425)
+    * Kristoffer Magnus Overgaard (s194110)
+    * Benjamin Noah Lumbye (s204428)
+    * Emil Wraae Carlsen (s204458)
  * Description:
  * This class is responsible for handling payment requests and processing them.
  * It listens for events on the message queue and processes them accordingly.
@@ -63,7 +69,7 @@ public class PaymentManager {
      * Part of the three asynchronous steps of processing a payment.
      * @param e The event that triggered this method ("PaymentRequested")
      * @see PaymentData
-     * @author Katja
+     * @author Group 17
      */
     public void onPaymentRequested(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
@@ -97,6 +103,7 @@ public class PaymentManager {
      * Otherwise, the data is stored until all required data is present.
      * Part of the three asynchronous steps of processing a payment.
      * @param e The event that triggered this method ("CustomerBankAccountRetrieved")
+     * @author Group 17
      */
     public void onCustomerAccountIdRetrieved(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);
@@ -126,7 +133,7 @@ public class PaymentManager {
      * Otherwise, the data is stored until all required data is present.
      * Part of the three asynchronous steps of processing a payment.
      * @param e The event that triggered this method ("MerchantBankAccountRetrieved")
-     * @author Katja
+     * @author Group 17
      */
 
     public void onMerchantAccountIdRetrieved(Event e) {
@@ -153,7 +160,7 @@ public class PaymentManager {
      * If the payment is successful, a PaymentCompleted event is published.
      * If the payment fails, a PaymentFailed event is published.
      * @param data The payment data to process
-     * @author Katja
+     * @author Group 17
      */
     public void processPayment(PaymentData data) {
         try {

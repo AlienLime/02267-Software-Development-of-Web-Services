@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Stine Lund Madsen (s204425)
  * Description:
  *  This class is responsible for managing the accounts of customers and merchants.
  *  It listens for events from the message queue and register, deregister and retrieves accounts.
@@ -34,7 +34,7 @@ public class AccountManager {
      * @param queue: RabbitMQ message queue
      * @param customerRepository: Repository for customers
      * @param merchantRepository: Repository for merchants
-     * @author Katja Kaj
+     * @author Emil Kim Krarup (s204449)
      */
     public AccountManager(MessageQueue queue, CustomerRepository customerRepository, MerchantRepository merchantRepository) {
         LOG.info("Starting Account Manager...");
@@ -59,7 +59,7 @@ public class AccountManager {
      * Uses the AccountFactory to create a new customer with a unique ID and adds it to the customer repository.
      * Publishes an event with the customer ID.
      * @param e: Event containing the customer and bank account ID
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     public Customer registerCustomer(Event e) {
         Customer namedCustomer = e.getArgument("customer", Customer.class);
@@ -77,7 +77,7 @@ public class AccountManager {
      * Uses the AccountFactory to create a new merchant with a unique ID and adds it to the merchant repository.
      * Publishes an event with the merchant ID.
      * @param e: Event containing the merchant and bank account ID
-     *         @author Katja
+     *         @author Stine Lund Madsen (s204425)
      */
     public Merchant registerMerchant(Event e) {
         Merchant namedMerchant = e.getArgument("merchant", Merchant.class);
@@ -94,7 +94,7 @@ public class AccountManager {
     /**
      * Publishes an event with a customer's bank account ID.
      * @param e Event containing the customer ID
-     *        @Author Katja
+     *        @Author Stine Lund Madsen (s204425)
      */
     public void retrieveCustomerBankAccount(Event e) {
         UUID customerId = e.getArgument("customerId", UUID.class);
@@ -117,6 +117,7 @@ public class AccountManager {
     /**
      * Publishes an event with a merchant's bank account ID.
      * @param e Event containing the merchant ID
+     * @author Victor G. H. Rasmussen (s204475)
      */
     public void retrieveMerchantBankAccount(Event e) {
         UUID merchantId = e.getArgument("merchantId", UUID.class);
@@ -139,7 +140,7 @@ public class AccountManager {
     /**
      * Removes a customer from the customer repository and publishes an event with the customer ID.
      * @param e Event containing the customer ID
-     *       @Author Katja
+     *       @author Kristoffer Magnus Overgaard (s194110)
      */
     public void deregisterCustomer(Event e) {
         UUID customerId = e.getArgument("customerId", UUID.class);
@@ -161,7 +162,7 @@ public class AccountManager {
     /**
      * Removes a merchant from the merchant repository and publishes an event with the merchant ID.
      * @param e Event containing the merchant ID
-     *        @Author Katja
+     *        @author Kristoffer Magnus Overgaard (s194110)
      */
     public void deregisterMerchant(Event e) {
         UUID merchantId = e.getArgument("merchantId", UUID.class);
@@ -183,7 +184,7 @@ public class AccountManager {
     /**
      * Clears all customers and merchants from the repositories and publishes an event.
      * @param e Event containing the event ID
-     *        @Author Katja
+     *        @author Benjamin Noah Lumbye (s204428)
      */
     public void clearAccounts(Event e) {
         customerRepository.clearCustomers();

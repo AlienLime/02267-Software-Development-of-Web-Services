@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Emil Wraae Carlsen (s204458)
  * Description:
  * Contains the step general Cucumber related operations (After, Before, etc).
  * Also contains the step definitions for the error message steps.
@@ -40,7 +40,7 @@ public class CucumberSteps {
 
     /**
      * Clear all the helpers before each scenario
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     @Before
     public void before() {
@@ -54,7 +54,7 @@ public class CucumberSteps {
 
     /**
      * Clear all accounts and remove all manager report entries.
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     @After
     public void after() throws BankServiceException_Exception {
@@ -65,7 +65,7 @@ public class CucumberSteps {
     /**
      * Asserts that the error message is as expected
      * @param expectedErrorMessage the expected error message
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     @Then("the error message is {string}")
     public void theErrorMessageIs(String expectedErrorMessage) {
@@ -76,7 +76,7 @@ public class CucumberSteps {
     /**
      * Asserts that the error message matches the given pattern
      * @param expectedPattern the expected pattern of the error message
-     * @author Katja
+     * @author Stine Lund Madsen (s204425)
      */
     @And("the error message matches the expression {string}")
     public void theErrorMessageMatchesTheExpression(String expectedPattern) {

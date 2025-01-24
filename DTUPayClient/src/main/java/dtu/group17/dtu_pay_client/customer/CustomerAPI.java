@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Kristoffer Magnus Overgaard (s194110)
  * Description:
  * CustomerAPI provides an interface for interacting with customer-related functionalities (including banking services and REST APIs).
  * It connects between the backend service and the application logic to enable managing customer accounts, tokens, and reports.
@@ -30,7 +30,7 @@ public class CustomerAPI {
      * Register a customer with a bank account by sending a POST request.
      * @param customer The customer to register
      * @param accountId The ID of the bank account
-     * @author Katja
+     * @author Kristoffer Magnus Overgaard (s194110)
      * */
     public Customer register(Customer customer, String accountId) {
         try {
@@ -47,7 +47,7 @@ public class CustomerAPI {
      * Removes a customer by sending a DELETE request.
      * @param id The ID of the customer to remove
      * @throws Error
-     * @author Katja
+     * @author Benjamin Noah Lumbye (s204428)
      */
     public boolean deregister(UUID id) throws Exception {
         Response response = target.path("customers").path(id.toString()).request().delete();
@@ -64,7 +64,7 @@ public class CustomerAPI {
      * @param id The ID of the customer to get tokens
      * @throws Error
      * @return The customer with the given ID
-     * @author Katja
+     * @author Kristoffer Magnus Overgaard (s194110)
      */
     public List<Token> requestTokens(UUID id, int amount) throws Exception {
         Response response = target.path("customers").path(id.toString()).path("tokens").queryParam("amount", amount).request().post(null);
@@ -80,7 +80,7 @@ public class CustomerAPI {
      * Request a customer report by sending a GET request.
      * @param id The ID of the customer to get a report for
      * @return A list of customer report entries
-     * @author Katja
+     * @author Stine Lund Madsen (s204425)
      */
     public List<CustomerReportEntry> requestCustomerReport(UUID id) {
         Response response = target.path("customers").path(id.toString()).path("report").request().get();
@@ -93,7 +93,7 @@ public class CustomerAPI {
      * @param token The token to consume
      * @return True if the token was consumed successfully, false otherwise
      * @throws Exception If the customer or a token does not exist
-     * @author Katja
+     * @author Kristoffer Magnus Overgaard (s194110)
      */
     public boolean consumeToken(UUID id, Token token) throws Exception {
         Response response = target.path("customers").path(id.toString()).path("tokens").path("consume").request().post(Entity.json(token));

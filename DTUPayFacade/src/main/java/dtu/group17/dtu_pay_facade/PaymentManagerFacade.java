@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Emil Wraae Carlsen (s204458)
  * Description:
  * This file contains the PaymentManagerFacade class, which is a facade for the payment manager and thus contains no business logic.
  * It is responsible for handling the communication with the payment manager and the messaging system.
@@ -57,7 +57,7 @@ public class PaymentManagerFacade {
 
     /**
      * For testing, on hot reload we remove the previous subscription
-     * @author Katja
+     * @author Benjamin Noah Lumbye (s204428)
      */
     @PreDestroy
     public void cleanup() {
@@ -74,7 +74,7 @@ public class PaymentManagerFacade {
      * @return true if the payment was successfully submitted
      * @throws MerchantNotFoundException if the merchant was not found
      * @throws TokenNotFoundException if the token was not found
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     public boolean submitPayment(UUID merchantId, Payment payment) {
         CompletableFuture<Void> future = new CompletableFuture<>();

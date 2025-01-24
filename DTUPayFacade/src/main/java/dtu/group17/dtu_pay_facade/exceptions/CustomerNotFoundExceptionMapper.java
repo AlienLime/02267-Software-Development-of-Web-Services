@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Stine Lund Madsen (s204425)
  * Description:
  * This class is used to map exceptions when customers are not found to a HTTP response.
  */
@@ -18,7 +18,7 @@ public class CustomerNotFoundExceptionMapper implements ExceptionMapper<Customer
     /**
      * Maps BankException to a HTTP response.
      * Returns a HTTP 404 Not Found response with the exception message.
-     * @author Katja
+     * @author Stine Lund Madsen (s204425)
      */
     @Override
     public Response toResponse(CustomerNotFoundException exception) {

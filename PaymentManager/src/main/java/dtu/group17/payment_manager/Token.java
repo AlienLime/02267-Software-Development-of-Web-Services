@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Benjamin Noah Lumbye (s204428)
  * Description:
  * Tokens are used to identify a payment.
  */

@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Stine Lund Madsen (s204425)
  * Description:
  * MerchantAPI provides an interface for interacting with merchant-related functionalities (including banking services and REST APIs).
  * It connects between the backend service and the application logic to enable managing merchant accounts, tokens, and reports.

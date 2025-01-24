@@ -1,7 +1,7 @@
 /**
+ * Author: Kristoffer Magnus Overgaard (s194110)
  * Description:
  * Represents an error message.
- * @Author Katja
  */
 
 package dtu.group17.dtu_pay_client.helpers;

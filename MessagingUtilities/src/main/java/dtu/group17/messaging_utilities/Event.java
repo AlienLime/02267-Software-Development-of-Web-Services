@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Kristoffer Magnus Overgaard (s194110)
  * Description:
  * Event class for messaging utilities
  */
@@ -39,7 +39,7 @@ public class Event implements Serializable {
 
     /**
      * Get argument by key and keeps type after serialization
-     * @author Katja
+     * @author Kristoffer Magnus Overgaard (s194110)
      */
     public <T> T getArgument(String key, Class<T> cls) {
         Gson gson = new Gson();
@@ -49,7 +49,7 @@ public class Event implements Serializable {
 
     /**
      * Get argument by key and keeps type after serialization with TypeToken
-     * @author Katja
+     * @author Kristoffer Magnus Overgaard (s194110)
      */
     public <T> T getArgument(String key, TypeToken<T> typeToken) {
         Gson gson = new Gson();
@@ -60,7 +60,7 @@ public class Event implements Serializable {
 
     /*
         * Overriden equals method to check if two events are equal
-        * @author Katja
+        * @author Benjamin Noah Lumbye (s204428)
      */
     @Override
     public boolean equals(Object o) {
@@ -72,7 +72,7 @@ public class Event implements Serializable {
     /*
         * Overriden hashCode method to generate hash code for event object
         * @return hash code for event object based on topic and arguments
-        * @author Katja
+        * @author Emil Wraae Carlsen (s204458)
      */
     @Override
     public int hashCode() {
@@ -82,7 +82,7 @@ public class Event implements Serializable {
     /*
         * Overriden toString method to generate string representation of event object
         * @return string representation of event object with topic and arguments
-        * @author Katja
+        * @author Stine Lund Madsen (s204425)
      */
     @Override
     public String toString() {

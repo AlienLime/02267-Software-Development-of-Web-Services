@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Benjamin Noah Lumbye (s204428)
  * Description:
  * Contains the steps for payments.
  * The steps are used to create payments between customers and merchants.
@@ -45,7 +45,7 @@ public class PaymentSteps {
      * @param amount The amount of the payment
      * @param description The description of the payment
      * @throws Exception If the payment fails
-     * @author Katja
+     * @author Benjamin Noah Lumbye (s204428)
      */
     public void submitPayment(Customer customer, Merchant merchant, int amount, String description) throws Exception {
         paymentHelper.createPayment(amount, merchant, description);
@@ -58,7 +58,7 @@ public class PaymentSteps {
      * Creates customer payments for the current customer based on a data table.
      * @param paymentDataTable The data table containing the payments
      * @throws Exception If the payment fails
-     * @author Katja
+     * @author G. H. Rasmussen (s204475)
      */
     @Given("the customer has made the following payments")
     public void theCustomerHasMadeTheFollowingPayments(io.cucumber.datatable.DataTable paymentDataTable) throws Exception {
@@ -81,7 +81,7 @@ public class PaymentSteps {
      * Creates merchant payments for the current merchant based on a data table.
      * @param paymentDataTable The data table containing the payments
      * @throws Exception If the payment fails
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     @Given("the following payments have been made to the merchant")
     public void theFollowingPaymentsHaveBeenMadeToTheMerchant(io.cucumber.datatable.DataTable paymentDataTable) throws Exception {
@@ -106,7 +106,7 @@ public class PaymentSteps {
      * Creates payments between customers and merchants based on a data table.
      * @param paymentDataTable The data table containing the payments
      * @throws Exception If the payment fails
-     * @author Katja
+     * @author Benjamin Noah Lumbye (s204428)
      */
     @Given("the following payments have been made")
     public void theFollowingPaymentsHaveBeenMade(io.cucumber.datatable.DataTable paymentDataTable) throws Exception {
@@ -140,7 +140,7 @@ public class PaymentSteps {
     /**
      * Creates a payment of a given amount for the current merchant.
      * @param amount The amount of the payment
-     * @author Katja
+     * @author Stine Lund Madsen (s204425)
      */
     @When("the merchant creates a payment for {int} kr")
     public void theMerchantCreatesAPaymentForKr(Integer amount) {
@@ -149,7 +149,7 @@ public class PaymentSteps {
 
     /**
      * Submits a payment between a customer and merchant by getting the customer from the consumed token.
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     @When("the merchant submits the payment")
     public void theMerchantSubmitsThePayment() {
@@ -165,7 +165,7 @@ public class PaymentSteps {
      * Creates a payment between a customer and merchant with a given amount.
      * @param amount The amount of the payment
      * @throws Exception If the payment fails
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     @When("a payment of {int} kr between the customer and merchant is submitted")
     public void aPaymentOfKrBetweenTheCustomerAndMerchantIsSubmitted(Integer amount) throws Exception {
@@ -183,7 +183,7 @@ public class PaymentSteps {
     /**
      * Creates a payment between a customer and merchant with a given amount.
      * @param merchantId The id of the merchant
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     @When("a payment is created with merchant id {string}")
     public void aPaymentIsCreatedWithMerchantId(String merchantId) {
@@ -193,7 +193,7 @@ public class PaymentSteps {
 
     /**
      * Creates a payment of a default value 1.
-     * @author Katja
+     * @author Stine Lund Madsen (s204425)
      */
     @When("the merchant creates a payment")
     public void theMerchantCreatesAPayment() {

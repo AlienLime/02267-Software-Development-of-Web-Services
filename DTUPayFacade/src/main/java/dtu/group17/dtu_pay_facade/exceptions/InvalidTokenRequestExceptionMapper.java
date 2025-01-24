@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Emil Kim Krarup (s204449)
  * Description:
  * This class is used to map InvalidTokenRequestException to a HTTP response.
  */
@@ -18,7 +18,7 @@ public class InvalidTokenRequestExceptionMapper implements ExceptionMapper<Inval
     /**
      * Maps InvalidTokenRequestException to a HTTP response.
      * Returns a HTTP 400 Bad Request response with the exception message.
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     @Override
     public Response toResponse(InvalidTokenRequestException exception) {

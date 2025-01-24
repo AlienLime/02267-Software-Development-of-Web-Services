@@ -1,5 +1,11 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Authors:
+ * Victor G. H. Rasmussen (s204475)
+ * Emil Kim Krarup (s204449)
+ * Stine Lund Madsen (s204425)
+ * Kristoffer Magnus Overgaard (s194110)
+ * Benjamin Noah Lumbye (s204428)
+ * Emil Wraae Carlsen (s204458)
  * Description:
  * CustomerResource is a REST resource that provides endpoints for interacting with individual customer related data (reports, tokens and deregistration).
  */
@@ -32,7 +38,7 @@ public class CustomerResource {
      * Get a report for a customer.
      * @param id The DTUPay id of the customer.
      * @return A list of CustomerReportEntry objects.
-     * @author Katja
+     * @author Group 17
      * @see CustomerReportEntry
      */
     @GET
@@ -48,7 +54,7 @@ public class CustomerResource {
      * @param amount The amount of tokens to request.
      * @return A list of Token objects.
      * @see Token
-     * @author Katja
+     * @author Group 17
      */
     @POST
     @Path("/tokens")
@@ -68,7 +74,7 @@ public class CustomerResource {
      * @return True if the token was successfully consumed
      * @throws Throwable If the token could not be consumed
      * @see Token
-     * @author Katja
+     * @author Group 17
      */
     @POST
     @Path("/tokens/consume")
@@ -87,7 +93,7 @@ public class CustomerResource {
      * @param id The DTUPay id of the customer.
      * @return True if the customer was successfully deregistered
      * @throws Throwable If the customer could not be deregistered
-     * @author Katja
+     * @author Group 17
      */
     @DELETE
     @Produces(MediaType.TEXT_PLAIN)

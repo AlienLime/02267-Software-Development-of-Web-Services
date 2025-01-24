@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Benjamin Noah Lumbye (s204428)
  * Description:
  * Contains the step definitions for the account-related features of the DTUPay system.
  * Concerns registering and deregistering customers and merchants with DTUPay and the bank.
@@ -42,7 +42,7 @@ public class AccountSteps {
      * @param customer The customer to register.
      * @param balance  The initial balance of the customer's bank account.
      * @throws BankServiceException_Exception
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458) 34
      */
     public Customer registerCustomer(Customer customer, int balance) throws BankServiceException_Exception {
         String accountId = bankHelper.createBankAccount(customer, balance);
@@ -51,11 +51,10 @@ public class AccountSteps {
 
     /**
      * Register a merchant with the bank and DTUPay.
-     *
      * @param merchant The merchant to register.
      * @param balance  The initial balance of the merchant's bank account.
      * @return The registered merchant
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     public Merchant registerMerchant(Merchant merchant, int balance) throws BankServiceException_Exception {
         String accountId = bankHelper.createBankAccount(merchant, balance);
@@ -69,7 +68,7 @@ public class AccountSteps {
      * @param firstName The first name of the customer
      * @param lastName  The last name of the customer
      * @param cpr       The CPR number of the customer
-     * @author Katja
+     * @author Kristoffer Magnus Overgaard (s194110)
      */
     @Given("a customer with name {string}, last name {string}, and CPR {string}")
     public void aCustomerWithNameLastNameAndCPR(String firstName, String lastName, String cpr) {
@@ -80,7 +79,7 @@ public class AccountSteps {
      * Register a customer with the bank.
      *
      * @throws BankServiceException_Exception
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     @Given("the customer is registered with the bank")
     public void theCustomerIsRegisteredWithTheBank() throws BankServiceException_Exception {
@@ -92,7 +91,7 @@ public class AccountSteps {
      * number.
      *
      * @throws BankServiceException_Exception
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     @Given("a registered customer")
     public void aRegisteredCustomer() throws BankServiceException_Exception {
@@ -103,9 +102,9 @@ public class AccountSteps {
     /**
      * Create and register a customer with the bank and DTUPay with a specific CPR
      * number.
-     *
      * @param cpr The CPR number of the customer
      * @throws BankServiceException_Exception
+     * @author Kristoffer Magnus Overgaard (s194110)
      */
     @Given("a registered customer with cpr {string}")
     public void aRegisteredCustomerWithCpr(String cpr) throws BankServiceException_Exception {
@@ -116,10 +115,9 @@ public class AccountSteps {
     /**
      * Create and register a customer with the bank and DTUPay with a specific
      * balance and specific number of tokens.
-     *
      * @param balance      The initial balance of the customer's bank account
      * @param amountTokens The number of tokens the customer should have
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     @Given("a registered customer with a balance of {int} kr and {int} token\\(s)")
     public void aRegisteredCustomerWithABalanceOfKrAndTokens(Integer balance, Integer amountTokens) throws Exception {
@@ -132,9 +130,8 @@ public class AccountSteps {
     /**
      * Create and register a customer with the bank and DTUPay with a specific
      * number of tokens.
-     *
      * @param amountTokens The number of tokens the customer should have
-     * @author Katja
+     * @author Stine Lund Madsen (s204425)
      */
     @Given("a registered customer with {int} token\\(s)")
     public void aRegisteredCustomerWithTokenS(Integer amountTokens) throws Exception {
@@ -145,8 +142,7 @@ public class AccountSteps {
 
     /**
      * Create a customer who is not registered with the bank.
-     *
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     @Given("a customer who is not registered with the bank")
     public void aCustomerWhoIsNotRegisteredWithTheBank() throws Exception {
@@ -158,8 +154,7 @@ public class AccountSteps {
 
     /**
      * Register the current customer with DTUPay using their given bank account.
-     *
-     * @author Katja
+     * @author Benjamin Noah Lumbye (s204428)
      */
     @When("the customer tries to register with DTU Pay using their bank account")
     public void theCustomerTriesToRegisterWithDTUPayUsingTheirBankAccount() {
@@ -169,7 +164,7 @@ public class AccountSteps {
 
     /**
      * Deregister the current customer from DTUPay.
-     * @author Katja
+     * @author Kristoffer Magnus Overgaard (s194110)
      */
     @When("the customer tries to deregister their account from DTU Pay")
     public void theCustomerTriesToDeregisterTheirAccountFromDTUPay() throws Exception {
@@ -179,7 +174,7 @@ public class AccountSteps {
     /**
      * A customer with a specific ID tries to deregister their account from DTUPay.
      * @param id The ID of the customer
-     *           @author Katja
+     *           @author Emil Wraae Carlsen (s204458)
      */
     @When("a customer with id {string} tries to deregister their account from DTU Pay")
     public void aCustomerWithIdTriesToDeregisterTheirAccountFromDTUPay(String id) {
@@ -196,7 +191,7 @@ public class AccountSteps {
      * @param firstName The first name of the customer
      * @param lastName The last name of the customer
      * @param cpr The CPR number of the customer
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     @Then("the customer is registered successfully and with the name {string}, last name {string}, and CPR {string}")
     public void theCustomerIsRegisteredSuccessfullyAndWithTheNameLastNameAndCPR(String firstName, String lastName, String cpr) {
@@ -211,9 +206,8 @@ public class AccountSteps {
 
     /**
      * Check that the customer with the given CPR number is deregistered.
-     *
      * @param cpr The CPR number of the customer
-     *            @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     @Then("the customer with cpr {string} is successfully deregistered")
     public void theCustomerWithCprIsSuccessfullyDeregistered(String cpr) {
@@ -227,7 +221,7 @@ public class AccountSteps {
 
     /**
      * Check that the customer could not be deregistered.
-     *            @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     @Then("the customer could not be deregistered")
     public void theCustomerCouldNotBeDeregistered() {
@@ -242,6 +236,7 @@ public class AccountSteps {
      * @param firstName The first name of the merchant
      * @param lastName  The last name of the merchant
      * @param cpr       The CPR number of the merchant
+     * @author Kristoffer Magnus Overgaard (s194110)
      */
     @Given("a merchant with name {string}, last name {string}, and CPR {string}")
     public void aMerchantWithNameLastNameAndCPR(String firstName, String lastName, String cpr) {
@@ -250,9 +245,8 @@ public class AccountSteps {
 
     /**
      * Register the current merchant with the bank.
-     *
      * @throws BankServiceException_Exception
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     @Given("the merchant is registered with the bank")
     public void theMerchantIsRegisteredWithTheBank() throws BankServiceException_Exception {
@@ -263,9 +257,8 @@ public class AccountSteps {
      * Create and register a merchant with the bank and DTUPay with a random CPR
      * number.
      * Uses the default balance of 1000000.
-     *
      * @throws BankServiceException_Exception
-     * @author Katja
+     * @author Kristoffer Magnus Overgaard (s194110)
      */
     @Given("a registered merchant with a bank account")
     public void aRegisteredMerchantWithABankAccount() throws BankServiceException_Exception {
@@ -279,7 +272,7 @@ public class AccountSteps {
      *
      * @param cpr The CPR number of the merchant
      * @throws BankServiceException_Exception
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     @Given("a registered merchant with cpr {string}")
     public void aRegisteredMerchantWithCpr(String cpr) throws BankServiceException_Exception {
@@ -290,10 +283,9 @@ public class AccountSteps {
     /**
      * Create and register a merchant with the bank and DTUPay with a specific
      * balance.
-     *
      * @param balance The initial balance of the merchant's bank account
      * @throws BankServiceException_Exception
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     @Given("a registered merchant with a bank account and a balance of {int} kr")
     public void aRegisteredMerchantWithABankAccountAndABalanceOfKr(Integer balance) throws BankServiceException_Exception {
@@ -304,8 +296,7 @@ public class AccountSteps {
     /**
      * Create a merchant with an incorrect bank account ID and register them with
      * DTUPay.
-     *
-     * @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     @Given("a merchant who is not registered with the bank")
     public void aMerchantWhoIsNotRegisteredWithTheBank() {
@@ -316,7 +307,7 @@ public class AccountSteps {
 
     /**
      * Register the current merchant with DTUPay using their given bank account.
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     @When("the merchant tries to register with DTU Pay using their bank account")
     public void theMerchantTriesToRegisterWithDTUPayUsingTheirBankAccount() {
@@ -326,7 +317,7 @@ public class AccountSteps {
 
     /**
      * Deregister the current merchant from DTUPay.
-     * @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     @When("the merchant tries to deregister their account from DTU Pay")
     public void theMerchantTriesToDeregisterTheirAccountFromDTUPay() throws Exception {
@@ -336,7 +327,7 @@ public class AccountSteps {
     /**
      * A merchant with a specific ID tries to deregister their account from DTUPay.
      * @param id The ID of the merchant
-     *           @author Katja
+     * @author Emil Kim Krarup (s204449)
      */
     @When("a merchant with id {string} tries to deregister their account from DTU Pay")
     public void aMerchantWithIdTriesToDeregisterTheirAccountFromDTUPay(String id) {
@@ -353,7 +344,7 @@ public class AccountSteps {
      * @param firstName The first name of the merchant
      * @param lastName The last name of the merchant
      * @param cpr The CPR number of the merchant
-     * @author  Katja
+     * @author  Stine Lund Madsen (s204425)
      */
     @Then("the merchant is registered successfully and with the name {string}, last name {string}, and CPR {string}")
     public void theMerchantIsRegisteredSuccessfullyAndWithTheNameLastNameAndCPR(String firstName, String lastName, String cpr) {
@@ -368,9 +359,8 @@ public class AccountSteps {
 
     /**
      * Check that the merchant with the given CPR number is deregistered (not among the registered merchants).
-     *
      * @param cpr The CPR number of the merchant
-     * @author Katja
+     * @author Benjamin Noah Lumbye (s204428)
      */
     @Then("the merchant with cpr {string} is successfully deregistered")
     public void theMerchantWithCprIsSuccessfullyDeregistered(String cpr) {
@@ -383,7 +373,7 @@ public class AccountSteps {
 
     /**
      * Check that the merchant could not be deregistered.
-     *            @author Katja
+     * @author Victor G. H. Rasmussen (s204475)
      */
     @Then("the merchant could not be deregistered")
     public void theMerchantCouldNotBeDeregistered() {

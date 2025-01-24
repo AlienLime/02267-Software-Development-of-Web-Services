@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Emil Wraae Carlsen (s204458)
  * Description:
  * The steps are used to check the balance of the customer and merchant at the bank.
  */
@@ -31,7 +31,7 @@ public class BankSteps {
      * Asserts that the bank balance of the customer the expected balance.
      * @param balance The expected balance of the customer.
      * @throws BankServiceException_Exception
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     @Then("the balance of the customer at the bank is {int} kr")
     public void theBalanceOfTheCustomerAtTheBankIsKr(Integer balance) throws BankServiceException_Exception {
@@ -43,7 +43,7 @@ public class BankSteps {
      * Asserts that the bank balance of the merchant the expected balance.
      * @param balance The expected balance of the merchant.
      * @throws BankServiceException_Exception
-     * @author Katja
+     * @author Emil Wraae Carlsen (s204458)
      */
     @Then("the balance of the merchant at the bank is {int} kr")
     public void theBalanceOfTheMerchantAtTheBankIsKr(Integer balance) throws BankServiceException_Exception {

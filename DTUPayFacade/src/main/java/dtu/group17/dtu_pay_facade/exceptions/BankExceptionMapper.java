@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Benjamin Noah Lumbye (s204428)
  * Description:
     * This class is used to map BankException to a HTTP response.
  */
@@ -14,7 +14,7 @@ import jakarta.ws.rs.ext.Provider;
 /**
  * Maps BankException to a HTTP response.
  * Returns a HTTP 400 Bad Request response with the exception message as the entity.
- * @author Katja
+ * @author Benjamin Noah Lumbye (s204428)
  */
 @Provider
 public class BankExceptionMapper implements ExceptionMapper<BankException> {

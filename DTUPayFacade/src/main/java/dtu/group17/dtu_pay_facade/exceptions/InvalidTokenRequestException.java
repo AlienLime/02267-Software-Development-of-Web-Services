@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Stine Lund Madsen (s204425)
  * Description:
  * Describes a custom exception for when a token request is invalid.
  * If the customer has too many tokens, or requests an invalid amount of tokens (i.e <1).

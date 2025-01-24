@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Benjamin Noah Lumbye (s204428)
  * Description:
  * This file contains the ReportManagerFacade class, which is a facade for the report manager and thus contains no business logic.
  * It is responsible for handling the communication with the report manager and the messaging system.
@@ -52,7 +52,7 @@ public class TokenManagerFacade {
 
     /**
      * For testing, on hot reload we the remove previous subscription
-     * @author Katja
+     * @author Benjamin Noah Lumbye (s204428)
      */
     @PreDestroy
     public void cleanup() {
@@ -67,7 +67,7 @@ public class TokenManagerFacade {
      * @param customerId The customer id
      * @param amount The amount of tokens to request
      * @return A list of tokens
-     * @author Katja
+     * @author Benjamin Noah Lumbye (s204428)
      */
     public List<Token> requestTokens(UUID customerId, int amount) {
         CompletableFuture<List<Token>> future = new CompletableFuture<>();
@@ -83,7 +83,7 @@ public class TokenManagerFacade {
      * @param customerId The customer id
      * @param token The token to consume
      * @return True if the token was consumed successfully
-     * @author Katja
+     * @author Kristoffer Magnus Overgaard (s194110)
      */
     public boolean consumeToken(UUID customerId, Token token) {
         CompletableFuture<Void> future = new CompletableFuture<>();
@@ -98,7 +98,7 @@ public class TokenManagerFacade {
     /**
      * Handle the TokensRegistered event by completing the future with the tokens
      * @param e The event containing the tokens
-     * @author Katja
+     * @author Stine Lund Madsen (s204425)
      */
     public void handleTokensRegistered(Event e) {
         UUID eventId = e.getArgument("id", UUID.class);

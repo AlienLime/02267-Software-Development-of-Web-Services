@@ -1,5 +1,5 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Author: Emil Wraae Carlsen (s204458)
  * Description:
  * A full payment is a payment with every field assigned. Only the manager has a use for full payments.
  */

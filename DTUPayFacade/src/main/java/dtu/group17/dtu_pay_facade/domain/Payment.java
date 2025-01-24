@@ -1,6 +1,6 @@
 /*
-    * Author: Katja Kaj (s123456)
-    * Description:
+    * Author: Benjamin Noah Lumbye (s204428)
+ * Description:
     * Represents a payment.
     * Contains the token used for the payment, the amount of money involved and the merchant ID.
 */

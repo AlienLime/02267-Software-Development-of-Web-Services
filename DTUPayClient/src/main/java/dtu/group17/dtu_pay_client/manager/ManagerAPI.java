@@ -1,5 +1,11 @@
 /*
- * Author: Katja Kaj (s123456)
+ * Authors:
+ * Victor G. H. Rasmussen (s204475)
+ * Emil Kim Krarup (s204449)
+ * Stine Lund Madsen (s204425)
+ * Kristoffer Magnus Overgaard (s194110)
+ * Benjamin Noah Lumbye (s204428)
+ * Emil Wraae Carlsen (s204458)
  * Description:
  * ManagerAPI is a simple interface for interacting with the single manager-related activity (generating a report).
  */
@@ -22,7 +28,7 @@ public class ManagerAPI {
 
     /**
      * Requests a manager report by sending a GET request.
-     * @author Katja
+     * @author Group 17
      */
     public List<ManagerReportEntry> requestManagerReport() {
         Response response = target.path("manager").path("report").request().get();
@@ -31,7 +37,7 @@ public class ManagerAPI {
 
     /**
      * Clears all data by sending a DELETE request to the manager.
-     * @author Katja
+     * @author Group 17
      */
     public boolean clearEverything() {
         Response response = target.path("manager").path("clear").request().delete();
