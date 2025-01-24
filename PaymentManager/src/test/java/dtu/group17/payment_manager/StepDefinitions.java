@@ -4,7 +4,6 @@ import dtu.group17.messaging_utilities.Event;
 import dtu.group17.messaging_utilities.MessageQueue;
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
-import dtu.ws.fastmoney.BankServiceService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -12,8 +11,7 @@ import io.cucumber.java.en.When;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class StepDefinitions {
@@ -22,16 +20,16 @@ public class StepDefinitions {
     PaymentManager paymentManager = new PaymentManager(queue, bankService);
 
     UUID eventId = UUID.randomUUID();
-    PaymentData paymentData;
+    PaymentData paymentData = new PaymentData(eventId);
 
     Random random = new Random();
 
-// Successful payment transaction - start
+    // Successful payment transaction - start
     @Given("the payment data with sufficient funds has been submitted")
     public void thePaymentDataHasBeenSubmitted() throws BankServiceException_Exception {
-        eventId = UUID.randomUUID();
+        //eventId = UUID.randomUUID();
         Token token = new Token(UUID.randomUUID());
-        paymentData = new PaymentData(eventId);
+        //paymentData = new PaymentData(eventId);
         paymentData.setAmount(Optional.of(random.nextInt(1000)));
         paymentData.setToken(Optional.of(token));
 
@@ -64,7 +62,7 @@ public class StepDefinitions {
 // Successful payment transaction - end
 
 
-// Failure payment transaction - start
+    // Failure payment transaction - start
     @Given("the payment data with insufficient funds has been submitted")
     public void theGivenBankAccountsDoesntHaveSufficientFunds() {
         eventId = UUID.randomUUID();
@@ -84,9 +82,9 @@ public class StepDefinitions {
             doThrow(new BankServiceException_Exception("Debtor balance will be negative", null))
                     .when(bankService)
                     .transferMoneyFromTo(paymentData.getCustomerAccountId().get(),
-                        paymentData.getMerchantAccountId().get(),
-                        BigDecimal.valueOf(paymentData.getAmount().get()),
-                        description
+                            paymentData.getMerchantAccountId().get(),
+                            BigDecimal.valueOf(paymentData.getAmount().get()),
+                            description
                     );
         } catch (BankServiceException_Exception e) {
             throw new RuntimeException(e);
@@ -101,7 +99,7 @@ public class StepDefinitions {
 // Failure payment transaction - end
 
 
-// PaymentRequested - Start
+    // PaymentRequested - Start
     @Given("a PaymentRequested event with valid data is received")
     public void aPaymentRequestedEventWithValidDataIsReceived() {
         eventId = UUID.randomUUID();
@@ -209,33 +207,29 @@ public class StepDefinitions {
 // PaymentRequest - End
 
 
+    // CustomerBankAccountRetrieved - Start
+    @Given("a CustomerBankAccountRetrieved event with valid data is received")
+    public void aCustomerBankAccountRetrievedEventWithValidDataIsReceived() {
+        eventId = UUID.randomUUID();
+        UUID customerId = UUID.randomUUID();
+        String accountId = UUID.randomUUID().toString();
 
+        Event event = new Event("CustomerBankAccountRetrieved", Map.of(
+                "id", eventId,
+                "customerId", customerId,
+                "accountId", accountId
+        ));
 
+        doAnswer(invocation -> {
+            var handler = (java.util.function.Consumer<Event>) invocation.getArgument(1);
+            handler.accept(event);
+            return null;
+        }).when(queue).subscribe(eq("CustomerBankAccountRetrieved"), any());
 
-
-// CustomerBankAccountRetrieved - Start
-@Given("a CustomerBankAccountRetrieved event with valid data is received")
-public void aCustomerBankAccountRetrievedEventWithValidDataIsReceived() {
-    eventId = UUID.randomUUID();
-    UUID customerId = UUID.randomUUID();
-    String accountId = UUID.randomUUID().toString();
-
-    Event event = new Event("CustomerBankAccountRetrieved", Map.of(
-            "id", eventId,
-            "customerId", customerId,
-            "accountId", accountId
-    ));
-
-    doAnswer(invocation -> {
-        var handler = (java.util.function.Consumer<Event>) invocation.getArgument(1);
-        handler.accept(event);
-        return null;
-    }).when(queue).subscribe(eq("CustomerBankAccountRetrieved"), any());
-
-    paymentData = new PaymentData(eventId);
-    paymentData.setCustomerId(Optional.of(customerId));
-    paymentData.setCustomerAccountId(Optional.of(accountId));
-}
+        paymentData = new PaymentData(eventId);
+        paymentData.setCustomerId(Optional.of(customerId));
+        paymentData.setCustomerAccountId(Optional.of(accountId));
+    }
 
     @When("the CustomerBankAccountRetrieved event is processed")
     public void theCustomerBankAccountRetrievedEventIsProcessed() {
@@ -258,29 +252,26 @@ public void aCustomerBankAccountRetrievedEventWithValidDataIsReceived() {
 // CustomerBankAccountRetrieved - End
 
 
+    // MerchantBankAccountRetrieved - Start
+    @Given("a MerchantBankAccountRetrieved event with valid data is received")
+    public void aMerchantBankAccountRetrievedEventWithValidDataIsReceived() {
+        eventId = UUID.randomUUID();
+        String merchantAccountId = UUID.randomUUID().toString();
 
+        Event event = new Event("MerchantBankAccountRetrieved", Map.of(
+                "id", eventId,
+                "accountId", merchantAccountId
+        ));
 
+        doAnswer(invocation -> {
+            var handler = (java.util.function.Consumer<Event>) invocation.getArgument(1);
+            handler.accept(event);
+            return null;
+        }).when(queue).subscribe(eq("MerchantBankAccountRetrieved"), any());
 
-// MerchantBankAccountRetrieved - Start
-@Given("a MerchantBankAccountRetrieved event with valid data is received")
-public void aMerchantBankAccountRetrievedEventWithValidDataIsReceived() {
-    eventId = UUID.randomUUID();
-    String merchantAccountId = UUID.randomUUID().toString();
-
-    Event event = new Event("MerchantBankAccountRetrieved", Map.of(
-            "id", eventId,
-            "accountId", merchantAccountId
-    ));
-
-    doAnswer(invocation -> {
-        var handler = (java.util.function.Consumer<Event>) invocation.getArgument(1);
-        handler.accept(event);
-        return null;
-    }).when(queue).subscribe(eq("MerchantBankAccountRetrieved"), any());
-
-    paymentData = new PaymentData(eventId);
-    paymentData.setMerchantAccountId(Optional.of(merchantAccountId));
-}
+        paymentData = new PaymentData(eventId);
+        paymentData.setMerchantAccountId(Optional.of(merchantAccountId));
+    }
 
     @When("the MerchantBankAccountRetrieved event is processed")
     public void theMerchantBankAccountRetrievedEventIsProcessed() {
@@ -300,87 +291,106 @@ public void aMerchantBankAccountRetrievedEventWithValidDataIsReceived() {
     }
 // MerchantBankAccountRetrieved - End
 
-    @Given("PaymentRequested, CustomerBankAccountRetrieved, and MerchantBankAccountRetrieved are received with valid data")
-    public void paymentRequestedCustomerBankAccountRetrievedAndMerchantBankAccountRetrievedAreReceivedWithValidData() {
-        // Step 1: Simulate PaymentRequested event
+
+    @Given("{string}, {string}, and {string} are received with valid data")
+    public void paymentRequestedCustomerBankAccountRetrievedAndMerchantBankAccountRetrievedAreReceivedWithValidData(String topic1, String topic2, String topic3) {
+
+        String[] topics = {topic1, topic2, topic3};
+
         eventId = UUID.randomUUID();
-        Token token = new Token(UUID.randomUUID());
-        int amount = random.nextInt(1000);
-        UUID merchantId = UUID.randomUUID();
-
-        Event paymentRequestedEvent = new Event("PaymentRequested", Map.of(
-                "id", eventId,
-                "token", token,
-                "amount", amount,
-                "merchantId", merchantId
-        ));
-
-        doAnswer(invocation -> {
-            var handler = (java.util.function.Consumer<Event>) invocation.getArgument(1);
-            handler.accept(paymentRequestedEvent);
-            return null;
-        }).when(queue).subscribe(eq("PaymentRequested"), any());
-
         paymentData = new PaymentData(eventId);
-        paymentData.setToken(Optional.of(token));
-        paymentData.setAmount(Optional.of(amount));
-        paymentData.setMerchantId(Optional.of(merchantId));
 
+        for (String topic : topics) {
+            switch (topic) {
+                case "PaymentRequested":
+                    Token token = new Token(UUID.randomUUID());
+                    int amount = random.nextInt(1000);
+                    UUID merchantId = UUID.randomUUID();
 
-        // Step 2: Simulate CustomerBankAccountRetrieved event
-        UUID customerId = UUID.randomUUID();
-        String customerAccountId = UUID.randomUUID().toString();
+                    Event paymentRequestedEvent = new Event("PaymentRequested", Map.of(
+                            "id", eventId,
+                            "token", token,
+                            "amount", amount,
+                            "merchantId", merchantId
+                    ));
 
-        Event customerAccountRetrievedEvent = new Event("CustomerBankAccountRetrieved", Map.of(
-                "id", eventId,
-                "customerId", customerId,
-                "accountId", customerAccountId
-        ));
+                    doAnswer(invocation -> {
+                        var handler = (java.util.function.Consumer<Event>) invocation.getArgument(1);
+                        handler.accept(paymentRequestedEvent);
+                        return null;
+                    }).when(queue).subscribe(eq("PaymentRequested"), any());
 
-        doAnswer(invocation -> {
-            var handler = (java.util.function.Consumer<Event>) invocation.getArgument(1);
-            handler.accept(customerAccountRetrievedEvent);
-            return null;
-        }).when(queue).subscribe(eq("CustomerBankAccountRetrieved"), any());
+                    paymentData.setToken(Optional.of(token));
+                    paymentData.setAmount(Optional.of(amount));
+                    paymentData.setMerchantId(Optional.of(merchantId));
+                    break;
+                case "CustomerBankAccountRetrieved":
+                    UUID customerId = UUID.randomUUID();
+                    String customerAccountId = UUID.randomUUID().toString();
 
-        paymentData.setCustomerId(Optional.of(customerId));
-        paymentData.setCustomerAccountId(Optional.of(customerAccountId));
+                    Event customerAccountRetrievedEvent = new Event("CustomerBankAccountRetrieved", Map.of(
+                            "id", eventId,
+                            "customerId", customerId,
+                            "accountId", customerAccountId
+                    ));
 
-        // Step 3: Simulate MerchantBankAccountRetrieved event
-        String merchantAccountId = UUID.randomUUID().toString();
+                    doAnswer(invocation -> {
+                        var handler = (java.util.function.Consumer<Event>) invocation.getArgument(1);
+                        handler.accept(customerAccountRetrievedEvent);
+                        return null;
+                    }).when(queue).subscribe(eq("CustomerBankAccountRetrieved"), any());
 
-        Event merchantAccountRetrievedEvent = new Event("MerchantBankAccountRetrieved", Map.of(
-                "id", eventId,
-                "accountId", merchantAccountId
-        ));
+                    paymentData.setCustomerId(Optional.of(customerId));
+                    paymentData.setCustomerAccountId(Optional.of(customerAccountId));
+                    break;
+                case "MerchantBankAccountRetrieved":
+                    String merchantAccountId = UUID.randomUUID().toString();
 
-        doAnswer(invocation -> {
-            var handler = (java.util.function.Consumer<Event>) invocation.getArgument(1);
-            handler.accept(merchantAccountRetrievedEvent);
-            return null;
-        }).when(queue).subscribe(eq("MerchantBankAccountRetrieved"), any());
+                    Event merchantAccountRetrievedEvent = new Event("MerchantBankAccountRetrieved", Map.of(
+                            "id", eventId,
+                            "accountId", merchantAccountId
+                    ));
 
-        paymentData.setMerchantAccountId(Optional.of(merchantAccountId));
+                    doAnswer(invocation -> {
+                        var handler = (java.util.function.Consumer<Event>) invocation.getArgument(1);
+                        handler.accept(merchantAccountRetrievedEvent);
+                        return null;
+                    }).when(queue).subscribe(eq("MerchantBankAccountRetrieved"), any());
+
+                    paymentData.setMerchantAccountId(Optional.of(merchantAccountId));
+                    break;
+            }
+        }
     }
 
-    @When("all events are processed")
-    public void allEventsAreProcessed() {
-        paymentManager.onPaymentRequested(new Event("PaymentRequested", Map.of(
-                "id", eventId,
-                "token", paymentData.getToken().get(),
-                "amount", paymentData.getAmount().get(),
-                "merchantId", paymentData.getMerchantId().get()
-        )));
-
-        paymentManager.onCustomerAccountIdRetrieved(new Event("CustomerBankAccountRetrieved", Map.of(
-                "id", eventId,
-                "customerId", paymentData.getCustomerId().get(),
-                "accountId", paymentData.getCustomerAccountId().get()
-        )));
-
-        paymentManager.onMerchantAccountIdRetrieved(new Event("MerchantBankAccountRetrieved", Map.of(
-                "id", eventId,
-                "accountId", paymentData.getMerchantAccountId().get()
-        )));
+    @When("all events are processed in the given order {string}, {string}, and {string}")
+    public void allEventsAreProcessed(String topic1, String topic2, String topic3) {
+        String[] topics = {topic1, topic2, topic3};
+        for (String topic : topics) {
+            switch (topic) {
+                case "CustomerBankAccountRetrieved":
+                    paymentManager.onCustomerAccountIdRetrieved(new Event("CustomerBankAccountRetrieved", Map.of(
+                            "id", eventId,
+                            "customerId", paymentData.getCustomerId().get(),
+                            "accountId", paymentData.getCustomerAccountId().get()
+                    )));
+                    break;
+                case "MerchantBankAccountRetrieved":
+                    paymentManager.onMerchantAccountIdRetrieved(new Event("MerchantBankAccountRetrieved", Map.of(
+                            "id", eventId,
+                            "accountId", paymentData.getMerchantAccountId().get()
+                    )));
+                    break;
+                case "PaymentRequested":
+                    paymentManager.onPaymentRequested(new Event("PaymentRequested", Map.of(
+                            "id", eventId,
+                            "token", paymentData.getToken().get(),
+                            "amount", paymentData.getAmount().get(),
+                            "merchantId", paymentData.getMerchantId().get()
+                    )));
+                    break;
+            }
+        }
     }
 }
+
