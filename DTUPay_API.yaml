@@ -275,6 +275,8 @@ definitions:
         format: uuid
       token:
         $ref: "#/definitions/Token"
+      description:
+        type: string
 
   MerchantReportEntry:
     properties:
@@ -282,6 +284,8 @@ definitions:
         type: integer
       token:
         $ref: "#/definitions/Token"
+      description:
+        type: string
 
   CustomerReportEntry:
     properties:
@@ -292,6 +296,8 @@ definitions:
         format: uuid
       token:
         $ref: "#/definitions/Token"
+      description:
+        type: string
   
   Payment:
     properties:
@@ -299,6 +305,8 @@ definitions:
         $ref: "#/definitions/Token"
       amount:
         type: integer
+      description:
+        type: string
   
   Merchant:
     properties:
