@@ -26,7 +26,7 @@ public class StepDefinitions {
 
     // Successful payment transaction - start
     @Given("the payment data with sufficient funds has been submitted")
-    public void thePaymentDataHasBeenSubmitted() throws BankServiceException_Exception {
+    public void thePaymentDataHasBeenSubmitted() {
         //eventId = UUID.randomUUID();
         Token token = new Token(UUID.randomUUID());
         //paymentData = new PaymentData(eventId);
@@ -41,7 +41,7 @@ public class StepDefinitions {
     }
 
     @When("the payment is processed")
-    public void thePaymentIsProcessed() throws BankServiceException_Exception {
+    public void thePaymentIsProcessed() {
         paymentManager.processPayment(paymentData);
     }
 
@@ -59,7 +59,7 @@ public class StepDefinitions {
         Event expectedEvent = new Event("PaymentCompleted", eventData);
         verify(queue).publish(expectedEvent);
     }
-// Successful payment transaction - end
+    // Successful payment transaction - end
 
 
     // Failure payment transaction - start
@@ -139,7 +139,7 @@ public class StepDefinitions {
         paymentManager.onPaymentRequested(event);
     }
 
-    @Then("the payment data is correctly stored in the paymentDatas map")
+    @Then("the payment data is correctly stored")
     public void thePaymentDataIsCorrectlyStoredInThePaymentDatasMap() {
         PaymentData storedData = paymentManager.getSpecificPaymentData(eventId);
         assertNotNull(storedData);
@@ -242,7 +242,7 @@ public class StepDefinitions {
         paymentManager.onCustomerAccountIdRetrieved(event);
     }
 
-    @Then("the customer account data is correctly updated in the paymentDatas map")
+    @Then("the customer account data is correctly updated")
     public void theCustomerAccountDataIsCorrectlyUpdatedInThePaymentDatasMap() {
         PaymentData storedData = paymentManager.getSpecificPaymentData(eventId);
         assertNotNull(storedData);

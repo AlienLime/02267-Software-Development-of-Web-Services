@@ -1,6 +1,5 @@
-# Created by emilk at 23/01/2025
 Feature: Payment
-  # Enter feature description here
+  Background: Payments can be made from a customer to a merchants registered with DTU Pay
 
   Scenario: Transaction between bank accounts successful
     Given the payment data with sufficient funds has been submitted
@@ -25,17 +24,17 @@ Feature: Payment
   Scenario: PaymentRequested event is successfully processed
     Given a PaymentRequested event with valid data is received
     When the PaymentRequested event is processed
-    Then the payment data is correctly stored in the paymentDatas map
+    Then the payment data is correctly stored
 
   Scenario: CustomerBankAccountRetrieved event is successfully processed
     Given a CustomerBankAccountRetrieved event with valid data is received
     When the CustomerBankAccountRetrieved event is processed
-    Then the customer account data is correctly updated in the paymentDatas map
+    Then the customer account data is correctly updated
 
   Scenario: MerchantBankAccountRetrieved event is successfully processed
     Given a MerchantBankAccountRetrieved event with valid data is received
     When the MerchantBankAccountRetrieved event is processed
-    Then the merchant account data is correctly updated in the paymentDatas map
+    Then the merchant account data is correctly updated
 
   Scenario: Successful processing of events
     Given "CustomerBankAccountRetrieved", "MerchantBankAccountRetrieved", and "PaymentRequested" are received with valid data
