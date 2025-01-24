@@ -72,6 +72,8 @@ public class CustomerResource {
      */
     @POST
     @Path("/tokens/consume")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     public boolean consumeToken(@PathParam("id") UUID id, Token token) throws Throwable {
         try {
             return tokenManagerFacade.consumeToken(id, token);
@@ -88,6 +90,7 @@ public class CustomerResource {
      * @author Katja
      */
     @DELETE
+    @Produces(MediaType.TEXT_PLAIN)
     public boolean deregisterCustomer(@PathParam("id") UUID id) throws Throwable {
         try {
             return accountManagerFacade.deregisterCustomer(id);

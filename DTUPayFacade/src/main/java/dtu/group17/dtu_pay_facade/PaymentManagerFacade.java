@@ -76,7 +76,7 @@ public class PaymentManagerFacade {
      * @throws TokenNotFoundException if the token was not found
      * @author Katja
      */
-    public boolean submitPayment(Payment payment) {
+    public boolean submitPayment(UUID merchantId, Payment payment) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         UUID id = CorrelationId.randomCorrelationId();
         submitPaymentRequests.put(id, future);
@@ -84,7 +84,7 @@ public class PaymentManagerFacade {
                 "id", id,
                 "token", payment.token(),
                 "amount", payment.amount(),
-                "merchantId", payment.merchantId(),
+                "merchantId", merchantId,
                 "description", payment.description()
         ));
         queue.publish(event);
