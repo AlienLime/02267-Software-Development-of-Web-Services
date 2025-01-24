@@ -31,7 +31,7 @@ public class StepDefinitions {
 
     Random random = new Random();
 
-    private record Payment(UUID customerId, UUID merchantId, int amount, Token token) {}
+    private record Payment(UUID customerId, UUID merchantId, int amount, Token token, String description) {}
 
     UUID currentCustomerId;
     UUID currentMerchantId;
@@ -44,33 +44,33 @@ public class StepDefinitions {
     private List<CustomerReportEntry> getCustomerReport(UUID customerId) {
         return payments.stream()
                 .filter(payment -> payment.customerId().equals(customerId))
-                .map(payment -> new CustomerReportEntry(payment.amount(), payment.merchantId(), payment.token()))
+                .map(payment -> new CustomerReportEntry(payment.amount(), payment.merchantId(), payment.token(), payment.description()))
                 .toList();
     }
 
     private List<MerchantReportEntry> getMerchantReport(UUID merchantId) {
         return payments.stream()
                 .filter(payment -> payment.merchantId().equals(merchantId))
-                .map(payment -> new MerchantReportEntry(payment.amount(), payment.token()))
+                .map(payment -> new MerchantReportEntry(payment.amount(), payment.token(), payment.description()))
                 .toList();
     }
 
     private List<ManagerReportEntry> getManagerReport() {
         return payments.stream()
-                .map(payment -> new ManagerReportEntry(payment.amount(), payment.merchantId(), payment.customerId(), payment.token()))
+                .map(payment -> new ManagerReportEntry(payment.amount(), payment.merchantId(), payment.customerId(), payment.token(), payment.description()))
                 .toList();
     }
 
     private void savePayment(Payment payment) {
         payments.add(payment);
 
-        CustomerReportEntry customerReportEntry = new CustomerReportEntry(payment.amount(), payment.merchantId(), payment.token());
+        CustomerReportEntry customerReportEntry = new CustomerReportEntry(payment.amount(), payment.merchantId(), payment.token(), payment.description());
         reportReadRepository.getCustomerReports().computeIfAbsent(payment.customerId(), id -> new ArrayList<>()).add(customerReportEntry);
 
-        MerchantReportEntry merchantReportEntry = new MerchantReportEntry(payment.amount(), payment.token());
+        MerchantReportEntry merchantReportEntry = new MerchantReportEntry(payment.amount(), payment.token(), payment.description());
         reportReadRepository.getMerchantReports().computeIfAbsent(payment.merchantId(), id -> new ArrayList<>()).add(merchantReportEntry);
 
-        ManagerReportEntry managerReportEntry = new ManagerReportEntry(payment.amount(), payment.merchantId(), payment.customerId(), payment.token());
+        ManagerReportEntry managerReportEntry = new ManagerReportEntry(payment.amount(), payment.merchantId(), payment.customerId(), payment.token(), payment.description());
         reportReadRepository.getManagerReports().add(managerReportEntry);
     }
 
@@ -102,12 +102,14 @@ public class StepDefinitions {
         UUID merchantId = UUID.randomUUID();
         int amount = random.nextInt(1000);
         Token token = new Token(UUID.randomUUID());
-        payments.add(new Payment(customerId, merchantId, amount, token));
+        String description = "test payment";
+        payments.add(new Payment(customerId, merchantId, amount, token, description));
         Event event = new Event("PaymentCompleted", Map.of(
                 "customerId", customerId,
                 "merchantId", merchantId,
                 "amount", amount,
-                "token", token
+                "token", token,
+                "description", description
         ));
         reportProjector.applyPaymentCompleted(event);
     }
@@ -115,7 +117,7 @@ public class StepDefinitions {
     @Then("the payment is added to the repository")
     public void thePaymentIsAddedToTheRepository() {
         Payment payment = payments.getFirst();
-        List<CustomerReportEntry> expected = List.of(new CustomerReportEntry(payment.amount(), payment.merchantId(), payment.token()));
+        List<CustomerReportEntry> expected = List.of(new CustomerReportEntry(payment.amount(), payment.merchantId(), payment.token(), payment.description()));
         List<CustomerReportEntry> actual = reportReadRepository.getCustomerReports().get(payment.customerId());
         assertEquals(expected, actual);
     }
@@ -127,7 +129,8 @@ public class StepDefinitions {
             Token token = new Token(UUID.randomUUID());
             UUID merchantId = UUID.randomUUID();
             int paymentAmount = random.nextInt(1000);
-            savePayment(new Payment(currentCustomerId, merchantId, paymentAmount, token));
+            String description = "test payment";
+            savePayment(new Payment(currentCustomerId, merchantId, paymentAmount, token, description));
         }
     }
 
@@ -155,7 +158,8 @@ public class StepDefinitions {
             Token token = new Token(UUID.randomUUID());
             UUID merchantId = UUID.randomUUID();
             int paymentAmount = random.nextInt(1000);
-            savePayment(new Payment(currentCustomerId, merchantId, paymentAmount, token));
+            String description = "test payment";
+            savePayment(new Payment(currentCustomerId, merchantId, paymentAmount, token, description));
         }
     }
 
@@ -179,7 +183,8 @@ public class StepDefinitions {
             Token token = new Token(UUID.randomUUID());
             UUID customerId = UUID.randomUUID();
             int paymentAmount = random.nextInt(1000);
-            savePayment(new Payment(customerId, currentMerchantId, paymentAmount, token));
+            String description = "test payment";
+            savePayment(new Payment(customerId, currentMerchantId, paymentAmount, token, description));
         }
     }
 
@@ -212,7 +217,8 @@ public class StepDefinitions {
             Token token = new Token(UUID.randomUUID());
             UUID customerId = UUID.randomUUID();
             int paymentAmount = random.nextInt(1000);
-            savePayment(new Payment(customerId, currentMerchantId, paymentAmount, token));
+            String description = "test payment";
+            savePayment(new Payment(customerId, currentMerchantId, paymentAmount, token, description));
         }
     }
 
@@ -236,7 +242,8 @@ public class StepDefinitions {
             UUID merchantId = UUID.randomUUID();
             int paymentAmount = random.nextInt(1000);
             Token token = new Token(UUID.randomUUID());
-            savePayment(new Payment(customerId, merchantId, paymentAmount, token));
+            String description = "test payment";
+            savePayment(new Payment(customerId, merchantId, paymentAmount, token, description));
         }
     }
 

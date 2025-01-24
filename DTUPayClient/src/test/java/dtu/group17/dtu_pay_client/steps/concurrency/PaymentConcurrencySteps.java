@@ -98,7 +98,7 @@ public class PaymentConcurrencySteps {
             Customer customer = newNamedRegisteredCustomer(customerName[0], customerName[1], amount, 1);
 
             Token token = tokenHelper.consumeFirstToken(customer);
-            paymentHelper.createPayment(amount, merchant);
+            paymentHelper.createPayment(amount, merchant, "test payment");
             paymentHelper.addToken(token);
             paymentHelper.submitPayment(customer.id());
         }
@@ -134,7 +134,7 @@ public class PaymentConcurrencySteps {
         var t1 = new Thread(() -> {
             try {
                 customerAPI.consumeToken(customerId1, token1);
-                merchantAPI.submitPayment(new Payment(token1, amount, merchantId1));
+                merchantAPI.submitPayment(new Payment(token1, amount, merchantId1, "payment 1"));
             } catch (Exception e) {
                 synchronized (errorMessageHelper) {
                     errorMessageHelper.setErrorMessage(e.getMessage());
@@ -144,7 +144,7 @@ public class PaymentConcurrencySteps {
         var t2 = new Thread(() -> {
             try {
                 customerAPI.consumeToken(customerId2, token2);
-                merchantAPI.submitPayment(new Payment(token2, amount, merchantId2));
+                merchantAPI.submitPayment(new Payment(token2, amount, merchantId2, "payment 2"));
             } catch (Exception e) {
                 synchronized (errorMessageHelper) {
                     errorMessageHelper.setErrorMessage(e.getMessage());
@@ -198,7 +198,7 @@ public class PaymentConcurrencySteps {
         var t1 = new Thread(() -> {
             try {
                 customerAPI.consumeToken(customer.id(), token);
-                merchantAPI.submitPayment(new Payment(token, amount, merchant.id()));
+                merchantAPI.submitPayment(new Payment(token, amount, merchant.id(), "test payment"));
             } catch (Exception e) {
                 synchronized (errorMessageHelper) {
                     errorMessageHelper.setErrorMessage(e.getMessage());

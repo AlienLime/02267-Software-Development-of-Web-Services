@@ -70,6 +70,7 @@ public class PaymentManager {
         Token token = e.getArgument("token", Token.class);
         int amount = e.getArgument("amount", Integer.class);
         UUID merchantId = e.getArgument("merchantId", UUID.class);
+        String description = e.getArgument("description", String.class);
 
         paymentDatas.compute(eventId, (id, data) -> {
             if (data == null) {
@@ -79,6 +80,7 @@ public class PaymentManager {
             data.setToken(Optional.of(token));
             data.setAmount(Optional.of(amount));
             data.setMerchantId(Optional.of(merchantId));
+            data.setDescription(Optional.of(description));
 
             if (data.isComplete()) {
                 processPayment(data);
@@ -155,8 +157,7 @@ public class PaymentManager {
      */
     public void processPayment(PaymentData data) {
         try {
-            String description = "Group 17 - transfer of " + data.getAmount().get() + " kr. from " + data.getCustomerId().get() + " to " + data.getMerchantId().get();
-            bankService.transferMoneyFromTo(data.getCustomerAccountId().get(), data.getMerchantAccountId().get(), BigDecimal.valueOf(data.getAmount().get()), description);
+            bankService.transferMoneyFromTo(data.getCustomerAccountId().get(), data.getMerchantAccountId().get(), BigDecimal.valueOf(data.getAmount().get()), data.getDescription().get());
         } catch (Exception ex) {
             String errorMessage = ex.getMessage();
             LOG.error(errorMessage);
@@ -173,6 +174,7 @@ public class PaymentManager {
         eventData.put("merchantId", data.getMerchantId().get());
         eventData.put("customerAccountId", data.getCustomerAccountId().get());
         eventData.put("merchantAccountId", data.getMerchantAccountId().get());
+        eventData.put("description", data.getDescription().get());
 
         Event event = new Event("PaymentCompleted", eventData);
         queue.publish(event);

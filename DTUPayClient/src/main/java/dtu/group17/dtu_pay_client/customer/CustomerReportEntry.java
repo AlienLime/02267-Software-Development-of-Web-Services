@@ -12,4 +12,4 @@ import dtu.group17.dtu_pay_client.Token;
 
 import java.util.UUID;
 
-public record CustomerReportEntry(int amount, UUID merchantId, Token token) {}
+public record CustomerReportEntry(int amount, UUID merchantId, Token token, String description) {}

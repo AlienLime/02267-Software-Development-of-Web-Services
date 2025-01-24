@@ -10,4 +10,4 @@ package dtu.group17.dtu_pay_client.merchant;
 
 import dtu.group17.dtu_pay_client.Token;
 
-public record MerchantReportEntry(int amount, Token token) {}
+public record MerchantReportEntry(int amount, Token token, String description) {}

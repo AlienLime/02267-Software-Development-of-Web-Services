@@ -84,7 +84,9 @@ public class PaymentManagerFacade {
                 "id", id,
                 "token", payment.token(),
                 "amount", payment.amount(),
-                "merchantId", payment.merchantId()));
+                "merchantId", payment.merchantId(),
+                "description", payment.description()
+        ));
         queue.publish(event);
         future.join();
         return true;

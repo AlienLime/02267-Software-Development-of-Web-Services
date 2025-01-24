@@ -34,6 +34,7 @@ public class StepDefinitions {
         paymentData = new PaymentData(eventId);
         paymentData.setAmount(Optional.of(random.nextInt(1000)));
         paymentData.setToken(Optional.of(token));
+        paymentData.setDescription(Optional.of("service test payment"));
 
         paymentData.setCustomerId(Optional.of(UUID.randomUUID()));
         paymentData.setCustomerAccountId(Optional.of(UUID.randomUUID().toString()));
@@ -57,6 +58,7 @@ public class StepDefinitions {
         eventData.put("merchantId", paymentData.getMerchantId().get());
         eventData.put("customerAccountId", paymentData.getCustomerAccountId().get());
         eventData.put("merchantAccountId", paymentData.getMerchantAccountId().get());
+        eventData.put("description", paymentData.getDescription().get());
 
         Event expectedEvent = new Event("PaymentCompleted", eventData);
         verify(queue).publish(expectedEvent);
@@ -72,6 +74,7 @@ public class StepDefinitions {
         paymentData = new PaymentData(eventId);
         paymentData.setAmount(Optional.of(random.nextInt(1000)));
         paymentData.setToken(Optional.of(token));
+        paymentData.setDescription(Optional.of("service test payment"));
 
         paymentData.setCustomerId(Optional.of(UUID.randomUUID()));
         paymentData.setCustomerAccountId(Optional.of(UUID.randomUUID().toString()));
@@ -79,14 +82,13 @@ public class StepDefinitions {
         paymentData.setMerchantId(Optional.of(UUID.randomUUID()));
         paymentData.setMerchantAccountId(Optional.of(UUID.randomUUID().toString()));
 
-        String description = "Group 17 - transfer of " + paymentData.getAmount().get() + " kr. from " + paymentData.getCustomerId().get() + " to " + paymentData.getMerchantId().get();
         try {
             doThrow(new BankServiceException_Exception("Debtor balance will be negative", null))
                     .when(bankService)
                     .transferMoneyFromTo(paymentData.getCustomerAccountId().get(),
                         paymentData.getMerchantAccountId().get(),
                         BigDecimal.valueOf(paymentData.getAmount().get()),
-                        description
+                        paymentData.getDescription().get()
                     );
         } catch (BankServiceException_Exception e) {
             throw new RuntimeException(e);
@@ -113,7 +115,8 @@ public class StepDefinitions {
                 "id", eventId,
                 "token", token,
                 "amount", amount,
-                "merchantId", merchantId
+                "merchantId", merchantId,
+                "description", "service test payment"
         ));
 
 
@@ -127,6 +130,7 @@ public class StepDefinitions {
         paymentData.setToken(Optional.of(token));
         paymentData.setAmount(Optional.of(amount));
         paymentData.setMerchantId(Optional.of(merchantId));
+        paymentData.setDescription(Optional.of("service test payment"));
     }
 
     @When("the PaymentRequested event is processed")
@@ -135,7 +139,8 @@ public class StepDefinitions {
                 "id", eventId,
                 "token", paymentData.getToken().get(),
                 "amount", paymentData.getAmount().get(),
-                "merchantId", paymentData.getMerchantId().get()
+                "merchantId", paymentData.getMerchantId().get(),
+                "description", paymentData.getDescription().get()
         ));
 
         paymentManager.onPaymentRequested(event);
@@ -148,6 +153,7 @@ public class StepDefinitions {
         assertEquals(paymentData.getToken(), storedData.getToken());
         assertEquals(paymentData.getAmount(), storedData.getAmount());
         assertEquals(paymentData.getMerchantId(), storedData.getMerchantId());
+        assertEquals(paymentData.getDescription(), storedData.getDescription());
     }
 
     @Given("the payment data with invalid merchant account has been submitted")
@@ -157,6 +163,7 @@ public class StepDefinitions {
         paymentData = new PaymentData(eventId);
         paymentData.setAmount(Optional.of(random.nextInt(1000)));
         paymentData.setToken(Optional.of(token));
+        paymentData.setDescription(Optional.of("service test payment"));
 
         paymentData.setCustomerId(Optional.of(UUID.randomUUID()));
         paymentData.setCustomerAccountId(Optional.of(UUID.randomUUID().toString()));
@@ -164,14 +171,13 @@ public class StepDefinitions {
         paymentData.setMerchantId(Optional.of(UUID.randomUUID()));
         paymentData.setMerchantAccountId(Optional.of(UUID.randomUUID().toString()));
 
-        String description = "Group 17 - transfer of " + paymentData.getAmount().get() + " kr. from " + paymentData.getCustomerId().get() + " to " + paymentData.getMerchantId().get();
         try {
             doThrow(new BankServiceException_Exception("Creditor account does not exist", null))
                     .when(bankService)
                     .transferMoneyFromTo(paymentData.getCustomerAccountId().get(),
                             paymentData.getMerchantAccountId().get(),
                             BigDecimal.valueOf(paymentData.getAmount().get()),
-                            description
+                            paymentData.getDescription().get()
                     );
         } catch (BankServiceException_Exception e) {
             throw new RuntimeException(e);
@@ -185,6 +191,7 @@ public class StepDefinitions {
         paymentData = new PaymentData(eventId);
         paymentData.setAmount(Optional.of(random.nextInt(1000)));
         paymentData.setToken(Optional.of(token));
+        paymentData.setDescription(Optional.of("service test payment"));
 
         paymentData.setCustomerId(Optional.of(UUID.randomUUID()));
         paymentData.setCustomerAccountId(Optional.of(UUID.randomUUID().toString()));
@@ -192,14 +199,13 @@ public class StepDefinitions {
         paymentData.setMerchantId(Optional.of(UUID.randomUUID()));
         paymentData.setMerchantAccountId(Optional.of(UUID.randomUUID().toString()));
 
-        String description = "Group 17 - transfer of " + paymentData.getAmount().get() + " kr. from " + paymentData.getCustomerId().get() + " to " + paymentData.getMerchantId().get();
         try {
             doThrow(new BankServiceException_Exception("Debtor account does not exist", null))
                     .when(bankService)
                     .transferMoneyFromTo(paymentData.getCustomerAccountId().get(),
                             paymentData.getMerchantAccountId().get(),
                             BigDecimal.valueOf(paymentData.getAmount().get()),
-                            description
+                            paymentData.getDescription().get()
                     );
         } catch (BankServiceException_Exception e) {
             throw new RuntimeException(e);
@@ -219,11 +225,13 @@ public void aCustomerBankAccountRetrievedEventWithValidDataIsReceived() {
     eventId = UUID.randomUUID();
     UUID customerId = UUID.randomUUID();
     String accountId = UUID.randomUUID().toString();
+    String description = "test payment";
 
     Event event = new Event("CustomerBankAccountRetrieved", Map.of(
             "id", eventId,
             "customerId", customerId,
-            "accountId", accountId
+            "accountId", accountId,
+            "description", description
     ));
 
     doAnswer(invocation -> {
@@ -235,6 +243,7 @@ public void aCustomerBankAccountRetrievedEventWithValidDataIsReceived() {
     paymentData = new PaymentData(eventId);
     paymentData.setCustomerId(Optional.of(customerId));
     paymentData.setCustomerAccountId(Optional.of(accountId));
+    paymentData.setDescription(Optional.of(description));
 }
 
     @When("the CustomerBankAccountRetrieved event is processed")
@@ -242,7 +251,8 @@ public void aCustomerBankAccountRetrievedEventWithValidDataIsReceived() {
         Event event = new Event("CustomerBankAccountRetrieved", Map.of(
                 "id", eventId,
                 "customerId", paymentData.getCustomerId().get(),
-                "accountId", paymentData.getCustomerAccountId().get()
+                "accountId", paymentData.getCustomerAccountId().get(),
+                "description", paymentData.getDescription().get()
         ));
 
         paymentManager.onCustomerAccountIdRetrieved(event);
@@ -312,6 +322,7 @@ public void aMerchantBankAccountRetrievedEventWithValidDataIsReceived() {
                 "id", eventId,
                 "token", token,
                 "amount", amount,
+                "description", "service test payment",
                 "merchantId", merchantId
         ));
 
@@ -325,6 +336,7 @@ public void aMerchantBankAccountRetrievedEventWithValidDataIsReceived() {
         paymentData.setToken(Optional.of(token));
         paymentData.setAmount(Optional.of(amount));
         paymentData.setMerchantId(Optional.of(merchantId));
+        paymentData.setDescription(Optional.of("service test payment"));
 
 
         // Step 2: Simulate CustomerBankAccountRetrieved event
@@ -369,7 +381,8 @@ public void aMerchantBankAccountRetrievedEventWithValidDataIsReceived() {
                 "id", eventId,
                 "token", paymentData.getToken().get(),
                 "amount", paymentData.getAmount().get(),
-                "merchantId", paymentData.getMerchantId().get()
+                "merchantId", paymentData.getMerchantId().get(),
+                "description", paymentData.getDescription().get()
         )));
 
         paymentManager.onCustomerAccountIdRetrieved(new Event("CustomerBankAccountRetrieved", Map.of(

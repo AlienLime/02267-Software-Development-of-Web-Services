@@ -42,11 +42,12 @@ public class PaymentSteps {
      * @param customer The customer
      * @param merchant The merchant
      * @param amount The amount of the payment
+     * @param description The description of the payment
      * @throws Exception If the payment fails
      * @author Katja
      */
-    public void submitPayment(Customer customer, Merchant merchant, int amount) throws Exception {
-        paymentHelper.createPayment(amount, merchant);
+    public void submitPayment(Customer customer, Merchant merchant, int amount, String description) throws Exception {
+        paymentHelper.createPayment(amount, merchant, description);
         Token token = tokenHelper.consumeFirstToken(customer);
         paymentHelper.addToken(token);
         paymentHelper.submitPayment(customer.id());
@@ -67,10 +68,11 @@ public class PaymentSteps {
             String[] name = columns.get("merchant name").trim().split(" ");
             Merchant merchant = accountHelper.createMerchant(name[0], name[1]);
             int amount = Integer.parseInt(columns.get("amount"));
+            String description = columns.get("description");
 
             String accountId = bankHelper.createBankAccount(merchant, 0);
             merchant = accountHelper.registerMerchantWithDTUPay(merchant, accountId);
-            submitPayment(customer, merchant, amount);
+            submitPayment(customer, merchant, amount, description);
         }
     }
 
@@ -92,9 +94,10 @@ public class PaymentSteps {
 
         for (Map<String, String> columns : rows) {
             int amount = Integer.parseInt(columns.get("amount"));
+            String description = columns.get("description");
 
             tokenHelper.requestTokens(customer, 1);
-            submitPayment(customer, merchant, amount);
+            submitPayment(customer, merchant, amount, description);
         }
     }
 
@@ -112,6 +115,7 @@ public class PaymentSteps {
             int amount = Integer.parseInt(columns.get("amount"));
             String[] merchantName = columns.get("merchant name").trim().split(" ");
             String[] customerName = columns.get("customer name").trim().split(" ");
+            String description = columns.get("description");
 
             // Create merchant
             Merchant merchant = accountHelper.createMerchant(merchantName[0], merchantName[1]);
@@ -126,7 +130,7 @@ public class PaymentSteps {
             tokenHelper.requestTokens(customer, 1);
             Token token = tokenHelper.consumeFirstToken(customer);
 
-            paymentHelper.createPayment(amount, merchant);
+            paymentHelper.createPayment(amount, merchant, description);
             paymentHelper.addToken(token);
             paymentHelper.submitPayment(customer.id());
         }
@@ -139,7 +143,7 @@ public class PaymentSteps {
      */
     @When("the merchant creates a payment for {int} kr")
     public void theMerchantCreatesAPaymentForKr(Integer amount) {
-        paymentHelper.createPayment(amount, accountHelper.getCurrentMerchant());
+        paymentHelper.createPayment(amount, accountHelper.getCurrentMerchant(), "test payment of " + amount + " kr");
     }
 
     /**
@@ -164,7 +168,7 @@ public class PaymentSteps {
      */
     @When("a payment of {int} kr between the customer and merchant is submitted")
     public void aPaymentOfKrBetweenTheCustomerAndMerchantIsSubmitted(Integer amount) throws Exception {
-        paymentHelper.createPayment(amount, accountHelper.getCurrentMerchant());
+        paymentHelper.createPayment(amount, accountHelper.getCurrentMerchant(), "test payment of " + amount + " kr");
         tokenHelper.consumeFirstToken(accountHelper.getCurrentCustomer());
         paymentHelper.addToken(tokenHelper.getPresentedToken());
         try {
@@ -183,7 +187,7 @@ public class PaymentSteps {
     @When("a payment is created with merchant id {string}")
     public void aPaymentIsCreatedWithMerchantId(String merchantId) {
         Merchant merchant = new Merchant(UUID.fromString(merchantId), "FirstName", "LastName", AccountHelper.randomCPR());
-        paymentHelper.createPayment(1, merchant);
+        paymentHelper.createPayment(1, merchant, "test payment of 1 kr");
     }
 
     /**
@@ -192,7 +196,7 @@ public class PaymentSteps {
      */
     @When("the merchant creates a payment")
     public void theMerchantCreatesAPayment() {
-        paymentHelper.createPayment(1, accountHelper.getCurrentMerchant());
+        paymentHelper.createPayment(1, accountHelper.getCurrentMerchant(), "test payment of 1 kr");
     }
 
     @Then("the payment is successful")

@@ -35,10 +35,11 @@ public class PaymentHelper {
      * Create a new payment with the given amount and merchant.
      * @param amount The amount of money involved in the payment.
      * @param merchant The merchant receiving the payment.
+     * @param description The description of the payment.
      * @author Katja
      */
-    public Payment createPayment(int amount, Merchant merchant) {
-        currentPayment = new Payment(null, amount, merchant.id());
+    public Payment createPayment(int amount, Merchant merchant, String description) {
+        currentPayment = new Payment(null, amount, merchant.id(), description);
         return currentPayment;
     }
 
@@ -50,7 +51,7 @@ public class PaymentHelper {
      */
     public void submitPayment(UUID customerId) throws Exception {
         merchantAPI.submitPayment(currentPayment);
-        previousPayments.add(new FullPayment(customerId, currentPayment.token(), currentPayment.amount(), currentPayment.merchantId()));
+        previousPayments.add(new FullPayment(customerId, currentPayment.token(), currentPayment.amount(), currentPayment.merchantId(), currentPayment.description()));
     }
 
     /**
@@ -60,7 +61,7 @@ public class PaymentHelper {
      * @author Katja
      */
     public Payment addToken (Token token) {
-        currentPayment = new Payment(token, currentPayment.amount(), currentPayment.merchantId());
+        currentPayment = new Payment(token, currentPayment.amount(), currentPayment.merchantId(), currentPayment.description());
         return currentPayment;
     }
 

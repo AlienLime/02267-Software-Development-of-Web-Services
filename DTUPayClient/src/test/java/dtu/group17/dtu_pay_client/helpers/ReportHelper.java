@@ -58,7 +58,8 @@ public class ReportHelper {
                 receivedReport.stream().anyMatch(reportEntry ->
                         reportEntry.merchantId().equals(payment.merchantId()) &&
                         reportEntry.amount() == payment.amount() &&
-                        reportEntry.token().equals(payment.token())
+                        reportEntry.token().equals(payment.token()) &&
+                        reportEntry.description().equals(payment.description())
                 )
         );
     }
@@ -79,7 +80,8 @@ public class ReportHelper {
         return payments.stream().allMatch(payment ->
                 receivedReport.stream().anyMatch(reportEntry ->
                         reportEntry.amount() == payment.amount() &&
-                        reportEntry.token().equals(payment.token()))
+                        reportEntry.token().equals(payment.token()) &&
+                        reportEntry.description().equals(payment.description()))
         );
     }
 
@@ -101,7 +103,8 @@ public class ReportHelper {
                         reportEntry.merchantId().equals(payment.merchantId()) &&
                         reportEntry.amount() == payment.amount() &&
                         reportEntry.token().equals(payment.token()) &&
-                        reportEntry.customerId().equals(payment.customerId()))
+                        reportEntry.customerId().equals(payment.customerId()) &&
+                        reportEntry.description().equals(payment.description()))
         );
     }
 }

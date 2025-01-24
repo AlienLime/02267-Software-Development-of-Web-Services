@@ -28,14 +28,15 @@ public class ReportProjector {
         UUID merchantId = event.getArgument("merchantId", UUID.class);
         int amount = event.getArgument("amount", Integer.class);
         Token token = event.getArgument("token", Token.class);
+        String description = event.getArgument("description", String.class);
 
-        CustomerReportEntry customerReportEntry = new CustomerReportEntry(amount, merchantId, token);
+        CustomerReportEntry customerReportEntry = new CustomerReportEntry(amount, merchantId, token, description);
         reportReadRepository.getCustomerReports().computeIfAbsent(customerId, id -> new ArrayList<>()).add(customerReportEntry);
 
-        MerchantReportEntry merchantReportEntry = new MerchantReportEntry(amount, token);
+        MerchantReportEntry merchantReportEntry = new MerchantReportEntry(amount, token, description);
         reportReadRepository.getMerchantReports().computeIfAbsent(merchantId, id -> new ArrayList<>()).add(merchantReportEntry);
 
-        ManagerReportEntry managerReportEntry = new ManagerReportEntry(amount, merchantId, customerId, token);
+        ManagerReportEntry managerReportEntry = new ManagerReportEntry(amount, merchantId, customerId, token, description);
         reportReadRepository.getManagerReports().add(managerReportEntry);
     }
 

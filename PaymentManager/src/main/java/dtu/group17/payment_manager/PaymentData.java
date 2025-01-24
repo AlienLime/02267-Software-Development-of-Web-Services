@@ -18,6 +18,7 @@ class PaymentData {
     private Optional<UUID> merchantId = Optional.empty();
     private Optional<String> customerAccountId = Optional.empty();
     private Optional<String> merchantAccountId = Optional.empty();
+    private Optional<String> description = Optional.empty();
 
     public PaymentData(UUID id) {
         this.id = id;
@@ -75,8 +76,16 @@ class PaymentData {
         this.merchantAccountId = merchantAccountId;
     }
 
-    public boolean isComplete() {
-        return token.isPresent() && amount.isPresent() && customerId.isPresent() && merchantId.isPresent() && customerAccountId.isPresent() && merchantAccountId.isPresent();
+    public Optional<String> getDescription() {
+        return description;
     }
-    
+
+    public void setDescription(Optional<String> description) {
+        this.description = description;
+    }
+
+    public boolean isComplete() {
+        return token.isPresent() && amount.isPresent() && customerId.isPresent() && merchantId.isPresent() && customerAccountId.isPresent() && merchantAccountId.isPresent() && description.isPresent();
+    }
+
 }

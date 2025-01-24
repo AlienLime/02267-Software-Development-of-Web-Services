@@ -11,4 +11,4 @@ import dtu.group17.dtu_pay_client.Token;
 import java.util.UUID;
 
 
-public record Payment(Token token, int amount, UUID merchantId) {}
+public record Payment(Token token, int amount, UUID merchantId, String description) {}
