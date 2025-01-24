@@ -48,29 +48,9 @@ paths:
           schema:
             type: string
 
-  /customers/{id}/report:
-    get:
-      summary: Request customer report
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          name: id
-          type: string
-          format: uuid
-          required: true
-          description: Id of the customer requesting their report
-      responses:
-        "200":
-          description: OK. The report was successfully retrieved
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/CustomerReportEntry"
-
   /customers/{id}/tokens:
     post:
-      summary: Request tokens
+      summary: Request new tokens
       produces:
         - application/json
       parameters:
@@ -126,6 +106,26 @@ paths:
           description: Not Found. Token with id 'id' not found
           schema:
             type: string
+
+  /customers/{id}/report:
+    get:
+      summary: Retrieve customer report
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: string
+          format: uuid
+          required: true
+          description: Id of the customer requesting their report
+      responses:
+        "200":
+          description: OK. The report was successfully retrieved
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/CustomerReportEntry"
 
   /merchants:
     post:
@@ -205,7 +205,7 @@ paths:
 
   /merchants/{id}/report:
     get:
-      summary: Request merchant report
+      summary: Retrieve merchant report
       produces:
         - application/json
       parameters:
@@ -225,7 +225,7 @@ paths:
 
   /manager/report:
     get:
-      summary: Request manager report
+      summary: Retrieve manager report
       produces:
         - application/json
       responses:
