@@ -3,6 +3,10 @@ package dtu.group17.report_manager;
 import com.google.gson.reflect.TypeToken;
 import dtu.group17.messaging_utilities.Event;
 import dtu.group17.messaging_utilities.MessageQueue;
+import dtu.group17.report_manager.domain.CustomerReportEntry;
+import dtu.group17.report_manager.domain.ManagerReportEntry;
+import dtu.group17.report_manager.domain.MerchantReportEntry;
+import dtu.group17.report_manager.domain.Token;
 import io.cucumber.java.Before;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
@@ -14,14 +18,16 @@ import org.mockito.ArgumentCaptor;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class StepDefinitions {
     MessageQueue queue = mock(MessageQueue.class);
-    ReportRepository repo = new InMemoryRepository();
-    ReportManager reportManager = new ReportManager(queue, repo);
+    EventStore eventStore = new EventStore();
+    ReportReadRepository reportReadRepository = new ReportReadRepository();
+
+    ReportProjector reportProjector = new ReportProjector(reportReadRepository, queue);
+    ReportProjection reportProjection = new ReportProjection(reportReadRepository, queue);
+    Aggregate aggregate = new Aggregate(queue, eventStore);
 
     Random random = new Random();
 
@@ -55,6 +61,19 @@ public class StepDefinitions {
                 .toList();
     }
 
+    private void savePayment(Payment payment) {
+        payments.add(payment);
+
+        CustomerReportEntry customerReportEntry = new CustomerReportEntry(payment.amount(), payment.merchantId(), payment.token());
+        reportReadRepository.getCustomerReports().computeIfAbsent(payment.customerId(), id -> new ArrayList<>()).add(customerReportEntry);
+
+        MerchantReportEntry merchantReportEntry = new MerchantReportEntry(payment.amount(), payment.token());
+        reportReadRepository.getMerchantReports().computeIfAbsent(payment.merchantId(), id -> new ArrayList<>()).add(merchantReportEntry);
+
+        ManagerReportEntry managerReportEntry = new ManagerReportEntry(payment.amount(), payment.merchantId(), payment.customerId(), payment.token());
+        reportReadRepository.getManagerReports().add(managerReportEntry);
+    }
+
     @Before
     public void before() {
         currentCustomerId = null;
@@ -68,7 +87,8 @@ public class StepDefinitions {
 
     @After
     public void after() {
-        repo.clearReports();
+        reportReadRepository.clear();
+        clearAllCaches();
     }
 
     @Given("a customer with id {string}")
@@ -89,14 +109,15 @@ public class StepDefinitions {
                 "amount", amount,
                 "token", token
         ));
-        reportManager.onPaymentCompleted(event);
+        reportProjector.applyPaymentCompleted(event);
     }
 
     @Then("the payment is added to the repository")
     public void thePaymentIsAddedToTheRepository() {
         Payment payment = payments.getFirst();
         List<CustomerReportEntry> expected = List.of(new CustomerReportEntry(payment.amount(), payment.merchantId(), payment.token()));
-        assertEquals(expected, repo.getCustomerReport(payment.customerId()));
+        List<CustomerReportEntry> actual = reportReadRepository.getCustomerReports().get(payment.customerId());
+        assertEquals(expected, actual);
     }
 
     @Given("{int} payments made by a customer")
@@ -106,8 +127,7 @@ public class StepDefinitions {
             Token token = new Token(UUID.randomUUID());
             UUID merchantId = UUID.randomUUID();
             int paymentAmount = random.nextInt(1000);
-            payments.add(new Payment(currentCustomerId, merchantId, paymentAmount, token));
-            repo.savePayment(currentCustomerId, merchantId, paymentAmount, token);
+            savePayment(new Payment(currentCustomerId, merchantId, paymentAmount, token));
         }
     }
 
@@ -115,7 +135,7 @@ public class StepDefinitions {
     public void theCustomerRequestsAReport() {
         eventId = UUID.randomUUID();
         Event event = new Event("CustomerReportRequested", Map.of("id", eventId, "customerId", currentCustomerId));
-        reportManager.generateCustomerReport(event);
+        reportProjection.handleCustomerReportQuery(event);
     }
 
     @Then("a customer report generated event with the report is sent")
@@ -135,8 +155,7 @@ public class StepDefinitions {
             Token token = new Token(UUID.randomUUID());
             UUID merchantId = UUID.randomUUID();
             int paymentAmount = random.nextInt(1000);
-            payments.add(new Payment(currentCustomerId, merchantId, paymentAmount, token));
-            repo.savePayment(currentCustomerId, merchantId, paymentAmount, token);
+            savePayment(new Payment(currentCustomerId, merchantId, paymentAmount, token));
         }
     }
 
@@ -144,7 +163,7 @@ public class StepDefinitions {
     public void theCustomerWithIdRequestsAReport(String customerId) {
         eventId = UUID.randomUUID();
         Event event = new Event("CustomerReportRequested", Map.of("id", eventId, "customerId", customerId));
-        reportManager.generateCustomerReport(event);
+        reportProjection.handleCustomerReportQuery(event);
     }
 
     @Then("a customer report generated event with an empty report is sent")
@@ -160,8 +179,7 @@ public class StepDefinitions {
             Token token = new Token(UUID.randomUUID());
             UUID customerId = UUID.randomUUID();
             int paymentAmount = random.nextInt(1000);
-            payments.add(new Payment(customerId, currentMerchantId, paymentAmount, token));
-            repo.savePayment(customerId, currentMerchantId, paymentAmount, token);
+            savePayment(new Payment(customerId, currentMerchantId, paymentAmount, token));
         }
     }
 
@@ -169,7 +187,7 @@ public class StepDefinitions {
     public void theMerchantRequestsAReport() {
         eventId = UUID.randomUUID();
         Event event = new Event("MerchantReportRequested", Map.of("id", eventId, "merchantId", currentMerchantId));
-        reportManager.generateMerchantReport(event);
+        reportProjection.handleMerchantReportQuery(event);
     }
 
     @Then("a merchant report generated event with the report is sent")
@@ -194,8 +212,7 @@ public class StepDefinitions {
             Token token = new Token(UUID.randomUUID());
             UUID customerId = UUID.randomUUID();
             int paymentAmount = random.nextInt(1000);
-            payments.add(new Payment(customerId, currentMerchantId, paymentAmount, token));
-            repo.savePayment(customerId, currentMerchantId, paymentAmount, token);
+            savePayment(new Payment(customerId, currentMerchantId, paymentAmount, token));
         }
     }
 
@@ -203,7 +220,7 @@ public class StepDefinitions {
     public void theMerchantWithIdRequestsAReport(String merchantId) {
         eventId = UUID.randomUUID();
         Event event = new Event("MerchantReportRequested", Map.of("id", eventId, "merchantId", UUID.fromString(merchantId)));
-        reportManager.generateMerchantReport(event);
+        reportProjection.handleMerchantReportQuery(event);
     }
 
     @Then("a merchant report generated event with an empty report is sent")
@@ -219,8 +236,7 @@ public class StepDefinitions {
             UUID merchantId = UUID.randomUUID();
             int paymentAmount = random.nextInt(1000);
             Token token = new Token(UUID.randomUUID());
-            payments.add(new Payment(customerId, merchantId, paymentAmount, token));
-            repo.savePayment(customerId, merchantId, paymentAmount, token);
+            savePayment(new Payment(customerId, merchantId, paymentAmount, token));
         }
     }
 
@@ -228,7 +244,7 @@ public class StepDefinitions {
     public void theManagerRequestsAReport() {
         eventId = UUID.randomUUID();
         Event event = new Event("ManagerReportRequested", Map.of("id", eventId));
-        reportManager.generateManagerReport(event);
+        reportProjection.handleManagerReportQuery(event);
     }
 
     @Then("a manager report generated event with the report is sent")
@@ -242,11 +258,16 @@ public class StepDefinitions {
         assertEquals(new HashSet<>(expectedReport), new HashSet<>(actualReport));
     }
 
+    // This test isn't great because it relies on the event queue actually working.
+    // As a workaround we manually also send a ClearRequested event to the projector.
     @When("the reports are cleared")
     public void theReportsAreCleared() {
         eventId = UUID.randomUUID();
         Event event = new Event("ClearRequested", Map.of("id", eventId));
-        reportManager.clearReports(event);
+        aggregate.handleClearCommand(event);
+        Event clearedEvent = new Event("ReportsCleared", Map.of("id", eventId));
+        verify(queue).publish(clearedEvent);
+        reportProjector.applyReportsCleared(clearedEvent);
     }
 
     @Then("a manager report generated event with an empty report is sent")
