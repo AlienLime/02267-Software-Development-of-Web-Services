@@ -140,7 +140,7 @@ public class StepDefinitions {
     }
 
     @Then("the payment data is correctly stored")
-    public void thePaymentDataIsCorrectlyStoredInThePaymentDatasMap() {
+    public void thePaymentDataIsCorrectlyStored() {
         PaymentData storedData = paymentManager.getSpecificPaymentData(eventId);
         assertNotNull(storedData);
         assertEquals(paymentData.getToken(), storedData.getToken());
@@ -243,7 +243,7 @@ public class StepDefinitions {
     }
 
     @Then("the customer account data is correctly updated")
-    public void theCustomerAccountDataIsCorrectlyUpdatedInThePaymentDatasMap() {
+    public void theCustomerAccountDataIsCorrectlyUpdated() {
         PaymentData storedData = paymentManager.getSpecificPaymentData(eventId);
         assertNotNull(storedData);
         assertEquals(paymentData.getCustomerId(), storedData.getCustomerId());
@@ -283,8 +283,8 @@ public class StepDefinitions {
         paymentManager.onMerchantAccountIdRetrieved(event);
     }
 
-    @Then("the merchant account data is correctly updated in the paymentDatas map")
-    public void theMerchantAccountDataIsCorrectlyUpdatedInThePaymentDatasMap() {
+    @Then("the merchant account data is correctly updated")
+    public void theMerchantAccountDataIsCorrectlyUpdated() {
         PaymentData storedData = paymentManager.getSpecificPaymentData(eventId);
         assertNotNull(storedData);
         assertEquals(paymentData.getMerchantAccountId(), storedData.getMerchantAccountId());
