@@ -48,6 +48,27 @@ public class InMemoryRepository implements TokenRepository {
     }
 
     @Override
+    public void removeCustomer(UUID id) {
+        tokens.remove(id);
+        consumedTokens.entrySet().removeIf(entry -> entry.getValue().equals(id));
+    }
+
+    @Override
+    public boolean doesCustomerExist (UUID id) {
+        return tokens.containsKey(id);
+    }
+
+    @Override
+    public List<Token> getTokens() {
+        return tokens.values().stream().flatMap(List::stream).toList();
+    }
+
+    @Override
+    public List<Token> getConsumedTokens() {
+        return new ArrayList<>(consumedTokens.keySet());
+    }
+
+    @Override
     public void clear() {
         tokens.clear();
         consumedTokens.clear();

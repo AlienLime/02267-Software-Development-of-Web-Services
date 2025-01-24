@@ -15,6 +15,14 @@ public interface TokenRepository {
 
     int getNumberOfTokens(UUID id);
 
+    void removeCustomer(UUID id);
+
+    boolean doesCustomerExist(UUID id);
+
+    List<Token> getTokens();
+
+    List<Token> getConsumedTokens();
+
     void clear();
 
 }

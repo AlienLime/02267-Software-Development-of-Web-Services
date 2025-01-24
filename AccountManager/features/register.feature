@@ -1,4 +1,5 @@
 Feature: Register
+
   Background: Customers and merchants can register with DTU Pay using their firstName, lastName and CPR
 
   Scenario: Customer is successfully registered

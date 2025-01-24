@@ -1,10 +1,11 @@
 Feature: Deregister
+
   Background: Once a customer or merchant is registered with DTU Pay they can also deregister
 
   Scenario: Customer is successfully deregistered
     Given there is a registered customer with id '497dcba3-ecbf-4587-a2dd-5eb0665e6880'
     When the CustomerDeregistrationRequested event is received
-    Then the "CustomerDeregistered" confirmation event is sent
+    Then the CustomerDeregistered event is sent
     And the customer is deregistered
 
   Scenario: Merchant is successfully deregistered
