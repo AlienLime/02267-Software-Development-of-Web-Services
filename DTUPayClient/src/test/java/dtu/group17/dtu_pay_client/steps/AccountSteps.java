@@ -21,7 +21,8 @@ import io.cucumber.java.en.When;
 import java.util.List;
 import java.util.UUID;
 
-import static org.wildfly.common.Assert.*;
+import static org.wildfly.common.Assert.assertFalse;
+import static org.wildfly.common.Assert.assertTrue;
 
 public class AccountSteps {
     private ErrorMessageHelper errorMessageHelper;

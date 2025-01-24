@@ -6,7 +6,9 @@ import dtu.group17.messaging_utilities.MessageQueue;
 import dtu.group17.messaging_utilities.RabbitMQQueue;
 import org.jboss.logging.Logger;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class TokenManager {
     private static final Logger LOG = Logger.getLogger(TokenManager.class);

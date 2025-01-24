@@ -7,13 +7,14 @@
 
 package dtu.group17.dtu_pay_client.customer;
 
+import dtu.group17.dtu_pay_client.Token;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
-import dtu.group17.dtu_pay_client.Token;
+
 import java.util.List;
 import java.util.UUID;
 

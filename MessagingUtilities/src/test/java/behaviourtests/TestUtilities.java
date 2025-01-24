@@ -1,6 +1,8 @@
 package behaviourtests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.google.gson.reflect.TypeToken;
+import dtu.group17.messaging_utilities.Event;
+import dtu.group17.messaging_utilities.MessageQueue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import com.google.gson.reflect.TypeToken;
-import dtu.group17.messaging_utilities.Event;
-import dtu.group17.messaging_utilities.MessageQueue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestUtilities {
 

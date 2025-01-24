@@ -8,12 +8,12 @@
 package dtu.group17.dtu_pay_facade;
 
 import com.google.gson.reflect.TypeToken;
-import dtu.group17.messaging_utilities.Event;
-import dtu.group17.messaging_utilities.MessageQueue;
-import dtu.group17.messaging_utilities.RabbitMQQueue;
 import dtu.group17.dtu_pay_facade.exceptions.InvalidTokenRequestException;
 import dtu.group17.dtu_pay_facade.exceptions.TokenNotFoundException;
 import dtu.group17.dtu_pay_facade.records.Token;
+import dtu.group17.messaging_utilities.Event;
+import dtu.group17.messaging_utilities.MessageQueue;
+import dtu.group17.messaging_utilities.RabbitMQQueue;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 

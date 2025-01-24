@@ -8,10 +8,10 @@
 package dtu.group17.dtu_pay_client.steps;
 
 import dtu.group17.dtu_pay_client.Token;
-import dtu.group17.dtu_pay_client.helpers.ErrorMessageHelper;
 import dtu.group17.dtu_pay_client.helpers.AccountHelper;
-import dtu.group17.dtu_pay_client.helpers.TokenHelper;
+import dtu.group17.dtu_pay_client.helpers.ErrorMessageHelper;
 import dtu.group17.dtu_pay_client.helpers.PaymentHelper;
+import dtu.group17.dtu_pay_client.helpers.TokenHelper;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 

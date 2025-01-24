@@ -9,14 +9,18 @@ package dtu.group17.dtu_pay_client.steps;
 
 import dtu.group17.dtu_pay_client.FullPayment;
 import dtu.group17.dtu_pay_client.customer.CustomerReportEntry;
-import dtu.group17.dtu_pay_client.helpers.*;
+import dtu.group17.dtu_pay_client.helpers.AccountHelper;
+import dtu.group17.dtu_pay_client.helpers.PaymentHelper;
+import dtu.group17.dtu_pay_client.helpers.ReportHelper;
 import dtu.group17.dtu_pay_client.manager.ManagerReportEntry;
 import dtu.group17.dtu_pay_client.merchant.MerchantReportEntry;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReportSteps {
     private AccountHelper accountHelper;

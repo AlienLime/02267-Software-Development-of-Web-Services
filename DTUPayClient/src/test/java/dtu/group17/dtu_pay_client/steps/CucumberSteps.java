@@ -7,7 +7,6 @@
 
 package dtu.group17.dtu_pay_client.steps;
 
-import dtu.group17.dtu_pay_client.helpers.ErrorMessageHelper;
 import dtu.group17.dtu_pay_client.helpers.*;
 import dtu.group17.dtu_pay_client.manager.ManagerAPI;
 import dtu.ws.fastmoney.BankServiceException_Exception;

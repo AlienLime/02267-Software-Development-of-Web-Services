@@ -1,7 +1,7 @@
 package dtu.group17.token_manager;
 
-import java.util.UUID;
 import java.util.List;
+import java.util.UUID;
 
 public interface TokenRepository {
 

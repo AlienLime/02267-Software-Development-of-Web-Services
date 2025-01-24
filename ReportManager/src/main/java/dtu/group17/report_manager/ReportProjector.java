@@ -8,7 +8,6 @@ import dtu.group17.report_manager.domain.MerchantReportEntry;
 import dtu.group17.report_manager.domain.Token;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class ReportProjector {

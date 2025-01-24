@@ -6,7 +6,6 @@ import dtu.group17.report_manager.domain.CustomerReportEntry;
 import dtu.group17.report_manager.domain.ManagerReportEntry;
 import dtu.group17.report_manager.domain.MerchantReportEntry;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;

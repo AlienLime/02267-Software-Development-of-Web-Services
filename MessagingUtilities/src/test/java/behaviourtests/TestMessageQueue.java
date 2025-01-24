@@ -1,19 +1,18 @@
 package behaviourtests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import dtu.group17.messaging_utilities.Event;
+import dtu.group17.messaging_utilities.MessageQueue;
+import dtu.group17.messaging_utilities.RabbitMQQueue;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import dtu.group17.messaging_utilities.Event;
-import dtu.group17.messaging_utilities.MessageQueue;
-import dtu.group17.messaging_utilities.RabbitMQQueue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Only works when using RabbitMq")
 public class TestMessageQueue extends TestUtilities {
