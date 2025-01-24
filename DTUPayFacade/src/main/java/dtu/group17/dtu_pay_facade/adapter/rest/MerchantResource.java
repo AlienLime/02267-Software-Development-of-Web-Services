@@ -35,7 +35,7 @@ public class MerchantResource {
     ReportManagerFacade reportManagerFacade;
 
     /**
-     * Submit a merchant payment (token, amount, description) //TODO: Description?
+     * Submit a merchant payment (token, amount, description)
      * @param payment The payment to submit
      * @return true if the payment was successful
      * @throws CompletionException if the payment was not successful

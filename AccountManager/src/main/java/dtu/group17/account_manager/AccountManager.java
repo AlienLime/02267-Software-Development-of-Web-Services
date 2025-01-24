@@ -155,7 +155,7 @@ public class AccountManager {
             return;
         }
 
-        Event event = new Event("CustomerDeregistered", Map.of("id", eventId, "customerId", customerId)); //TODO: customerId changes things
+        Event event = new Event("CustomerDeregistered", Map.of("id", eventId, "customerId", customerId));
         queue.publish(event);
     }
 

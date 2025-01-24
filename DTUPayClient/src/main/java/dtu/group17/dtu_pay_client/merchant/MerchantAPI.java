@@ -26,7 +26,7 @@ public class MerchantAPI {
     public record RegisterMerchantBody(Merchant merchant, String accountId) {}
     public Merchant register(Merchant merchant, String accountId) {
         try {
-            RegisterMerchantBody body = new RegisterMerchantBody(merchant, accountId); //TODO: Use factory pattern
+            RegisterMerchantBody body = new RegisterMerchantBody(merchant, accountId);
             try (Response response = target.path("merchants").request().post(Entity.json(body))) {
                 return response.readEntity(Merchant.class);
             }
