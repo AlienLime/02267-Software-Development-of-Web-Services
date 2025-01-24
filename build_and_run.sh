@@ -2,8 +2,8 @@
 set -e
 
 # Install local maven dependencies
-mvn clean install -f ../BankStub/pom.xml
-mvn clean install -f ../MessagingUtilities/pom.xml
+mvn clean install -f BankStub/pom.xml
+mvn clean install -f MessagingUtilities/pom.xml
 
 # Build microservices
 services=(
@@ -15,7 +15,7 @@ services=(
 )
 
 for service in "${services[@]}"; do
-  pushd ../"$service"
+  pushd "$service"
   mvn clean package
   popd
 done
@@ -27,6 +27,6 @@ docker image prune -f
 docker system prune -f
 
 # Test
-pushd ../DTUPayClient
+pushd DTUPayClient
 mvn test
 popd
