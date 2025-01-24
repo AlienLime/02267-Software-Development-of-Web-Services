@@ -20,11 +20,9 @@ import java.util.UUID;
 
 public class ReportProjector {
     private final ReportReadRepository reportReadRepository;
-    MessageQueue queue;
 
     public ReportProjector(ReportReadRepository reportReadRepository, MessageQueue queue) {
         this.reportReadRepository = reportReadRepository;
-        this.queue = queue;
 
         queue.subscribe("PaymentCompleted", this::applyPaymentCompleted);
         queue.subscribe("ReportsCleared", this::applyReportsCleared);

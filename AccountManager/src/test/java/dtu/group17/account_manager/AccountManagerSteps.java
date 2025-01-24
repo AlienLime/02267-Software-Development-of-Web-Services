@@ -118,13 +118,13 @@ public class AccountManagerSteps {
     @Then("the customer is registered with a non-empty id")
     public void theCustomerIsRegisteredWithANonEmptyId() {
         assertNotNull(currentCustomer.id());
-        assertEquals(currentCustomer, accountManager.customerRepository.getCustomerById(currentCustomer.id()));
+        assertEquals(currentCustomer, repo.getCustomerById(currentCustomer.id()));
     }
 
     @Then("the merchant is registered with a non-empty id")
     public void theMerchantIsRegisteredWithANonEmptyId() {
         assertNotNull(currentMerchant.id());
-        assertEquals(currentMerchant, accountManager.merchantRepository.getMerchantById(currentMerchant.id()));
+        assertEquals(currentMerchant, repo.getMerchantById(currentMerchant.id()));
     }
     //#endregion
 

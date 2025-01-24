@@ -18,7 +18,7 @@ import java.util.UUID;
 
 public class ReportProjection {
     private final ReportReadRepository reportReadRepository;
-    MessageQueue queue;
+    private MessageQueue queue;
 
     public ReportProjection(ReportReadRepository reportReadRepository, MessageQueue queue) {
         this.reportReadRepository = reportReadRepository;
