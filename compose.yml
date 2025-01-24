@@ -1,7 +1,7 @@
 services:
 
   dtu-pay-facade:
-    build: ../DTUPayFacade
+    build: DTUPayFacade
     image: dtu-pay-facade
     container_name: dtu-pay-facade
     environment:
@@ -21,7 +21,7 @@ services:
         condition: service_healthy
     
   account-manager:
-    build: ../AccountManager
+    build: AccountManager
     image: account-manager
     container_name: account-manager
     environment:
@@ -31,7 +31,7 @@ services:
         condition: service_healthy
 
   payment-manager:
-    build: ../PaymentManager
+    build: PaymentManager
     image: payment-manager
     container_name: payment-manager
     environment:
@@ -41,7 +41,7 @@ services:
         condition: service_healthy
 
   report-manager:
-    build: ../ReportManager
+    build: ReportManager
     image: report-manager
     container_name: report-manager
     environment:
@@ -51,7 +51,7 @@ services:
         condition: service_healthy
 
   token-manager:
-    build: ../TokenManager
+    build: TokenManager
     image: token-manager
     container_name: token-manager
     environment:
