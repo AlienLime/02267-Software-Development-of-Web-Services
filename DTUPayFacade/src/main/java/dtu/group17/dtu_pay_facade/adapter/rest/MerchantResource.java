@@ -39,10 +39,10 @@ public class MerchantResource {
     @POST
     @Path("/payment")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public boolean submitPayment(Payment payment) throws Throwable {
+    @Produces(MediaType.TEXT_PLAIN)
+    public boolean submitPayment(@PathParam("id") UUID id, Payment payment) throws Throwable {
         try {
-            return paymentManagerFacade.submitPayment(payment);
+            return paymentManagerFacade.submitPayment(id, payment);
         } catch (CompletionException e) {
             throw e.getCause();
         }
@@ -69,6 +69,7 @@ public class MerchantResource {
      * @author Katja
      */
     @DELETE
+    @Produces(MediaType.TEXT_PLAIN)
     public boolean deregisterMerchant(@PathParam("id") UUID id) throws Throwable {
         try {
             return accountManagerFacade.deregisterMerchant(id);

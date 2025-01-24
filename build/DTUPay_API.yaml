@@ -4,114 +4,251 @@ info:
   title: DTU Pay
 schemes:
   - http
-  
+
 paths:
   /customers:
     post:
+      summary: Register customer
       consumes:
         - application/json
       produces:
         - application/json
       parameters:
-        - name: body
-          in: body
-          required: true
+        - in: body
+          name: body
           schema:
             $ref: '#/definitions/RegisterCustomerBody'
+          required: true
+          description: The customer information and their bank account id
       responses:
-        '201':
-          description: Registered
-          headers:
-            Location:
-              type: string
-      # No bad responses?
-  
-  # not customers/{id}/tokens?
-  /customers/tokens:
-    post:
-      consumes:
-        - application/json
+        "200":
+          description: OK. The customer was successfully registered
+          schema:
+            $ref: '#/definitions/Customer'
+
+  /customers/{id}:
+    delete:
+      summary: Deregister customer
+      produces:
+        - text/plain
+      parameters:
+        - in: path
+          name: id
+          type: string
+          format: uuid
+          required: true
+          description: Id of the customer to remove
+      responses:
+        "200":
+          description: OK. The customer was successfully deregistered
+          schema:
+            type: boolean
+        "404":
+          description: Not Found. The customer with 'id' does not exist
+          schema:
+            type: string
+
+  /customers/{id}/report:
+    get:
+      summary: Request customer report
       produces:
         - application/json
       parameters:
-        - name: body
-          in: body
+        - in: path
+          name: id
+          type: string
+          format: uuid
           required: true
-          schema:
-            $ref: '#/definitions/RequestTokensBody'
+          description: Id of the customer requesting their report
       responses:
-        '201':
-          description: Registered
-          headers:
-            Location:
-              type: string
-        '400':
-          description: Bad Request
-          headers: {}
+        "200":
+          description: OK. The report was successfully retrieved
           schema:
-            $ref: '#/definitions/ErrorType'
-        '404':
-            description: Not Found # should we specify meaning?
-            headers: {}
-            schema:
-              $ref: '#/definitions/ErrorType'
+            type: array
+            items:
+              $ref: "#/definitions/CustomerReportEntry"
+
+  /customers/{id}/tokens:
+    post:
+      summary: Request tokens
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: string
+          format: uuid
+          required: true
+          description: Id of the customer making the request
+        - in: query
+          name: amount
+          type: integer
+          required: true
+          description: Amount of tokens requested
+      responses:
+        "200":
+          description: OK. The requested amount of tokens were granted
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Token"
+        "400":
+          description: Bad Request. The customer had too many tokens already or the amount requested was invalid
+          schema:
+            type: string
+
+  /customers/{id}/tokens/consume:
+    post:
+      summary: Consume a token
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+      parameters:
+        - in: path
+          name: id
+          type: string
+          format: uuid
+          required: true
+          description: Id of the customer requesting to consume a token
+        - in: body
+          name: token
+          schema:
+            $ref: "#/definitions/Token"
+          required: true
+          description: The token to be consumed
+      responses:
+        "200":
+          description: OK. The token belonged to the customer and was successfully consumed
+          schema:
+            type: boolean
+        "404":
+          description: Not Found. Token with id 'id' not found
+          schema:
+            type: string
 
   /merchants:
     post:
+      summary: Register merchant
       consumes:
         - application/json
       produces:
         - application/json
       parameters:
-        - name: body
-          in: body
-          required: true
+        - in: body
+          name: body
           schema:
             $ref: '#/definitions/RegisterMerchantBody'
+          required: true
+          description: The merchant information and their bank account id
       responses:
-        '201':
-          description: Registered
-          headers:
-            Location:
-              type: string
-        # No bad responses?
-  
-  /merchants/payment:
+        "200":
+          description: OK. The merchant was successfully registered
+          schema:
+            $ref: '#/definitions/Merchant'
+
+  /merchants/{id}:
+    delete:
+      summary: Deregister merchant
+      produces:
+        - text/plain
+      parameters:
+        - in: path
+          name: id
+          type: string
+          format: uuid
+          required: true
+          description: Id of the merchant to remove
+      responses:
+        "200":
+          description: OK. The merchant was successfully deregistered
+          schema:
+            type: boolean
+        "404":
+          description: Not Found. The merchant with 'id' does not exist
+          schema:
+            type: string
+
+  /merchants/{id}/payment:
     post:
+      summary: Submit a payment
       consumes:
         - application/json
       produces:
-        - application/json
+        - text/plain
       parameters:
-        - name: body
-          in: body
+        - in: path
+          name: id
+          type: string
+          format: uuid
           required: true
+          description: Id of the merchant who submits the payment
+        - in: body
+          name: payment
           schema:
             $ref: '#/definitions/Payment'
+          required: true
+          description: The details of the payment between the merchant and a customer
       responses:
-        '201':
-          description: Successful Payment
-          headers: {}
-        '400':
-          description: Bad Request
-          headers: {}
+        "200":
+          description: OK. The payment was successfully processed
           schema:
-            $ref: '#/definitions/ErrorType'
-        '404':
-          description: Not Found
-          headers: {}
+            type: boolean
+        "400":
+          description: Bad Request. The bank declined the transaction due to insufficient funds or the absence of a valid debtor/creditor
           schema:
-            $ref: '#/definitions/ErrorType'
+            type: string
+        "404":
+          description: Not Found. The payment token could not be validated, or the customer/merchant's bank accounts could not be found
+          schema:
+            type: string
+
+  /merchants/{id}/report:
+    get:
+      summary: Request merchant report
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: string
+          format: uuid
+          required: true
+          description: Id of the merchant requesting their report
+      responses:
+        "200":
+          description: OK. The report was successfully retrieved
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/MerchantReportEntry"
+
+  /manager/report:
+    get:
+      summary: Request manager report
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK. The report was successfully retrieved
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ManagerReportEntry"
+
+  /manager/clear:
+    delete:
+      produces:
+        - text/plain
+      summary: Clear all information from DTU Pay
+      responses:
+        "200":
+          description: OK. All information has been deleted
+          schema:
+            type: boolean
 
 definitions:
-  
-  RequestTokensBody:
-    properties:
-      customerId:
-        type: string
-      amount:
-        type: integer
-        
+
   RegisterMerchantBody:
     properties:
       merchant:
@@ -125,22 +262,49 @@ definitions:
         $ref: '#/definitions/Customer'
       accountId:
         type: string
-  
-  Payment:
+
+  ManagerReportEntry:
     properties:
-    #  id:
-    #    type: string
-      token:
-        type: string
       amount:
         type: integer
       merchantId:
         type: string
+        format: uuid
+      customerId:
+        type: string
+        format: uuid
+      token:
+        $ref: "#/definitions/Token"
+
+  MerchantReportEntry:
+    properties:
+      amount:
+        type: integer
+      token:
+        $ref: "#/definitions/Token"
+
+  CustomerReportEntry:
+    properties:
+      amount:
+        type: integer
+      merchantId:
+        type: string
+        format: uuid
+      token:
+        $ref: "#/definitions/Token"
+  
+  Payment:
+    properties:
+      token:
+        $ref: "#/definitions/Token"
+      amount:
+        type: integer
   
   Merchant:
     properties:
       id:
         type: string
+        format: uuid
       firstName:
         type: string
       lastName:
@@ -152,14 +316,16 @@ definitions:
     properties:
       id:
         type: string
+        format: uuid
       firstName:
         type: string
       lastName:
         type: string
       cpr:
         type: string
-        
-  ErrorType:
+
+  Token:
     properties:
-      errorMessage:
+      id:
         type: string
+        format: uuid

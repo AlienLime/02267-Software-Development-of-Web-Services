@@ -5,11 +5,12 @@ import dtu.group17.report_manager.domain.ManagerReportEntry;
 import dtu.group17.report_manager.domain.MerchantReportEntry;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ReportReadRepository {
-    Map<UUID, List<CustomerReportEntry>> customerReports = new HashMap<>();
-    Map<UUID, List<MerchantReportEntry>> merchantReports = new HashMap<>();
-    List<ManagerReportEntry> managerReports = new ArrayList<>();
+    Map<UUID, List<CustomerReportEntry>> customerReports = new ConcurrentHashMap<>();
+    Map<UUID, List<MerchantReportEntry>> merchantReports = new ConcurrentHashMap<>();
+    List<ManagerReportEntry> managerReports = Collections.synchronizedList(new ArrayList<>());
 
     public Map<UUID, List<CustomerReportEntry>> getCustomerReports() {
         return customerReports;

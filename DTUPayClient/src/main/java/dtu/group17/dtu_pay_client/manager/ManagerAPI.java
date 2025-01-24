@@ -30,11 +30,11 @@ public class ManagerAPI {
     }
 
     /**
-     * Clears all data by sending a POST request to the manager.
+     * Clears all data by sending a DELETE request to the manager.
      * @author Katja
      */
     public boolean clearEverything() {
-        Response response = target.path("manager").path("clear").request().post(null);
+        Response response = target.path("manager").path("clear").request().delete();
         return response.getStatus() == Response.Status.OK.getStatusCode();
     }
 }
