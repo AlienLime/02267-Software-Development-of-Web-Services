@@ -5,7 +5,7 @@
     * The ID can temporarily be null, before it is assigned by the DTU Pay app.
 */
 
-package dtu.group17.dtu_pay_facade.records;
+package dtu.group17.dtu_pay_facade.domain;
 
 import java.util.UUID;
 

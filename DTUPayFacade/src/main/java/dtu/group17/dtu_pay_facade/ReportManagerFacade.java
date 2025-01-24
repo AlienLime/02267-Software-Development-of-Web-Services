@@ -8,9 +8,9 @@
 package dtu.group17.dtu_pay_facade;
 
 import com.google.gson.reflect.TypeToken;
-import dtu.group17.dtu_pay_facade.records.CustomerReportEntry;
-import dtu.group17.dtu_pay_facade.records.ManagerReportEntry;
-import dtu.group17.dtu_pay_facade.records.MerchantReportEntry;
+import dtu.group17.dtu_pay_facade.domain.CustomerReportEntry;
+import dtu.group17.dtu_pay_facade.domain.ManagerReportEntry;
+import dtu.group17.dtu_pay_facade.domain.MerchantReportEntry;
 import dtu.group17.messaging_utilities.Event;
 import dtu.group17.messaging_utilities.MessageQueue;
 import dtu.group17.messaging_utilities.RabbitMQQueue;

@@ -6,6 +6,6 @@
  * Contains the amount of money spent and the token used for the payment.
  */
 
-package dtu.group17.dtu_pay_facade.records;
+package dtu.group17.dtu_pay_facade.domain;
 
 public record MerchantReportEntry(int amount, Token token, String description) {}

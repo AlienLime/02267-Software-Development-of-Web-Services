@@ -6,7 +6,7 @@
  */
 
 
-package dtu.group17.dtu_pay_facade.records;
+package dtu.group17.dtu_pay_facade.domain;
 
 import java.util.UUID;
 

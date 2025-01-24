@@ -11,7 +11,7 @@ package dtu.group17.dtu_pay_facade.adapter.rest;
 
 import dtu.group17.dtu_pay_facade.Clear;
 import dtu.group17.dtu_pay_facade.ReportManagerFacade;
-import dtu.group17.dtu_pay_facade.records.ManagerReportEntry;
+import dtu.group17.dtu_pay_facade.domain.ManagerReportEntry;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;

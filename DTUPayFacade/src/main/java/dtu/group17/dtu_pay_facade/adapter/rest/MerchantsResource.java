@@ -8,7 +8,7 @@
 package dtu.group17.dtu_pay_facade.adapter.rest;
 
 import dtu.group17.dtu_pay_facade.AccountManagerFacade;
-import dtu.group17.dtu_pay_facade.records.Merchant;
+import dtu.group17.dtu_pay_facade.domain.Merchant;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;

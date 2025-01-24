@@ -11,7 +11,7 @@ import dtu.group17.dtu_pay_facade.exceptions.BankException;
 import dtu.group17.dtu_pay_facade.exceptions.CustomerNotFoundException;
 import dtu.group17.dtu_pay_facade.exceptions.MerchantNotFoundException;
 import dtu.group17.dtu_pay_facade.exceptions.TokenNotFoundException;
-import dtu.group17.dtu_pay_facade.records.Payment;
+import dtu.group17.dtu_pay_facade.domain.Payment;
 import dtu.group17.messaging_utilities.Event;
 import dtu.group17.messaging_utilities.MessageQueue;
 import dtu.group17.messaging_utilities.RabbitMQQueue;

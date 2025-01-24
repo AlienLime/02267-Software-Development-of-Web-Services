@@ -5,7 +5,7 @@
  * An entry is a full payment with all information.
  * Contains the amount of money spent, the merchant ID, the customerid and the token used for the payment.
  */
-package dtu.group17.dtu_pay_facade.records;
+package dtu.group17.dtu_pay_facade.domain;
 
 import java.util.UUID;
 

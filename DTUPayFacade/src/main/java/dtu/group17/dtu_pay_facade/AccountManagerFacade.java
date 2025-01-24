@@ -8,8 +8,8 @@ package dtu.group17.dtu_pay_facade;
 
 import dtu.group17.dtu_pay_facade.exceptions.CustomerNotFoundException;
 import dtu.group17.dtu_pay_facade.exceptions.MerchantNotFoundException;
-import dtu.group17.dtu_pay_facade.records.Customer;
-import dtu.group17.dtu_pay_facade.records.Merchant;
+import dtu.group17.dtu_pay_facade.domain.Customer;
+import dtu.group17.dtu_pay_facade.domain.Merchant;
 import dtu.group17.messaging_utilities.Event;
 import dtu.group17.messaging_utilities.MessageQueue;
 import dtu.group17.messaging_utilities.RabbitMQQueue;

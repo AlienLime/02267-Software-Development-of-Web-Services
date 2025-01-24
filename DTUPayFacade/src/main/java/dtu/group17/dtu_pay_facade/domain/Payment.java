@@ -5,6 +5,6 @@
     * Contains the token used for the payment, the amount of money involved and the merchant ID.
 */
 
-package dtu.group17.dtu_pay_facade.records;
+package dtu.group17.dtu_pay_facade.domain;
 
 public record Payment(Token token, int amount, String description) {}
